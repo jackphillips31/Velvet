@@ -1,1 +1,9 @@
+
+# Directories
 .vs/
+bin/
+Velvet/bin/
+Window/bin/
+
+# Files
+*.user
