@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Window", "Window\Window.vcxproj", "{C61C9844-283C-4174-8889-CF2D66C80C6C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Velvet", "Velvet\Velvet.vcxproj", "{F5A9D817-3DA8-4654-BA79-B96955183CD2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5A9D817-3DA8-4654-BA79-B96955183CD2}.Debug|x64.ActiveCfg = Debug|x64
+		{F5A9D817-3DA8-4654-BA79-B96955183CD2}.Debug|x64.Build.0 = Debug|x64
+		{F5A9D817-3DA8-4654-BA79-B96955183CD2}.Release|x64.ActiveCfg = Release|x64
+		{F5A9D817-3DA8-4654-BA79-B96955183CD2}.Release|x64.Build.0 = Release|x64
+		{C61C9844-283C-4174-8889-CF2D66C80C6C}.Debug|x64.ActiveCfg = Debug|x64
+		{C61C9844-283C-4174-8889-CF2D66C80C6C}.Debug|x64.Build.0 = Debug|x64
+		{C61C9844-283C-4174-8889-CF2D66C80C6C}.Release|x64.ActiveCfg = Release|x64
+		{C61C9844-283C-4174-8889-CF2D66C80C6C}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A513256-502F-4EA7-BB31-2F93F0C82421}
+	EndGlobalSection
+EndGlobal
