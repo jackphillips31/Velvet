@@ -12,4 +12,6 @@ Since Velvet is in its early stages, contributions are not accepted at the momen
 
 ## License
 
-This project is not currently licensed. More information on licensing will be provided in the future.
+This project is licensed under the MIT License. You can find the full text of the MIT License in the `LICENSE.md` file in this repository.
+
+The MIT License allows you to freely use, modify, and distribute this software, subject to the terms and conditions of the license. It's a permissive open-source license that encourages collaboration and the creation of derivative works. For more details, please refer to the [MIT License](LICENSE.md) file.
