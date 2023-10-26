@@ -1,6 +1,7 @@
 # Directories
 .vs/
 bin/
+dependencies/
 Velvet/bin/
 Window/bin/
 

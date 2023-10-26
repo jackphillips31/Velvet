@@ -1,9 +1,8 @@
 #pragma once
-
 // For use by Velvet applications
 
-#include <stdio.h>
 #include "Velvet/Application.h"
+#include "Velvet/Log.h"
 
 //----------ENTRY POINT----------
 //-------------------------------

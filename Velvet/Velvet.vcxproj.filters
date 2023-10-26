@@ -27,9 +27,15 @@
     <ClInclude Include="src\Velvet\EntryPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Velvet\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Velvet\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Velvet\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

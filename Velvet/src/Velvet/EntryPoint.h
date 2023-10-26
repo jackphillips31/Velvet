@@ -6,7 +6,9 @@ extern Velvet::Application* Velvet::CreateApplication();
 
 int main(int argc, char** argv)
 {
-	printf("Welcome to Velvet!");
+	Velvet::Log::Init(spdlog::level::trace);
+	VL_TRACE("Logging initialized!");
+
 	auto app = Velvet::CreateApplication();
 	app->Run();
 	delete app;

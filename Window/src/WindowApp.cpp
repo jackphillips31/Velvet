@@ -7,7 +7,6 @@ public:
 	{
 
 	}
-
 	~WindowApp()
 	{
 
@@ -16,5 +15,6 @@ public:
 
 Velvet::Application* Velvet::CreateApplication()
 {
+	VL_TRACE("Creating Application...");
 	return new WindowApp;
 }
