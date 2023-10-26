@@ -2,8 +2,6 @@
 .vs/
 bin/
 dependencies/
-Velvet/bin/
-Window/bin/
 
 # Files
 *.user
