@@ -5,3 +5,5 @@ dependencies/
 
 # Files
 *.user
+*.sln
+*.vcxproj
