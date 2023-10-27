@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "Core.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
@@ -25,20 +23,20 @@ namespace Velvet {
 
 }
 
-#ifdef VL_LOG_LOCATION
-	#define VL_CORE_CRITICAL(msg, ...) ::Velvet::Log::GetCoreLogger()->critical("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_ERROR(msg, ...) ::Velvet::Log::GetCoreLogger()->error("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_WARN(msg, ...) ::Velvet::Log::GetCoreLogger()->warn("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_INFO(msg, ...) ::Velvet::Log::GetCoreLogger()->info("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_DEBUG(msg, ...) ::Velvet::Log::GetCoreLogger()->debug("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_TRACE(msg, ...) ::Velvet::Log::GetCoreLogger()->trace("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+#ifdef VL_LOG_LOCATION_WIP
+	#define VL_CORE_CRITICAL(msg, ...) ::Velvet::Log::GetCoreLogger()->critical("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_CORE_ERROR(msg, ...) ::Velvet::Log::GetCoreLogger()->error("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_CORE_WARN(msg, ...) ::Velvet::Log::GetCoreLogger()->warn("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_CORE_INFO(msg, ...) ::Velvet::Log::GetCoreLogger()->info("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_CORE_DEBUG(msg, ...) ::Velvet::Log::GetCoreLogger()->debug("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_CORE_TRACE(msg, ...) ::Velvet::Log::GetCoreLogger()->trace("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
 
-	#define VL_CRITICAL(msg, ...) ::Velvet::Log::GetClientLogger()->critical("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_ERROR(msg, ...) ::Velvet::Log::GetClientLogger()->error("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_WARN(msg, ...) ::Velvet::Log::GetClientLogger()->warn("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_INFO(msg, ...) ::Velvet::Log::GetClientLogger()->info("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_DEBUG(msg, ...) ::Velvet::Log::GetClientLogger()->debug("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_TRACE(msg, ...) ::Velvet::Log::GetClientLogger()->trace("{} ({}:{}): " msg, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_CRITICAL(msg, ...) ::Velvet::Log::GetClientLogger()->critical("{} ({}:{}): ", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_ERROR(msg, ...) ::Velvet::Log::GetClientLogger()->error("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_WARN(msg, ...) ::Velvet::Log::GetClientLogger()->warn("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_INFO(msg, ...) ::Velvet::Log::GetClientLogger()->info("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_DEBUG(msg, ...) ::Velvet::Log::GetClientLogger()->debug("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+	#define VL_TRACE(...) ::Velvet::Log::GetCoreLogger()->trace("'{}' ('{}':'{}'): " __VA_ARGS__, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__)
 #else
 	#define VL_CORE_CRITICAL(...) ::Velvet::Log::GetCoreLogger()->critical(__VA_ARGS__)
 	#define VL_CORE_ERROR(...) ::Velvet::Log::GetCoreLogger()->error(__VA_ARGS__)

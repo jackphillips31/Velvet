@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace Velvet {
 
 	class VELVET_API KeyEvent : public Event

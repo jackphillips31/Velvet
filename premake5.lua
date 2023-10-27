@@ -20,6 +20,9 @@ project "Velvet"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{prj.name}/bin/")
 
+	pchheader "vlpch.h"
+	pchsource "%{prj.name}/src/vlpch.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.h",

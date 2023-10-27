@@ -2,9 +2,6 @@
 
 #include "Velvet/Core.h"
 
-#include <string>
-#include <functional>
-
 namespace Velvet {
 
 	// Events in Velvet are currently blocking, meaning when an event occurs it

@@ -1,4 +1,5 @@
 #pragma once
+
 #ifdef VL_PLATFORM_WINDOWS
 	#ifdef VL_BUILD_DLL
 		#define VELVET_API __declspec(dllexport)
