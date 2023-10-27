@@ -1,7 +1,10 @@
 #pragma once
+
 #include <memory>
+
 #include "Core.h"
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h"
 
 namespace Velvet {
 
@@ -10,14 +13,8 @@ namespace Velvet {
 	public:
 		static void Init(spdlog::level::level_enum setLevel);
 
-		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger()
-		{
-			return s_CoreLogger;
-		}
-		inline static std::shared_ptr<spdlog::logger>& GetClientLogger()
-		{
-			return s_ClientLogger;
-		}
+		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
+		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
 		inline static std::string ExtractFileName(const char* fullFilePath);
 
