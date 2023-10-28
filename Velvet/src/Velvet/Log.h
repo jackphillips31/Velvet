@@ -27,7 +27,6 @@ namespace Velvet {
 // Add VL_LOG_LOCATION to Preprocessor Definitions
 // to enable printing the source location information 
 // from which the log is called.
-#define VL_LOG_LOCATION
 #ifdef VL_LOG_LOCATION
 	namespace LogLocationDebug {
 		template<typename T>
