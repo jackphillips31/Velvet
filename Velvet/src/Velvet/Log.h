@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
+#include "spdlog/fmt/fmt.h"
 
 namespace Velvet {
 
@@ -14,7 +15,7 @@ namespace Velvet {
 		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
 		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
-		inline static std::string ExtractFileName(const char* fullFilePath);
+		
 
 	private:
 		static std::shared_ptr<spdlog::logger> s_CoreLogger;
@@ -23,20 +24,52 @@ namespace Velvet {
 
 }
 
-#ifdef VL_LOG_LOCATION_WIP
-	#define VL_CORE_CRITICAL(msg, ...) ::Velvet::Log::GetCoreLogger()->critical("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_ERROR(msg, ...) ::Velvet::Log::GetCoreLogger()->error("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_WARN(msg, ...) ::Velvet::Log::GetCoreLogger()->warn("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_INFO(msg, ...) ::Velvet::Log::GetCoreLogger()->info("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_DEBUG(msg, ...) ::Velvet::Log::GetCoreLogger()->debug("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_CORE_TRACE(msg, ...) ::Velvet::Log::GetCoreLogger()->trace("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
+// Add VL_LOG_LOCATION to Preprocessor Definitions
+// to enable printing the source location information 
+// from which the log is called.
+#define VL_LOG_LOCATION
+#ifdef VL_LOG_LOCATION
+	namespace LogLocationDebug {
+		template<typename T>
+		inline static std::string ToString(T& t)
+		{
+			std::stringstream ss;
+			ss << t;
+			return ss.str();
+		}
+		template<typename... Args>
+		inline static std::string ToString(const std::string& fmt, Args&&... args)
+		{
+			return fmt::format(fmt, std::forward<Args>(args)...);
+		}
+		inline static std::string ExtractFileName(const char* fullFilePath)
+		{
+			std::string filePath(fullFilePath);
+			size_t pos = filePath.find_last_of("/\\");
+			if (pos != std::string::npos) {
+				return filePath.substr(pos + 1);
+			}
+			return filePath;
+		}
+		inline static std::string FormatFileAndLine(std::string fileName, int line)
+		{
+			return fmt::format("({}:{})", fileName, line);
+		}
+	}
 
-	#define VL_CRITICAL(msg, ...) ::Velvet::Log::GetClientLogger()->critical("{} ({}:{}): ", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_ERROR(msg, ...) ::Velvet::Log::GetClientLogger()->error("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_WARN(msg, ...) ::Velvet::Log::GetClientLogger()->warn("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_INFO(msg, ...) ::Velvet::Log::GetClientLogger()->info("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_DEBUG(msg, ...) ::Velvet::Log::GetClientLogger()->debug("{} ({}:{}): {}", ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__, __VA_ARGS__)
-	#define VL_TRACE(...) ::Velvet::Log::GetCoreLogger()->trace("'{}' ('{}':'{}'): " __VA_ARGS__, ::Velvet::Log::ExtractFileName(__FILE__), __FUNCTION__, __LINE__)
+	#define VL_CORE_CRITICAL(...) ::Velvet::Log::GetCoreLogger()->critical("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_ERROR(...) ::Velvet::Log::GetCoreLogger()->error("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_WARN(...) ::Velvet::Log::GetCoreLogger()->warn("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_INFO(...) ::Velvet::Log::GetCoreLogger()->info("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_DEBUG(...) ::Velvet::Log::GetCoreLogger()->debug("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_TRACE(...) ::Velvet::Log::GetCoreLogger()->trace("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+
+	#define VL_CRITICAL(...) ::Velvet::Log::GetClientLogger()->critical("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_ERROR(...) ::Velvet::Log::GetClientLogger()->error("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_WARN(...) ::Velvet::Log::GetClientLogger()->warn("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_INFO(...) ::Velvet::Log::GetClientLogger()->info("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_DEBUG(...) ::Velvet::Log::GetClientLogger()->debug("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
+	#define VL_TRACE(...) ::Velvet::Log::GetClientLogger()->trace("{:^30} {:>20}: {}",__FUNCTION__, LogLocationDebug::FormatFileAndLine(LogLocationDebug::ExtractFileName(__FILE__), __LINE__), LogLocationDebug::ToString(__VA_ARGS__))
 #else
 	#define VL_CORE_CRITICAL(...) ::Velvet::Log::GetCoreLogger()->critical(__VA_ARGS__)
 	#define VL_CORE_ERROR(...) ::Velvet::Log::GetCoreLogger()->error(__VA_ARGS__)

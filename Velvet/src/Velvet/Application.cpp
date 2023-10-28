@@ -18,14 +18,15 @@ namespace Velvet {
 
 	void Application::Run()
 	{
+		VL_CORE_TRACE("Running application...");
 		WindowResizeEvent e(1280, 720);
 		if (e.IsInCategory(EventCategoryApplication))
 		{
-			VL_CORE_TRACE(e);
+			VL_CORE_INFO(e);
 		}
 		else if (e.IsInCategory(EventCategoryInput))
 		{
-			VL_CORE_TRACE(e);
+			VL_CORE_INFO(e);
 		}
 		while (true);
 	}
