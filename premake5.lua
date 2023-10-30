@@ -12,6 +12,13 @@ workspace "Velvet"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include directories relative to root folder (solution directory)
+IncludeDir = {}
+IncludeDir["spdlog"] = "Velvet/vendor/spdlog/include"
+IncludeDir["GLFW"] = "Velvet/vendor/GLFW/include"
+
+include "Velvet/vendor/GLFW"
+
 project "Velvet"
 	location "Velvet"
 	kind "SharedLib"
@@ -32,7 +39,14 @@ project "Velvet"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links
+	{
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -79,8 +93,8 @@ project "Window"
 
 	includedirs
 	{
-		"Velvet/vendor/spdlog/include",
-		"Velvet/src"
+		"Velvet/src",
+		"%{IncludeDir.spdlog}"
 	}
 
 	links
