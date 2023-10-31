@@ -23,9 +23,11 @@ project "Velvet"
 	location "Velvet"
 	kind "SharedLib"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "off"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("%{prj.name}/bin/")
+	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("%{wks.location}/%{prj.name}/bin/")
 
 	pchheader "vlpch.h"
 	pchsource "%{prj.name}/src/vlpch.cpp"
@@ -50,8 +52,6 @@ project "Velvet"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -67,23 +67,28 @@ project "Velvet"
 
 	filter "configurations:Debug"
 		defines "VL_DEBUG"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "VL_RELEASE"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "VL_DIST"
+		runtime "Release"
+		symbols "Off"
 		optimize "On"
 
 project "Window"
 	location "Window"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++17"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("%{prj.name}/bin/")
+	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("%{wks.location}/%{prj.name}/bin/")
 
 	files
 	{
@@ -103,8 +108,6 @@ project "Window"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -114,12 +117,16 @@ project "Window"
 
 	filter "configurations:Debug"
 		defines "VL_DEBUG"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "VL_RELEASE"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "VL_DIST"
+		runtime "Release"
+		symbols "Off"
 		optimize "On"
