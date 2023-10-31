@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Velvet/Log.h"
+
 #ifdef VL_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif
