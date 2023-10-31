@@ -2,13 +2,12 @@
 #include "Application.h"
 
 #include "Velvet/Events/ApplicationEvent.h"
-#include "Velvet/Log.h"
 
 namespace Velvet {
 
 	Application::Application()
 	{
-
+		m_Window = std::unique_ptr<Window>(Window::Create());
 	}
 
 	Application::~Application()
@@ -19,16 +18,10 @@ namespace Velvet {
 	void Application::Run()
 	{
 		VL_CORE_TRACE("Running application...");
-		WindowResizeEvent e(1280, 720);
-		if (e.IsInCategory(EventCategoryApplication))
+		while (m_Running)
 		{
-			VL_CORE_INFO(e);
+			m_Window->OnUpdate();
 		}
-		else if (e.IsInCategory(EventCategoryInput))
-		{
-			VL_CORE_INFO(e);
-		}
-		while (true);
 	}
 
 }
