@@ -4,3 +4,6 @@
 [submodule "Velvet/vendor/GLFW"]
 	path = Velvet/vendor/GLFW
 	url = https://github.com/jackphillips31/glfw
+[submodule "Velvet/vendor/imgui"]
+	path = Velvet/vendor/imgui
+	url = https://github.com/jackphillips31/imgui
