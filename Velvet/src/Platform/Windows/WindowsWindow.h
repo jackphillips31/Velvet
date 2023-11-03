@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Velvet/Window.h"
+#include "Velvet/Core/Window.h"
 
 #include <GLFW/glfw3.h>
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Velvet/Core.h"
+#include "Core.h"
 
-#include "Velvet/Window.h"
-#include "Velvet/LayerStack.h"
+#include "Window.h"
+#include "LayerStack.h"
 #include "Velvet/Events/Event.h"
 #include "Velvet/Events/ApplicationEvent.h"
 

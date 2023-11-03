@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Velvet/Log.h"
+#include "Velvet/Core/Log.h"
 
 #ifdef VL_PLATFORM_WINDOWS
 	#include <Windows.h>

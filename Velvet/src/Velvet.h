@@ -1,10 +1,10 @@
 #pragma once
 // For use by Velvet applications
 
-#include "Velvet/Application.h"
-#include "Velvet/Layer.h"
-#include "Velvet/Log.h"
+#include "Velvet/Core/Application.h"
+#include "Velvet/Core/Layer.h"
+#include "Velvet/Core/Log.h"
 
 //----------ENTRY POINT----------
 //-------------------------------
-#include "Velvet/EntryPoint.h"
+#include "Velvet/Core/EntryPoint.h"
