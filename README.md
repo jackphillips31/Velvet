@@ -8,7 +8,9 @@ Velvet is an open-source physics and game engine written in C++. It's designed t
 - [Building Velvet](#building-velvet)
 - [License](#license)
 ## Dependencies
-- [spdlog](https://github.com/gabime/spdlog) in Velvet/vendor/spdlog
+- [spdlog @ ddce421](https://github.com/gabime/spdlog) in Velvet/vendor/spdlog
+- [GLFW @ d2232ef](https://github.com/glfw/glfw) in Velvet/vendor/GLFW
+- [imgui @ 05487c1](https://github.com/jackphillips31/imgui) in Velvet/vendor/imgui
 ## Installation
 Install Velvet with Git Bash or simply download and extract to your desired directory. If you download the zip, make sure you download and extract the required dependencies to their respective directories.
 
@@ -16,8 +18,9 @@ First clone the project.
 ```bash
   git clone https://github.com/jackphillips31/Velvet.git
 ```
-Then update the submodules.
+Then update/download the submodules.
 ```bash
+  git submodule init
   git submodule update
 ```
 ## Setting up Premake
