@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Velvet/Core.h"
+#include "Velvet/Core/Core.h"
 
 namespace Velvet {
 
