@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core.h"
+#include "Velvet/Core.h"
 
 #include "Window.h"
 #include "Velvet/LayerStack.h"
