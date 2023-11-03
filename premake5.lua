@@ -16,8 +16,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["spdlog"] = "Velvet/vendor/spdlog/include"
 IncludeDir["GLFW"] = "Velvet/vendor/GLFW/include"
+IncludeDir["ImGui"] = "Velvet/vendor/imgui"
 
 include "Velvet/vendor/GLFW"
+include "Velvet/vendor/imgui"
 
 project "Velvet"
 	location "Velvet"
@@ -48,7 +50,8 @@ project "Velvet"
 	links
 	{
 		"GLFW",
-		"opengl32.lib"
+		"opengl32.lib",
+		"ImGui"
 	}
 
 	filter "system:windows"
