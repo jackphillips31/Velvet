@@ -1,7 +1,7 @@
-#include "vlpch.h"
-#include "Velvet/Log.h"
+#include <vlpch.h>
+#include "Velvet/Core/Log.h"
 
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace Velvet {
 

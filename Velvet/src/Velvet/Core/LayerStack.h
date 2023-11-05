@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Velvet/Core.h"
-#include "Layer.h"
+#include "Velvet/Core/Core.h"
+#include "Velvet/Core/Layer.h"
 
 #include <vector>
 

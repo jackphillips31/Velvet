@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Event.h"
+#include "Velvet/Events/Event.h"
 
 namespace Velvet {
 
