@@ -16,9 +16,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["spdlog"] = "Velvet/vendor/spdlog/include"
 IncludeDir["GLFW"] = "Velvet/vendor/GLFW/include"
+IncludeDir["GLAD"] = "Velvet/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Velvet/vendor/imgui"
 
 include "Velvet/vendor/GLFW"
+include "Velvet/vendor/GLAD"
 include "Velvet/vendor/imgui"
 
 project "Velvet"
@@ -44,14 +46,16 @@ project "Velvet"
 	{
 		"%{prj.name}/src",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.GLAD}"
 	}
 
 	links
 	{
 		"GLFW",
-		"opengl32.lib",
-		"ImGui"
+		"GLAD",
+		"ImGui",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -60,7 +64,8 @@ project "Velvet"
 		defines
 		{
 			"VL_PLATFORM_WINDOWS",
-			"VL_BUILD_DLL"
+			"VL_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands
