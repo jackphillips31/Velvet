@@ -11,3 +11,4 @@ dependencies/
 
 # Specific Files
 /Window/imgui.ini
+/Window/imgui_log.txt
