@@ -8,6 +8,16 @@ public:
 		: Layer("Example")
 	{
 	}
+
+	void OnUpdate() override
+	{
+		VL_TRACE("ExampleLayer::OnUpdate");
+	}
+
+	void OnEvent(Velvet::Event& event) override
+	{
+		VL_TRACE(event);
+	}
 };
 
 class WindowApp : public Velvet::Application
@@ -26,6 +36,6 @@ public:
 
 Velvet::Application* Velvet::CreateApplication()
 {
-	VL_TRACE("Creating Application...");
+	VL_WARN("Creating Application...");
 	return new WindowApp;
 }

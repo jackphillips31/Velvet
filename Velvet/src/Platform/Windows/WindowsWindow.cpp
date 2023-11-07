@@ -37,7 +37,7 @@ namespace Velvet {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		VL_CORE_TRACE("Creating window {} ({}, {})", props.Title, props.Width, props.Height);
+		VL_CORE_WARN("Creating window {} ({}, {})", props.Title, props.Width, props.Height);
 
 		if (!s_GLFWInitialized)
 		{
@@ -56,7 +56,7 @@ namespace Velvet {
 		SetVSync(true);
 
 		const char* glVersion = (char*)glGetString(GL_VERSION);
-		VL_CORE_TRACE("OpenGL Version: {}", glVersion);
+		VL_CORE_WARN("OpenGL Version: {}", glVersion);
 
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
@@ -101,6 +101,14 @@ namespace Velvet {
 						break;
 					}
 				}
+			});
+
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+				KeyTypedEvent event(keycode);
+				data.EventCallback(event);
 			});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
