@@ -66,7 +66,8 @@ project "Velvet"
 		{
 			"VL_PLATFORM_WINDOWS",
 			"VL_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
+			"GLFW_INCLUDE_NONE",
+			"IMGUI_IMPL_OPENGL_LOADER_CUSTOM"
 		}
 
 		postbuildcommands
