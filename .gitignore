@@ -8,3 +8,6 @@ dependencies/
 *.sln
 *.vcxproj
 *.filters
+
+# Specific Files
+/Window/imgui.ini
