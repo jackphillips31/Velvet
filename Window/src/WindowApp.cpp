@@ -8,6 +8,11 @@ public:
 		: Layer("Example")
 	{
 	}
+
+	void OnEvent(Velvet::Event& event) override
+	{
+		VL_TRACE(event);
+	}
 };
 
 class WindowApp : public Velvet::Application
