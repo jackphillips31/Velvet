@@ -11,12 +11,19 @@ public:
 
 	void OnUpdate() override
 	{
-		VL_TRACE("ExampleLayer::OnUpdate");
+		if (Velvet::Input::IsKeyPressed(VL_KEY_TAB))
+			VL_TRACE("Tab key is pressed! (poll)");
 	}
 
 	void OnEvent(Velvet::Event& event) override
 	{
-		VL_TRACE("ExampleLayer::OnEvent: {}", event);
+		if (event.GetEventType() == Velvet::EventType::KeyPressed)
+		{
+			Velvet::KeyPressedEvent& e = (Velvet::KeyPressedEvent&)event;
+			if (e.GetKeyCode() == VL_KEY_TAB)
+				VL_TRACE("Tab key is pressed! (event)");
+			VL_TRACE((char)e.GetKeyCode());
+		}
 	}
 };
 
