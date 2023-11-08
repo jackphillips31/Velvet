@@ -3,6 +3,8 @@
 
 #include <glad/glad.h>
 
+#include "Velvet/Core/Input.h"
+
 namespace Velvet {
 
 	Application* Application::s_Instance = nullptr;
@@ -43,6 +45,9 @@ namespace Velvet {
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			auto [x, y] = Input::GetMousePosition();
+			VL_CORE_TRACE("Input::GetMousePosition: {}, {}", x, y);
 
 			m_Window->OnUpdate();
 		}
