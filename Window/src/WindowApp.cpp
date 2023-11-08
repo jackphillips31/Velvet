@@ -16,7 +16,7 @@ public:
 
 	void OnEvent(Velvet::Event& event) override
 	{
-		VL_TRACE(event);
+		VL_TRACE("ExampleLayer::OnEvent: {}", event);
 	}
 };
 
