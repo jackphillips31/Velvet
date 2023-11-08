@@ -74,7 +74,7 @@ project "Velvet"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Window")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Window/\"")
 		}
 
 	filter "configurations:Debug"
