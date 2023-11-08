@@ -46,9 +46,6 @@ namespace Velvet {
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
-			auto [x, y] = Input::GetMousePosition();
-			VL_CORE_TRACE("Input::GetMousePosition: {}, {}", x, y);
-
 			m_Window->OnUpdate();
 		}
 	}
@@ -57,8 +54,6 @@ namespace Velvet {
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(VL_BIND_EVENT_FN(Application::OnWindowClose));
-
-		VL_CORE_INFO(e);
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
