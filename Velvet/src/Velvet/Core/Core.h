@@ -10,6 +10,10 @@
 	#error Velvet only supports Windows
 #endif
 
+#ifdef VL_DEBUG
+	#define VL_ENABLE_ASSERTS
+#endif
+
 #ifdef VL_ENABLE_ASSERTS
 	#define VL_ASSERT(x, ...) { if(!(x)) { VL_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 	#define VL_CORE_ASSERT(x, ...) { if(!(x)) { VL_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
