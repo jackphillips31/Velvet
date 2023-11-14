@@ -7,3 +7,6 @@
 [submodule "Velvet/vendor/imgui"]
 	path = Velvet/vendor/imgui
 	url = https://github.com/jackphillips31/imgui
+[submodule "Velvet/vendor/glm"]
+	path = Velvet/vendor/glm
+	url = https://github.com/g-truc/glm
