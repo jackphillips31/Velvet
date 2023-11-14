@@ -37,7 +37,7 @@ namespace Velvet {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		VL_CORE_WARN("Creating window {} ({}, {})", props.Title, props.Width, props.Height);
+		VL_CORE_WARN("Initializing window: {} ({}, {})", props.Title, props.Width, props.Height);
 
 		if (!s_GLFWInitialized)
 		{
