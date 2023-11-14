@@ -18,6 +18,7 @@ IncludeDir["spdlog"] = "Velvet/vendor/spdlog/include"
 IncludeDir["GLFW"] = "Velvet/vendor/GLFW/include"
 IncludeDir["GLAD"] = "Velvet/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Velvet/vendor/imgui"
+IncludeDir["glm"] = "Velvet/vendor/glm"
 
 group "Dependencies"
 	include "Velvet/vendor/GLFW"
@@ -50,7 +51,8 @@ project "Velvet"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}"
 	}
 
 	links
@@ -112,7 +114,8 @@ project "Window"
 	includedirs
 	{
 		"Velvet/src",
-		"%{IncludeDir.spdlog}"
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.glm}"
 	}
 
 	links
