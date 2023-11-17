@@ -33,7 +33,6 @@ public:
 	WindowApp()
 	{
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Velvet::ImGuiLayer());
 	}
 	~WindowApp()
 	{

@@ -7,6 +7,8 @@
 #include "Velvet/Events/Event.h"
 #include "Velvet/Events/ApplicationEvent.h"
 
+#include "Velvet/ImGui/ImGuiLayer.h"
+
 namespace Velvet {
 
 	class VELVET_API Application
@@ -29,6 +31,7 @@ namespace Velvet {
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 	private:
