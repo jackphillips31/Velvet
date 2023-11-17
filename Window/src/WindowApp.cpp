@@ -1,6 +1,8 @@
 #include <vlpch.h>
 #include <Velvet.h>
 
+#include "imgui/imgui.h"
+
 class ExampleLayer : public Velvet::Layer
 {
 public:
@@ -13,6 +15,13 @@ public:
 	{
 		if (Velvet::Input::IsKeyPressed(VL_KEY_TAB))
 			VL_TRACE("Tab key is pressed! (poll)");
+	}
+
+	virtual void OnImGuiRender() override
+	{
+		//ImGui::Begin("Test");
+		//ImGui::Text("Hello World");
+		//ImGui::End();
 	}
 
 	void OnEvent(Velvet::Event& event) override

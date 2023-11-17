@@ -73,7 +73,7 @@ project "Velvet"
 			"VL_PLATFORM_WINDOWS",
 			"VL_BUILD_DLL",
 			"GLFW_INCLUDE_NONE",
-			"IMGUI_IMPL_OPENGL_LOADER_CUSTOM"
+			"IMGUI_IMPL_OPENGL_LOADER_GLAD"
 		}
 
 		postbuildcommands
@@ -116,6 +116,7 @@ project "Window"
 	includedirs
 	{
 		"Velvet/src",
+		"Velvet/vendor",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.glm}"
 	}
