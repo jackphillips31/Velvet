@@ -1,8 +1,7 @@
 project "GLAD"
 	kind "StaticLib"
 	language "C"
-	staticruntime "off"
-	warnings "off"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin/" .. outputdir .. "/obj")
@@ -19,13 +18,6 @@ project "GLAD"
 		"include"
 	}
 
-	filter "system:linux"
-		pic "On"
-		systemversion "latest"
-
-	filter "system:macosx"
-		pic "On"
-
 	filter "system:windows"
 		systemversion "latest"
 
@@ -36,8 +28,3 @@ project "GLAD"
 	filter "configurations:Release"
 		runtime "Release"
 		optimize "on"
-
-    filter "configurations:Dist"
-		runtime "Release"
-		optimize "on"
-        symbols "off"

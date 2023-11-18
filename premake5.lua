@@ -28,10 +28,10 @@ group ""
 
 project "Velvet"
 	location "Velvet"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "off"
+	staticruntime "on"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/%{prj.name}/bin/")
@@ -76,33 +76,27 @@ project "Velvet"
 			"IMGUI_IMPL_OPENGL_LOADER_GLAD"
 		}
 
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Window/\"")
-		}
-
 	filter "configurations:Debug"
 		defines "VL_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "VL_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "VL_DIST"
 		runtime "Release"
-		symbols "Off"
-		optimize "On"
+		optimize "on"
 
 project "Window"
 	location "Window"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "off"
+	staticruntime "on"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/%{prj.name}/bin/")
@@ -137,15 +131,14 @@ project "Window"
 	filter "configurations:Debug"
 		defines "VL_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "VL_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "VL_DIST"
 		runtime "Release"
-		symbols "Off"
-		optimize "On"
+		optimize "on"

@@ -1,10 +1,14 @@
 #pragma once
 
 #ifdef VL_PLATFORM_WINDOWS
-	#ifdef VL_BUILD_DLL
-		#define VELVET_API __declspec(dllexport)
+	#if VL_DYNAMIC_LINK
+		#ifdef VL_BUILD_DLL
+			#define VELVET_API __declspec(dllexport)
+		#else
+			#define VELVET_API __declspec(dllimport)
+		#endif
 	#else
-		#define VELVET_API __declspec(dllimport)
+		#define VELVET_API
 	#endif
 #else
 	#error Velvet only supports Windows
