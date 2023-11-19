@@ -1,6 +1,6 @@
 [submodule "Velvet/vendor/spdlog"]
 	path = Velvet/vendor/spdlog
-	url = https://github.com/gabime/spdlog
+	url = https://github.com/jackphillips31/spdlog
 [submodule "Velvet/vendor/GLFW"]
 	path = Velvet/vendor/GLFW
 	url = https://github.com/jackphillips31/glfw
