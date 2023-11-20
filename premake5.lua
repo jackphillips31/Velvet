@@ -24,6 +24,7 @@ group "Dependencies"
 	include "Velvet/vendor/GLFW"
 	include "Velvet/vendor/GLAD"
 	include "Velvet/vendor/imgui"
+	include "Velvet/vendor/spdlog"
 group ""
 
 project "Velvet"
@@ -62,6 +63,7 @@ project "Velvet"
 		"GLFW",
 		"GLAD",
 		"ImGui",
+		"spdlog",
 		"opengl32.lib"
 	}
 
