@@ -8,7 +8,7 @@ namespace Velvet {
 	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
 	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
 
-	void Log::Init(spdlog::level::level_enum setLevel)
+	void Log::Init(spdlog::level setLevel)
 	{
 		spdlog::set_pattern("%^[%T] %7n: %v%$");
 		s_CoreLogger = spdlog::stdout_color_mt("VELVET");

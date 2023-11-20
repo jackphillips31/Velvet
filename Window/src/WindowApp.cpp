@@ -31,7 +31,7 @@ public:
 			Velvet::KeyPressedEvent& e = (Velvet::KeyPressedEvent&)event;
 			if (e.GetKeyCode() == VL_KEY_TAB)
 				VL_TRACE("Tab key is pressed! (event)");
-			VL_TRACE((char)e.GetKeyCode());
+			VL_TRACE("{}", (char)e.GetKeyCode());
 		}
 	}
 };
