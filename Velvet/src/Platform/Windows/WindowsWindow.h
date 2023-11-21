@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Velvet/Core/Window.h"
+#include "Velvet/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>
 
@@ -28,6 +29,7 @@ namespace Velvet {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{

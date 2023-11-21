@@ -5,7 +5,7 @@
 #include "Velvet/Events/MouseEvent.h"
 #include "Velvet/Events/KeyEvent.h"
 
-#include <glad/glad.h>
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Velvet {
 
@@ -49,14 +49,12 @@ namespace Velvet {
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		VL_CORE_ASSERT(status, "Failed to initialize GLAD!");
+
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
-
-		const char* glVersion = (char*)glGetString(GL_VERSION);
-		VL_CORE_WARN("OpenGL Version: {}", glVersion);
 
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
@@ -157,7 +155,7 @@ namespace Velvet {
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
