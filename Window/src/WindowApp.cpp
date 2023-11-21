@@ -51,6 +51,5 @@ public:
 
 Velvet::Application* Velvet::CreateApplication()
 {
-	VL_WARN("Creating Application...");
 	return new WindowApp;
 }

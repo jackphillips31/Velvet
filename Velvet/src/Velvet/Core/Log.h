@@ -76,13 +76,11 @@ namespace LogDebug {
 	#define VL_CORE_ERROR(...) ::Velvet::Log::GetCoreLogger()->error(LogDebug::ToString(__VA_ARGS__))
 	#define VL_CORE_WARN(...) ::Velvet::Log::GetCoreLogger()->warn(LogDebug::ToString(__VA_ARGS__))
 	#define VL_CORE_INFO(...) ::Velvet::Log::GetCoreLogger()->info(LogDebug::ToString(__VA_ARGS__))
-	#define VL_CORE_BUG(...) ::Velvet::Log::GetCoreLogger()->debug(LogDebug::ToString(__VA_ARGS__))
 	#define VL_CORE_TRACE(...) ::Velvet::Log::GetCoreLogger()->trace(LogDebug::ToString(__VA_ARGS__))
 
 	#define VL_CRITICAL(...) ::Velvet::Log::GetClientLogger()->critical(LogDebug::ToString(__VA_ARGS__))
 	#define VL_ERROR(...) ::Velvet::Log::GetClientLogger()->error(LogDebug::ToString(__VA_ARGS__))
 	#define VL_WARN(...) ::Velvet::Log::GetClientLogger()->warn(LogDebug::ToString(__VA_ARGS__))
 	#define VL_INFO(...) ::Velvet::Log::GetClientLogger()->info(LogDebug::ToString(__VA_ARGS__))
-	#define VL_BUG(...) ::Velvet::Log::GetClientLogger()->debug(LogDebug::ToString(__VA_ARGS__))
 	#define VL_TRACE(...) ::Velvet::Log::GetClientLogger()->trace(LogDebug::ToString(__VA_ARGS__))
 #endif
