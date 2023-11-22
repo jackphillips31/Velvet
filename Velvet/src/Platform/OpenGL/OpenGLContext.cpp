@@ -14,10 +14,12 @@ namespace Velvet {
 
 	void OpenGLContext::Init()
 	{
-		VL_CORE_WARN("Initializing OpenGL Context");
+		VL_CORE_INFO("Initializing OpenGL Context");
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		VL_CORE_ASSERT(status, "Failed to initialize GLAD!");
+
+		VL_CORE_INFO("OpenGL Renderer: {0}", (char*)glGetString(GL_VENDOR));
 	}
 
 	void OpenGLContext::SwapBuffers()

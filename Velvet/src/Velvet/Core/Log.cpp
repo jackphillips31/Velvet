@@ -15,7 +15,7 @@ namespace Velvet {
 		s_CoreLogger->set_level(setLevel);
 		s_ClientLogger = spdlog::stdout_color_mt("APP");
 		s_ClientLogger->set_level(setLevel);
-		VL_CORE_WARN("Logging Initialized");
+		VL_CORE_INFO("Logging Initialized");
 	}
 
 }

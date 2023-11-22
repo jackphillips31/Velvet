@@ -13,7 +13,7 @@ namespace Velvet {
 	{
 		VL_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
-		VL_CORE_WARN("Constructing Application");
+		VL_CORE_INFO("Constructing Application");
 
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(VL_BIND_EVENT_FN(Application::OnEvent));
@@ -64,7 +64,7 @@ namespace Velvet {
 
 	void Application::Run()
 	{
-		VL_CORE_WARN("Running Application...");
+		VL_CORE_INFO("Running Application...");
 		while (m_Running)
 		{
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
