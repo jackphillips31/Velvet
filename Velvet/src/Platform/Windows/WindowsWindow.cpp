@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "Platform/Windows/WindowsWindow.h"
+#include "WindowsWindow.h"
 
 #include "Velvet/Events/ApplicationEvent.h"
 #include "Velvet/Events/MouseEvent.h"

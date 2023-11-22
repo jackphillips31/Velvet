@@ -1,9 +1,9 @@
 #include <vlpch.h>
-#include "Velvet/Core/Application.h"
+#include "Application.h"
 
 #include <glad/glad.h>
 
-#include "Velvet/Core/Input.h"
+#include "Input.h"
 
 namespace Velvet {
 

@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "Velvet/Renderer/Shader.h"
+#include "Shader.h"
 
 #include <glad/glad.h>
 
