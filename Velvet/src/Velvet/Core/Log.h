@@ -58,19 +58,19 @@ namespace LogDebug {
 }
 
 #ifdef VL_LOG_LOCATION
-	#define VL_CORE_CRITICAL(...) ::Velvet::Log::GetCoreLogger()->critical("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_CORE_ERROR(...) ::Velvet::Log::GetCoreLogger()->error("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_CORE_WARN(...) ::Velvet::Log::GetCoreLogger()->warn("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_CORE_INFO(...) ::Velvet::Log::GetCoreLogger()->info("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_CORE_BUG(...) ::Velvet::Log::GetCoreLogger()->debug("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_CORE_TRACE(...) ::Velvet::Log::GetCoreLogger()->trace("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_CRITICAL(...) ::Velvet::Log::GetCoreLogger()->critical("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_ERROR(...) ::Velvet::Log::GetCoreLogger()->error("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_WARN(...) ::Velvet::Log::GetCoreLogger()->warn("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_INFO(...) ::Velvet::Log::GetCoreLogger()->info("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_BUG(...) ::Velvet::Log::GetCoreLogger()->debug("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_CORE_TRACE(...) ::Velvet::Log::GetCoreLogger()->trace("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
 
-	#define VL_CRITICAL(...) ::Velvet::Log::GetClientLogger()->critical("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_ERROR(...) ::Velvet::Log::GetClientLogger()->error("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_WARN(...) ::Velvet::Log::GetClientLogger()->warn("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_INFO(...) ::Velvet::Log::GetClientLogger()->info("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_BUG(...) ::Velvet::Log::GetClientLogger()->debug("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
-	#define VL_TRACE(...) ::Velvet::Log::GetClientLogger()->trace("{:^30} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_CRITICAL(...) ::Velvet::Log::GetClientLogger()->critical("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_ERROR(...) ::Velvet::Log::GetClientLogger()->error("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_WARN(...) ::Velvet::Log::GetClientLogger()->warn("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_INFO(...) ::Velvet::Log::GetClientLogger()->info("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_BUG(...) ::Velvet::Log::GetClientLogger()->debug("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
+	#define VL_TRACE(...) ::Velvet::Log::GetClientLogger()->trace("{:^40} {:>30}: {}",__FUNCTION__, LogDebug::FormatFileAndLine(LogDebug::ExtractFileName(__FILE__), __LINE__), LogDebug::ToString(__VA_ARGS__))
 #else
 	#define VL_CORE_CRITICAL(...) ::Velvet::Log::GetCoreLogger()->critical(LogDebug::ToString(__VA_ARGS__))
 	#define VL_CORE_ERROR(...) ::Velvet::Log::GetCoreLogger()->error(LogDebug::ToString(__VA_ARGS__))

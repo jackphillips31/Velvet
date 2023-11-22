@@ -19,7 +19,10 @@ namespace Velvet {
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		VL_CORE_ASSERT(status, "Failed to initialize GLAD!");
 
-		VL_CORE_INFO("OpenGL Renderer: {0}", (char*)glGetString(GL_VENDOR));
+		VL_CORE_INFO("OpenGL Info:");
+		VL_CORE_INFO("  {:<10}- {}", "Vendor", (char*)glGetString(GL_VENDOR));
+		VL_CORE_INFO("  {:<10}- {}", "Renderer", (char*)glGetString(GL_RENDERER));
+		VL_CORE_INFO("  {:<10}- {}", "Version", (char*)glGetString(GL_VERSION));
 	}
 
 	void OpenGLContext::SwapBuffers()
