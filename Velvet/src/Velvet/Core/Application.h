@@ -12,6 +12,7 @@
 #include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/Buffer.h"
 #include "Velvet/Renderer/VertexArray.h"
+#include "Velvet/Renderer/OrthographicCamera.h"
 
 namespace Velvet {
 
@@ -44,6 +45,8 @@ namespace Velvet {
 
 		std::shared_ptr<Shader> m_BlueShader;
 		std::shared_ptr<VertexArray> m_SquareVA;
+
+		OrthographicCamera m_Camera;
 	private:
 		static Application* s_Instance;
 	};
