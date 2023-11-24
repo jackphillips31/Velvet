@@ -1,18 +1,18 @@
 #pragma once
 
-namespace Velvet {
+#include "RenderCommand.h"
 
-	enum class RendererAPI
-	{
-		None = 0, OpenGL = 1
-	};
+namespace Velvet {
 
 	class Renderer
 	{
 	public:
-		inline static RendererAPI GetAPI() { return s_RendererAPI; }
-	private:
-		static RendererAPI s_RendererAPI;
+		static void BeginScene();	// TODO
+		static void EndScene();		// TODO
+
+		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+
+		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	};
 
 }
