@@ -12,7 +12,6 @@
 #include "Velvet/Events/MouseEvent.h"
 
 #include "Velvet/Renderer/Renderer.h"
-#include "Velvet/Renderer/Shader.h"
 
 //----------ENTRY POINT----------
 //-------------------------------
