@@ -4,6 +4,7 @@
 #include "Velvet/Core/Application.h"
 #include "Velvet/Core/Layer.h"
 #include "Velvet/Core/Log.h"
+#include "Velvet/Core/Timestep.h"
 
 #include "Velvet/Core/Input.h"
 #include "Velvet/Core/KeyCodes.h"
