@@ -11,7 +11,7 @@
 
 namespace Velvet {
 
-	class VELVET_API Application
+	class Application
 	{
 	public:
 		Application();
