@@ -9,11 +9,6 @@
 
 #include "Velvet/ImGui/ImGuiLayer.h"
 
-#include "Velvet/Renderer/Shader.h"
-#include "Velvet/Renderer/Buffer.h"
-#include "Velvet/Renderer/VertexArray.h"
-#include "Velvet/Renderer/OrthographicCamera.h"
-
 namespace Velvet {
 
 	class VELVET_API Application
@@ -39,14 +34,6 @@ namespace Velvet {
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<VertexArray> m_TriangleVA;
-
-		std::shared_ptr<Shader> m_BlueShader;
-		std::shared_ptr<VertexArray> m_SquareVA;
-
-		OrthographicCamera m_Camera;
 	private:
 		static Application* s_Instance;
 	};
