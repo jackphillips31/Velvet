@@ -19,6 +19,7 @@ IncludeDir["GLFW"] = "Velvet/vendor/GLFW/include"
 IncludeDir["GLAD"] = "Velvet/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Velvet/vendor/imgui"
 IncludeDir["glm"] = "Velvet/vendor/glm"
+IncludeDir["stb_image"] = "Velvet/vendor/stb_image"
 
 group "Dependencies"
 	include "Velvet/vendor/GLFW"
@@ -45,7 +46,9 @@ project "Velvet"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp"
 	}
 
 	includedirs
@@ -55,7 +58,8 @@ project "Velvet"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links

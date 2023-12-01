@@ -23,6 +23,7 @@
 
 #include "Velvet/Renderer/Buffer.h"
 #include "Velvet/Renderer/Shader.h"
+#include "Velvet/Renderer/Texture.h"
 #include "Velvet/Renderer/VertexArray.h"
 
 #include "Velvet/Renderer/OrthographicCamera.h"
