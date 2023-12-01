@@ -86,8 +86,8 @@ namespace Velvet {
 
 	void ImGuiLayer::OnImGuiRender()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		//bool show = false;
+		//ImGui::ShowDemoWindow(&show);
 	}
 
 }
