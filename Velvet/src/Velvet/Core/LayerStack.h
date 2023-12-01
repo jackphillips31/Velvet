@@ -6,7 +6,7 @@
 
 namespace Velvet {
 
-	class VELVET_API LayerStack
+	class LayerStack
 	{
 	public:
 		LayerStack();

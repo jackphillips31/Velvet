@@ -26,7 +26,7 @@ public:
 			 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
 		};
 
-		std::shared_ptr<Velvet::VertexBuffer> triangleVB;
+		Velvet::Ref<Velvet::VertexBuffer> triangleVB;
 		triangleVB.reset(Velvet::VertexBuffer::Create(vertices, sizeof(vertices)));
 		Velvet::BufferLayout layout = {
 					{ Velvet::ShaderDataType::Float3, "a_Position" },
@@ -36,7 +36,7 @@ public:
 		m_TriangleVA->AddVertexBuffer(triangleVB);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		std::shared_ptr<Velvet::IndexBuffer> triangleIB;
+		Velvet::Ref<Velvet::IndexBuffer> triangleIB;
 		triangleIB.reset(Velvet::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_TriangleVA->SetIndexBuffer(triangleIB);
 
@@ -52,7 +52,7 @@ public:
 			-0.5f,  0.5f, 0.0f
 		};
 
-		std::shared_ptr<Velvet::VertexBuffer> squareVB;
+		Velvet::Ref<Velvet::VertexBuffer> squareVB;
 		squareVB.reset(Velvet::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
 			{ Velvet::ShaderDataType::Float3, "a_Position" }
@@ -60,7 +60,7 @@ public:
 		m_SquareVA->AddVertexBuffer(squareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		std::shared_ptr<Velvet::IndexBuffer> squareIB;
+		Velvet::Ref<Velvet::IndexBuffer> squareIB;
 		squareIB.reset(Velvet::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIB);
 
@@ -193,11 +193,11 @@ public:
 
 	}
 private:
-	std::shared_ptr<Velvet::Shader> m_Shader;
-	std::shared_ptr<Velvet::VertexArray> m_TriangleVA;
+	Velvet::Ref<Velvet::Shader> m_Shader;
+	Velvet::Ref<Velvet::VertexArray> m_TriangleVA;
 
-	std::shared_ptr<Velvet::Shader> m_FlatColorShader;
-	std::shared_ptr<Velvet::VertexArray> m_SquareVA;
+	Velvet::Ref<Velvet::Shader> m_FlatColorShader;
+	Velvet::Ref<Velvet::VertexArray> m_SquareVA;
 
 	Velvet::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;

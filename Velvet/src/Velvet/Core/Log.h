@@ -7,7 +7,7 @@
 
 namespace Velvet {
 
-	class VELVET_API Log
+	class Log
 	{
 	public:
 		static void Init(spdlog::level setLevel);

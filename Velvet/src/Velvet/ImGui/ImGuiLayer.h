@@ -4,7 +4,7 @@
 
 namespace Velvet {
 
-	class VELVET_API ImGuiLayer : public Layer
+	class ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();

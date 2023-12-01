@@ -1,15 +1,9 @@
 #pragma once
 
+#include <memory>
+
 #ifdef VL_PLATFORM_WINDOWS
-	#if VL_DYNAMIC_LINK
-		#ifdef VL_BUILD_DLL
-			#define VELVET_API __declspec(dllexport)
-		#else
-			#define VELVET_API __declspec(dllimport)
-		#endif
-	#else
-		#define VELVET_API
-	#endif
+	#define VELVET_API
 #else
 	#error Velvet only supports Windows
 #endif
@@ -28,3 +22,13 @@
 
 #define BIT(x) (1 << x)
 #define VL_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+namespace Velvet {
+
+	template<typename T>
+	using Scope = std::unique_ptr<T>;
+
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+
+}

@@ -6,7 +6,7 @@
 
 namespace Velvet {
 
-	class VELVET_API Layer
+	class Layer
 	{
 	public:
 		Layer(const std::string& name = "Layer");
