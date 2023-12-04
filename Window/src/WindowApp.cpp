@@ -169,6 +169,7 @@ public:
 		m_TextureShader.reset(Velvet::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc));
 
 		m_Texture = Velvet::Texture2D::Create("assets/textures/Checkerboard.png");
+		m_VelvetLogoTexture = Velvet::Texture2D::Create("assets/textures/Velvet-Logo-500.png");
 
 		std::dynamic_pointer_cast<Velvet::OpenGLShader>(m_TextureShader)->Bind();
 		std::dynamic_pointer_cast<Velvet::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
@@ -223,6 +224,15 @@ public:
 					glm::vec3(1.5f)
 				)
 			);
+			m_VelvetLogoTexture->Bind();
+			Velvet::Renderer::Submit(
+				m_TextureShader,
+				m_SquareVA,
+				glm::scale(
+					glm::mat4(1.0f),
+					glm::vec3(1.5f)
+				)
+			);
 
 			// Triangle
 			// Velvet::Renderer::Submit(m_Shader, m_TriangleVA);
@@ -248,7 +258,7 @@ private:
 	Velvet::Ref<Velvet::Shader> m_FlatColorShader, m_TextureShader;
 	Velvet::Ref<Velvet::VertexArray> m_SquareVA;
 
-	Velvet::Ref<Velvet::Texture2D> m_Texture;
+	Velvet::Ref<Velvet::Texture2D> m_Texture, m_VelvetLogoTexture;
 
 	Velvet::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
