@@ -98,7 +98,7 @@ namespace Velvet {
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
 		GLuint program = glCreateProgram();
-		VL_CORE_ASSERT(shaderSources <= 2, "Only support maximum of 2 shaders.");
+		VL_CORE_ASSERT(shaderSources.size() <= 2, "Only support maximum of 2 shaders.");
 		std::array<GLenum, 2> glShaderIDs;
 		int glShaderIDIndex = 0;
 
