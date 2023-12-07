@@ -1,4 +1,4 @@
-# Velvet - A Physics/Game Engine
+![Velvet Banner](https://github.com/jackphillips31/Velvet/blob/dev/Window/assets/textures/Velvet-Banner-S.png)
 
 Velvet is an open-source physics and game engine written in C++. It's designed to be beginner-friendly, making application development with Velvet easy and enjoyable.
 ## Table of Contents
