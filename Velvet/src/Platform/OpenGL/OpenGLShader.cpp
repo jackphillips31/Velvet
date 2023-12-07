@@ -74,17 +74,27 @@ namespace Velvet {
 
 		const char* typeToken = "#type";
 		size_t typeTokenLength = strlen(typeToken);
+
+		// Start of shader type declaration line
 		size_t pos = source.find(typeToken, 0);
 		while (pos != std::string::npos)
 		{
+			// End of shader type declaration line
 			size_t eol = source.find_first_of("\r\n", pos);
 			VL_CORE_ASSERT(eol != std::string::npos, "Syntax Error");
+
+			// Start of shader type name (after "#type " keyword)
 			size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
 			VL_CORE_ASSERT(type == "vertex" || type == "fragment" || type == "pixel", "Invalid shader type specification!");
 
+			// Start of shader code after shader type declaration line
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
+			VL_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
+
+			// Start of next shader type declaration line
 			pos = source.find(typeToken, nextLinePos);
+
 			shaderSources[ShaderTypeFromString(type)] =
 				source.substr(
 					nextLinePos,

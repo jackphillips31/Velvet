@@ -1,13 +1,13 @@
-# Directories
-.vs/
-bin/
-dependencies/
+# Binaries
+**/bin/
 
-# Files
-*.user
-*.sln
-*.vcxproj
-*.filters
+# Visual Studio files and folders
+.vs/
+
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
 
 # Specific Files
 /Window/imgui.ini

@@ -13,15 +13,28 @@ namespace Velvet {
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		float timedCameraSpeed = m_CameraTranslationSpeed * ts;
 		if (Input::IsKeyPressed(VL_KEY_A))
-			m_CameraPosition.x -= m_CameraTranslationSpeed * ts;
+		{
+			m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * timedCameraSpeed;
+			m_CameraPosition.y -= sin(glm::radians(m_CameraRotation)) * timedCameraSpeed;
+		}
 		else if (Velvet::Input::IsKeyPressed(VL_KEY_D))
-			m_CameraPosition.x += m_CameraTranslationSpeed * ts;
+		{
+			m_CameraPosition.x += cos(glm::radians(m_CameraRotation)) * timedCameraSpeed;
+			m_CameraPosition.y += sin(glm::radians(m_CameraRotation)) * timedCameraSpeed;
+		}
 
 		if (Input::IsKeyPressed(VL_KEY_W))
-			m_CameraPosition.y += m_CameraTranslationSpeed * ts;
+		{
+			m_CameraPosition.x += -sin(glm::radians(m_CameraRotation)) * timedCameraSpeed;
+			m_CameraPosition.y += cos(glm::radians(m_CameraRotation)) * timedCameraSpeed;
+		}
 		else if (Input::IsKeyPressed(VL_KEY_S))
-			m_CameraPosition.y -= m_CameraTranslationSpeed * ts;
+		{
+			m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation)) * timedCameraSpeed;
+			m_CameraPosition.y -= cos(glm::radians(m_CameraRotation)) * timedCameraSpeed;
+		}
 
 		if (m_Rotation)
 		{
@@ -29,6 +42,11 @@ namespace Velvet {
 				m_CameraRotation += m_CameraRotationSpeed * ts;
 			else if (Input::IsKeyPressed(VL_KEY_E))
 				m_CameraRotation -= m_CameraRotationSpeed * ts;
+
+			if (m_CameraRotation > 180.0f)
+				m_CameraRotation -= 360.0f;
+			else if (m_CameraRotation <= -180.0f)
+				m_CameraRotation += 360.0f;
 
 			m_Camera.SetRotation(m_CameraRotation);
 		}
