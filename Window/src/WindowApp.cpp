@@ -12,7 +12,7 @@ class ExampleLayer : public Velvet::Layer
 {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
+		: Layer("Example"), m_CameraController(1280.0f / 720.0f)
 	{
 		//--------------------------------------------------------------
 		//------------------------ Draw Triangle -----------------------
@@ -145,28 +145,14 @@ public:
 
 	void OnUpdate(Velvet::Timestep ts) override
 	{
-		if (Velvet::Input::IsKeyPressed(VL_KEY_LEFT) || Velvet::Input::IsKeyPressed(VL_KEY_A))
-			m_CameraPosition.x -= m_CameraMoveSpeed * ts;
-		else if (Velvet::Input::IsKeyPressed(VL_KEY_RIGHT) || Velvet::Input::IsKeyPressed(VL_KEY_D))
-			m_CameraPosition.x += m_CameraMoveSpeed * ts;
+		// Update
+		m_CameraController.OnUpdate(ts);
 
-		if (Velvet::Input::IsKeyPressed(VL_KEY_UP) || Velvet::Input::IsKeyPressed(VL_KEY_W))
-			m_CameraPosition.y += m_CameraMoveSpeed * ts;
-		else if (Velvet::Input::IsKeyPressed(VL_KEY_DOWN) || Velvet::Input::IsKeyPressed(VL_KEY_S))
-			m_CameraPosition.y -= m_CameraMoveSpeed * ts;
-
-		if (Velvet::Input::IsKeyPressed(VL_KEY_Q))
-			m_CameraRotation += m_CameraRotationSpeed * ts;
-		else if (Velvet::Input::IsKeyPressed(VL_KEY_E))
-			m_CameraRotation -= m_CameraRotationSpeed * ts;
-
+		// Render
 		Velvet::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Velvet::RenderCommand::Clear();
 
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
-
-		Velvet::Renderer::BeginScene(m_Camera);
+		Velvet::Renderer::BeginScene(m_CameraController.GetCamera());
 		{
 			static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -217,9 +203,9 @@ public:
 		ImGui::End();
 	}
 
-	void OnEvent(Velvet::Event& event) override
+	void OnEvent(Velvet::Event& e) override
 	{
-
+		m_CameraController.OnEvent(e);
 	}
 private:
 	Velvet::ShaderLibrary m_ShaderLibrary;
@@ -231,12 +217,7 @@ private:
 
 	Velvet::Ref<Velvet::Texture2D> m_Texture, m_VelvetLogoTexture;
 
-	Velvet::OrthographicCamera m_Camera;
-	glm::vec3 m_CameraPosition;
-	float m_CameraMoveSpeed = 3.0f;
-
-	float m_CameraRotation = 0.0f;
-	float m_CameraRotationSpeed = 90.0f;
+	Velvet::OrthographicCameraController m_CameraController;
 
 	glm::vec3 m_SquareColor = { 0.2f, 0.2f, 0.8f };
 };

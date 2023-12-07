@@ -27,6 +27,7 @@
 #include "Velvet/Renderer/VertexArray.h"
 
 #include "Velvet/Renderer/OrthographicCamera.h"
+#include "Velvet/Renderer/OrthographicCameraController.h"
 
 
 //---------------- ENTRY POINT ----------------
