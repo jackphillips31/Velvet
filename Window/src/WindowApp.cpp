@@ -8,7 +8,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 class ExampleLayer : public Velvet::Layer
 {
 public:
@@ -101,7 +100,7 @@ public:
 				color = v_Color;
 			}
 		)";
-		m_Shader.reset(Velvet::Shader::Create(vertexSrc, fragmentSrc));
+		m_Shader = Velvet::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc);
 
 		std::string flatColorShaderVertexSrc = R"(
 			#version 330 core
@@ -133,15 +132,15 @@ public:
 				color = vec4(u_Color, 1.0);
 			}
 		)";
-		m_FlatColorShader.reset(Velvet::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc));
+		m_FlatColorShader = Velvet::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderFragmentSrc);
 
-		m_TextureShader.reset(Velvet::Shader::Create("assets/shaders/Texture.glsl"));
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = Velvet::Texture2D::Create("assets/textures/Checkerboard.png");
 		m_VelvetLogoTexture = Velvet::Texture2D::Create("assets/textures/Velvet-Logo-500.png");
 
-		std::dynamic_pointer_cast<Velvet::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<Velvet::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		std::dynamic_pointer_cast<Velvet::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<Velvet::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Velvet::Timestep ts) override
@@ -184,9 +183,11 @@ public:
 				}
 			}
 
+			auto textureShader = m_ShaderLibrary.Get("Texture");
+
 			m_Texture->Bind();
 			Velvet::Renderer::Submit(
-				m_TextureShader,
+				textureShader,
 				m_SquareVA,
 				glm::scale(
 					glm::mat4(1.0f),
@@ -195,7 +196,7 @@ public:
 			);
 			m_VelvetLogoTexture->Bind();
 			Velvet::Renderer::Submit(
-				m_TextureShader,
+				textureShader,
 				m_SquareVA,
 				glm::scale(
 					glm::mat4(1.0f),
@@ -221,10 +222,11 @@ public:
 
 	}
 private:
+	Velvet::ShaderLibrary m_ShaderLibrary;
 	Velvet::Ref<Velvet::Shader> m_Shader;
 	Velvet::Ref<Velvet::VertexArray> m_TriangleVA;
 
-	Velvet::Ref<Velvet::Shader> m_FlatColorShader, m_TextureShader;
+	Velvet::Ref<Velvet::Shader> m_FlatColorShader;
 	Velvet::Ref<Velvet::VertexArray> m_SquareVA;
 
 	Velvet::Ref<Velvet::Texture2D> m_Texture, m_VelvetLogoTexture;
