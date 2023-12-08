@@ -1,5 +1,5 @@
-#include <vlpch.h>
 #include <Velvet.h>
+#include <Velvet/Core/EntryPoint.h>
 
 #include "Platform/OpenGL/OpenGLShader.h"
 
@@ -7,6 +7,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Sandbox2D.h"
 
 class ExampleLayer : public Velvet::Layer
 {
@@ -17,7 +19,7 @@ public:
 		//--------------------------------------------------------------
 		//------------------------ Draw Triangle -----------------------
 		//--------------------------------------------------------------
-		m_TriangleVA.reset(Velvet::VertexArray::Create());
+		m_TriangleVAO = Velvet::VertexArray::Create();
 
 		float vertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
@@ -25,24 +27,24 @@ public:
 			 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
 		};
 
-		Velvet::Ref<Velvet::VertexBuffer> triangleVB;
-		triangleVB.reset(Velvet::VertexBuffer::Create(vertices, sizeof(vertices)));
+		Velvet::Ref<Velvet::VertexBuffer> triangleVBO;
+		triangleVBO.reset(Velvet::VertexBuffer::Create(vertices, sizeof(vertices)));
 		Velvet::BufferLayout layout = {
 					{ Velvet::ShaderDataType::Float3, "a_Position" },
 					{ Velvet::ShaderDataType::Float4, "a_Color" }
 		};
-		triangleVB->SetLayout(layout);
-		m_TriangleVA->AddVertexBuffer(triangleVB);
+		triangleVBO->SetLayout(layout);
+		m_TriangleVAO->AddVertexBuffer(triangleVBO);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		Velvet::Ref<Velvet::IndexBuffer> triangleIB;
-		triangleIB.reset(Velvet::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-		m_TriangleVA->SetIndexBuffer(triangleIB);
+		Velvet::Ref<Velvet::IndexBuffer> triangleIBO;
+		triangleIBO.reset(Velvet::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_TriangleVAO->SetIndexBuffer(triangleIBO);
 
 		//--------------------------------------------------------------
 		//------------------------ Draw Square -------------------------
 		//--------------------------------------------------------------
-		m_SquareVA.reset(Velvet::VertexArray::Create());
+		m_SquareVAO = Velvet::VertexArray::Create();
 
 		float squareVertices[5 * 4] = {
 			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
@@ -51,18 +53,18 @@ public:
 			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
-		Velvet::Ref<Velvet::VertexBuffer> squareVB;
-		squareVB.reset(Velvet::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
-		squareVB->SetLayout({
+		Velvet::Ref<Velvet::VertexBuffer> squareVBO;
+		squareVBO.reset(Velvet::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		squareVBO->SetLayout({
 			{ Velvet::ShaderDataType::Float3, "a_Position" },
 			{ Velvet::ShaderDataType::Float2, "a_TexCoord" }
 		});
-		m_SquareVA->AddVertexBuffer(squareVB);
+		m_SquareVAO->AddVertexBuffer(squareVBO);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		Velvet::Ref<Velvet::IndexBuffer> squareIB;
-		squareIB.reset(Velvet::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
-		m_SquareVA->SetIndexBuffer(squareIB);
+		Velvet::Ref<Velvet::IndexBuffer> squareIBO;
+		squareIBO.reset(Velvet::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		m_SquareVAO->SetIndexBuffer(squareIBO);
 
 		//--------------------------------------------------------------
 		//--------------------------- Shaders --------------------------
@@ -165,7 +167,7 @@ public:
 				{
 					glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
 					glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-					Velvet::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
+					Velvet::Renderer::Submit(m_FlatColorShader, m_SquareVAO, transform);
 				}
 			}
 
@@ -174,7 +176,7 @@ public:
 			m_Texture->Bind();
 			Velvet::Renderer::Submit(
 				textureShader,
-				m_SquareVA,
+				m_SquareVAO,
 				glm::scale(
 					glm::mat4(1.0f),
 					glm::vec3(1.5f)
@@ -183,7 +185,7 @@ public:
 			m_VelvetLogoTexture->Bind();
 			Velvet::Renderer::Submit(
 				textureShader,
-				m_SquareVA,
+				m_SquareVAO,
 				glm::scale(
 					glm::mat4(1.0f),
 					glm::vec3(1.5f)
@@ -191,7 +193,7 @@ public:
 			);
 
 			// Triangle
-			// Velvet::Renderer::Submit(m_Shader, m_TriangleVA);
+			// Velvet::Renderer::Submit(m_Shader, m_TriangleVAO);
 		}
 		Velvet::Renderer::EndScene();
 	}
@@ -210,10 +212,10 @@ public:
 private:
 	Velvet::ShaderLibrary m_ShaderLibrary;
 	Velvet::Ref<Velvet::Shader> m_Shader;
-	Velvet::Ref<Velvet::VertexArray> m_TriangleVA;
+	Velvet::Ref<Velvet::VertexArray> m_TriangleVAO;
 
 	Velvet::Ref<Velvet::Shader> m_FlatColorShader;
-	Velvet::Ref<Velvet::VertexArray> m_SquareVA;
+	Velvet::Ref<Velvet::VertexArray> m_SquareVAO;
 
 	Velvet::Ref<Velvet::Texture2D> m_Texture, m_VelvetLogoTexture;
 
@@ -227,7 +229,8 @@ class WindowApp : public Velvet::Application
 public:
 	WindowApp()
 	{
-		PushLayer(new ExampleLayer());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 	~WindowApp()
 	{

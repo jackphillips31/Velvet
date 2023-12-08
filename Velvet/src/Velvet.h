@@ -10,10 +10,6 @@
 #include "Velvet/Core/KeyCodes.h"
 #include "Velvet/Core/MouseButtonCodes.h"
 
-#include "Velvet/Events/Event.h"
-#include "Velvet/Events/KeyEvent.h"
-#include "Velvet/Events/MouseEvent.h"
-
 #include "Velvet/ImGui/ImGuiLayer.h"
 
 //----------------- RENDERER ------------------
@@ -28,8 +24,4 @@
 
 #include "Velvet/Renderer/OrthographicCamera.h"
 #include "Velvet/Renderer/OrthographicCameraController.h"
-
-
-//---------------- ENTRY POINT ----------------
 //---------------------------------------------
-#include "Velvet/Core/EntryPoint.h"
