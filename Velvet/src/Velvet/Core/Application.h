@@ -22,8 +22,8 @@ namespace Velvet {
 
 		void OnEvent(Event& e);
 
-		void PushLayer(Layer* layer);
-		void PushOverlay(Layer* overlay);
+		void PushLayer(Ref<Layer> layer);
+		void PushOverlay(Ref<Layer> overlay);
 
 		inline Window& GetWindow() { return *m_Window; }
 
@@ -33,7 +33,7 @@ namespace Velvet {
 		bool OnWindowResize(WindowResizeEvent& e);
 	private:
 		Scope<Window> m_Window;
-		ImGuiLayer* m_ImGuiLayer;
+		Ref<ImGuiLayer> m_ImGuiLayer;
 		bool m_Running = true;
 		bool m_Minimized = false;
 		LayerStack m_LayerStack;

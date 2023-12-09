@@ -226,7 +226,7 @@ public:
 	WindowApp()
 	{
 		//PushLayer(new ExampleLayer());
-		PushLayer(new Sandbox2D());
+		PushLayer(Velvet::CreateRef<Sandbox2D>());
 	}
 	~WindowApp()
 	{
