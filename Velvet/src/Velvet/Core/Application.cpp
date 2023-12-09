@@ -17,7 +17,7 @@ namespace Velvet {
 		s_Instance = this;
 		VL_CORE_INFO("Constructing Application");
 
-		m_Window = Scope<Window>(Window::Create());
+		m_Window = Window::Create();
 		m_Window->SetEventCallback(VL_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();

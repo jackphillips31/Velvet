@@ -12,7 +12,6 @@ namespace Velvet {
 		for (Ref<Layer> layer : m_Layers)
 		{
 			layer->OnDetach();
-			layer.reset();
 		}
 	}
 

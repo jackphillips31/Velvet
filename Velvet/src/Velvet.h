@@ -10,6 +10,11 @@
 #include "Velvet/Core/KeyCodes.h"
 #include "Velvet/Core/MouseButtonCodes.h"
 
+#include "Velvet/Events/ApplicationEvent.h"
+#include "Velvet/Events/Event.h"
+#include "Velvet/Events/KeyEvent.h"
+#include "Velvet/Events/MouseEvent.h"
+
 #include "Velvet/ImGui/ImGuiLayer.h"
 
 //----------------- RENDERER ------------------

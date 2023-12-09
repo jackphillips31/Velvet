@@ -225,7 +225,6 @@ class WindowApp : public Velvet::Application
 public:
 	WindowApp()
 	{
-		//PushLayer(new ExampleLayer());
 		PushLayer(Velvet::CreateRef<Sandbox2D>());
 	}
 	~WindowApp()
