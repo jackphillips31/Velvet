@@ -27,8 +27,7 @@ public:
 			 0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f
 		};
 
-		Velvet::Ref<Velvet::VertexBuffer> triangleVBO;
-		triangleVBO.reset(Velvet::VertexBuffer::Create(vertices, sizeof(vertices)));
+		Velvet::Ref<Velvet::VertexBuffer> triangleVBO = Velvet::VertexBuffer::Create(vertices, sizeof(vertices));
 		Velvet::BufferLayout layout = {
 					{ Velvet::ShaderDataType::Float3, "a_Position" },
 					{ Velvet::ShaderDataType::Float4, "a_Color" }
@@ -37,8 +36,7 @@ public:
 		m_TriangleVAO->AddVertexBuffer(triangleVBO);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		Velvet::Ref<Velvet::IndexBuffer> triangleIBO;
-		triangleIBO.reset(Velvet::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		Velvet::Ref<Velvet::IndexBuffer> triangleIBO = Velvet::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		m_TriangleVAO->SetIndexBuffer(triangleIBO);
 
 		//--------------------------------------------------------------
@@ -53,8 +51,7 @@ public:
 			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
-		Velvet::Ref<Velvet::VertexBuffer> squareVBO;
-		squareVBO.reset(Velvet::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		Velvet::Ref<Velvet::VertexBuffer> squareVBO = Velvet::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 		squareVBO->SetLayout({
 			{ Velvet::ShaderDataType::Float3, "a_Position" },
 			{ Velvet::ShaderDataType::Float2, "a_TexCoord" }
@@ -62,8 +59,7 @@ public:
 		m_SquareVAO->AddVertexBuffer(squareVBO);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		Velvet::Ref<Velvet::IndexBuffer> squareIBO;
-		squareIBO.reset(Velvet::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		Velvet::Ref<Velvet::IndexBuffer> squareIBO = Velvet::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 		m_SquareVAO->SetIndexBuffer(squareIBO);
 
 		//--------------------------------------------------------------

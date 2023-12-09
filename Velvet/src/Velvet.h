@@ -15,6 +15,7 @@
 //----------------- RENDERER ------------------
 //---------------------------------------------
 #include "Velvet/Renderer/Renderer.h"
+#include "Velvet/Renderer/Renderer2D.h"
 #include "Velvet/Renderer/RenderCommand.h"
 
 #include "Velvet/Renderer/Buffer.h"
