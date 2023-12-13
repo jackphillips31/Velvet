@@ -13,30 +13,53 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
-
+	VL_PROFILE_FUNCTION();
 }
 
 void Sandbox2D::OnDetach()
 {
-
+	VL_PROFILE_FUNCTION();
 }
 
 void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 {
+	VL_PROFILE_FUNCTION();
+
 	// Update
 	m_CameraController.OnUpdate(ts);
 
-	// Render
-	Velvet::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-	Velvet::RenderCommand::Clear();
 
-	Velvet::Renderer2D::BeginScene(m_CameraController.GetCamera());
-	Velvet::Renderer2D::DrawQuad(
-		{ 0.0f, 0.0f },
-		{ 1.0f, 1.0f },
-		{ 0.8f, 0.2f, 0.3f, 1.0f }
-	);
-	Velvet::Renderer2D::EndScene();
+	// Render
+	{
+		VL_PROFILE_SCOPE("Renderer Prep");
+
+		Velvet::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Velvet::RenderCommand::Clear();
+	}
+
+	{
+		VL_PROFILE_SCOPE("Renderer Draw");
+
+		Velvet::Renderer2D::BeginScene(m_CameraController.GetCamera());
+		Velvet::Renderer2D::DrawQuad(
+			{ 0.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.8f, 0.2f, 0.3f, 1.0f }
+		);
+		Velvet::Renderer2D::EndScene();
+	}
+
+	{
+		VL_PROFILE_SCOPE("Renderer UI");
+
+		Velvet::RendererUI::BeginScene(m_CameraController.GetCamera());
+		Velvet::RendererUI::DrawButton(
+			{ 0.0f, 0.0f },
+			{ 0.8f, 1.0f },
+			{ 0.2f, 0.8f, 0.2f, 1.0f }
+		);
+		Velvet::RendererUI::EndScene();
+	}
 
 	// TODO: Add these functions - Shader::SetMat4, Shader::SetFloat4
 	// std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->Bind();
@@ -45,6 +68,8 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 
 void Sandbox2D::OnImGuiRender()
 {
+	VL_PROFILE_FUNCTION();
+
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 	ImGui::End();

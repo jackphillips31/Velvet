@@ -14,6 +14,8 @@ namespace Velvet {
 
 	void OpenGLContext::Init()
 	{
+		VL_PROFILE_FUNCTION();
+
 		VL_CORE_INFO("Initializing OpenGL Context");
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -36,6 +38,8 @@ namespace Velvet {
 
 	void OpenGLContext::SwapBuffers()
 	{
+		VL_PROFILE_FUNCTION();
+
 		glfwSwapBuffers(m_WindowHandle);
 	}
 

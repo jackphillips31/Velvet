@@ -23,16 +23,22 @@ namespace Velvet {
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
+		VL_PROFILE_FUNCTION();
+
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
+		VL_PROFILE_FUNCTION();
+
 		Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		VL_PROFILE_FUNCTION();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -41,14 +47,19 @@ namespace Velvet {
 
 		if (!s_GLFWInitialized)
 		{
+			VL_PROFILE_SCOPE("glfwInit");
+
 			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
 			VL_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFWInitialized = true;
 		}
+		{
+			VL_PROFILE_SCOPE("glfwCreateWindow");
 
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		}
 
 		m_Context = CreateScope<OpenGLContext>(m_Window);
 		m_Context->Init();
@@ -149,17 +160,23 @@ namespace Velvet {
 
 	void WindowsWindow::Shutdown()
 	{
+		VL_PROFILE_FUNCTION();
+
 		glfwDestroyWindow(m_Window);
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
+		VL_PROFILE_FUNCTION();
+
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
+		VL_PROFILE_FUNCTION();
+
 		if (enabled)
 			glfwSwapInterval(1);
 		else

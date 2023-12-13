@@ -19,6 +19,8 @@ namespace Velvet {
 
 	void Renderer2D::Init()
 	{
+		VL_PROFILE_FUNCTION();
+
 		s_Data = CreateScope<Renderer2DStorage>();
 		s_Data->QuadVertexArray = VertexArray::Create();
 
@@ -44,11 +46,15 @@ namespace Velvet {
 
 	void Renderer2D::Shutdown()
 	{
+		VL_PROFILE_FUNCTION();
+
 		s_Data.release();
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
+		VL_PROFILE_FUNCTION();
+
 		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->Bind();
 		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->UploadUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->UploadUniformMat4("u_Transform", glm::mat4(1.0f));
@@ -56,7 +62,7 @@ namespace Velvet {
 
 	void Renderer2D::EndScene()
 	{
-
+		VL_PROFILE_FUNCTION();
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -66,6 +72,8 @@ namespace Velvet {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
+		VL_PROFILE_FUNCTION();
+
 		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->Bind();
 		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->UploadUniformFloat4("u_Color", color);
 

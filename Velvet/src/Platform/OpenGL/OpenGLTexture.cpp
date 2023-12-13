@@ -10,6 +10,8 @@ namespace Velvet {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		: m_Path(path)
 	{
+		VL_PROFILE_FUNCTION();
+
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -44,11 +46,15 @@ namespace Velvet {
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
+		VL_PROFILE_FUNCTION();
+
 		glDeleteTextures(1, &m_RendererID);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
+		VL_PROFILE_FUNCTION();
+
 		glBindTextureUnit(slot, m_RendererID);
 	}
 

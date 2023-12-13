@@ -62,6 +62,7 @@
 
 #ifdef VL_DEBUG
 	#define VL_ENABLE_ASSERTS
+	#define VL_PROFILE 0
 #endif
 
 #ifdef VL_ENABLE_ASSERTS

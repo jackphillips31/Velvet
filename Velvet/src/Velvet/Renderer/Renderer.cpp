@@ -3,6 +3,7 @@
 
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Renderer2D.h"
+#include "RendererUI.h"
 
 namespace Velvet {
 
@@ -10,8 +11,16 @@ namespace Velvet {
 
 	void Renderer::Init()
 	{
+		VL_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 		Renderer2D::Init();
+		RendererUI::Init();
+	}
+
+	void Renderer::Shutdown()
+	{
+		Renderer2D::Shutdown();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -26,6 +35,7 @@ namespace Velvet {
 
 	void Renderer::EndScene()
 	{
+		VL_PROFILE_FUNCTION();
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)

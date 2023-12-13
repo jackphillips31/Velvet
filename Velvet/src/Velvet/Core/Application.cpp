@@ -13,6 +13,8 @@ namespace Velvet {
 
 	Application::Application()
 	{
+		VL_PROFILE_FUNCTION();
+
 		VL_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 		VL_CORE_INFO("Constructing Application");
@@ -22,32 +24,41 @@ namespace Velvet {
 
 		Renderer::Init();
 
-		m_ImGuiLayer = CreateRef<ImGuiLayer>();
+		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
 	{
+		VL_PROFILE_FUNCTION();
 
+		Renderer::Shutdown();
 	}
 
-	void Application::PushLayer(Ref<Layer> layer)
+	void Application::PushLayer(Layer* layer)
 	{
+		VL_PROFILE_FUNCTION();
+
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
-	void Application::PushOverlay(Ref<Layer> overlay)
+	void Application::PushOverlay(Layer* overlay)
 	{
+		VL_PROFILE_FUNCTION();
+
 		m_LayerStack.PushOverlay(overlay);
 		overlay->OnAttach();
 	}
 
 	void Application::Run()
 	{
+		VL_PROFILE_FUNCTION();
+
 		VL_CORE_INFO("Running Application...");
 		while (m_Running)
 		{
+			VL_PROFILE_SCOPE("RunLoop");
 
 			float time = (float)glfwGetTime(); // TODO: Platform::GetTime()
 			Timestep timestep = time - m_LastFrameTime;
@@ -55,13 +66,19 @@ namespace Velvet {
 
 			if (!m_Minimized)
 			{
-				for (Ref<Layer> layer : m_LayerStack)
+				VL_PROFILE_SCOPE("LayerStack OnUpdate");
+
+				for (Layer* layer : m_LayerStack)
 					layer->OnUpdate(timestep);
 			}
 
 			m_ImGuiLayer->Begin();
-			for (Ref<Layer> layer : m_LayerStack)
-				layer->OnImGuiRender();
+			{
+				VL_PROFILE_SCOPE("LayerStack OnImGuiRender");
+
+				for (Layer* layer : m_LayerStack)
+					layer->OnImGuiRender();
+			}
 			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
@@ -70,6 +87,8 @@ namespace Velvet {
 
 	void Application::OnEvent(Event& e)
 	{
+		VL_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(VL_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(VL_BIND_EVENT_FN(Application::OnWindowResize));
@@ -90,6 +109,8 @@ namespace Velvet {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		VL_PROFILE_FUNCTION();
+
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;

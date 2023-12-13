@@ -22,6 +22,8 @@ namespace Velvet {
 
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 	{
+		VL_PROFILE_FUNCTION();
+
 		std::string source = ReadFile(filepath);
 		auto shaderSource = PreProcess(source);
 		Compile(shaderSource);
@@ -37,6 +39,8 @@ namespace Velvet {
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 		: m_Name(name)
 	{
+		VL_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -45,11 +49,15 @@ namespace Velvet {
 
 	OpenGLShader::~OpenGLShader()
 	{
+		VL_PROFILE_FUNCTION();
+
 		glDeleteProgram(m_RendererID);
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath) 
 	{
+		VL_PROFILE_FUNCTION();
+
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		if (in)
@@ -70,6 +78,8 @@ namespace Velvet {
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
+		VL_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -175,11 +185,15 @@ namespace Velvet {
 
 	void OpenGLShader::Bind() const
 	{
+		VL_PROFILE_FUNCTION();
+
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
+		VL_PROFILE_FUNCTION();
+
 		glUseProgram(0);
 	}
 

@@ -13,6 +13,8 @@ namespace Velvet {
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		VL_PROFILE_FUNCTION();
+
 		float timedCameraSpeed = m_CameraTranslationSpeed * ts;
 		if (Input::IsKeyPressed(VL_KEY_A))
 		{
@@ -58,13 +60,23 @@ namespace Velvet {
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
+		VL_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(VL_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(VL_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
 	}
 
+	void OrthographicCameraController::OnResize(float width, float height)
+	{
+		m_AspectRatio = width / height;
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+	}
+
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		VL_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.GetYOffset() * 0.2f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -73,8 +85,9 @@ namespace Velvet {
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
-		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		VL_PROFILE_FUNCTION();
+
+		OnResize((float)e.GetWidth(), (float)e.GetHeight());
 		return false;
 	}
 

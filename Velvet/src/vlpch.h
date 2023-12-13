@@ -14,6 +14,7 @@
 #include <unordered_set>
 
 #include "Velvet/Core/Log.h"
+#include "Velvet/Debug/Instrumentor.h"
 
 #ifdef VL_PLATFORM_WINDOWS
 	#include <Windows.h>
