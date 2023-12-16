@@ -6,11 +6,12 @@
 
 namespace Velvet {
 
-	OrthographicCameraController::OrthographicCameraController(glm::vec2 initialWindowDimensions, bool rotation) :
+	OrthographicCameraController::OrthographicCameraController(glm::vec2 initialWindowDimensions, bool rotation, bool zoom) :
 		m_Scale(1.0f),
 		m_AspectRatio(initialWindowDimensions.x / initialWindowDimensions.y),
 		m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, initialWindowDimensions),
-		m_Rotation(rotation)
+		m_Rotation(rotation),
+		m_Zoom(zoom)
 	{
 	}
 
@@ -81,10 +82,15 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		m_ZoomLevel -= e.GetYOffset() * 0.2f;
-		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel * m_Scale, m_AspectRatio * m_ZoomLevel * m_Scale, -m_ZoomLevel * m_Scale, m_ZoomLevel * m_Scale);
-		return false;
+		if (m_Zoom)
+		{
+			m_ZoomLevel -= e.GetYOffset() * 0.2f;
+			m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
+			m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel * m_Scale, m_AspectRatio * m_ZoomLevel * m_Scale, -m_ZoomLevel * m_Scale, m_ZoomLevel * m_Scale);
+			return false;
+		}
+		else
+			return true;
 	}
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)

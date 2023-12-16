@@ -85,44 +85,6 @@ namespace Velvet {
 		RenderCommand::DrawIndexed(s_UIData->ButtonVertexArray);
 	}
 
-	glm::vec2 RendererUI::NDCFromTopLeft(const glm::vec2& pixelPosition)
-	{
-		VL_PROFILE_FUNCTION();
-
-		// TODO: figure out how to have this NOT hardcoded!
-		float initialHeight = 720.0f;
-
-		glm::vec2& windowDimensions = GetWindowDimensions();
-		float aspectRatio = windowDimensions.x / windowDimensions.y;
-		float normalizedX, normalizedY;
-
-		float scale = windowDimensions.y / initialHeight;
-
-		normalizedX = (2.0f * pixelPosition.x) / windowDimensions.x - 1.0f;
-		normalizedY = 1.0f - (2.0f * pixelPosition.y) / windowDimensions.y;
-
-		return glm::vec2(normalizedX * aspectRatio * scale, normalizedY * scale);
-	}
-
-	glm::vec2 RendererUI::NDCFromTopRight(const glm::vec2& pixelPosition)
-	{
-		VL_PROFILE_FUNCTION();
-
-		// TODO: figure out how to have this NOT hardcoded!
-		float initialHeight = 720.0f;
-
-		glm::vec2& windowDimensions = GetWindowDimensions();
-		float aspectRatio = windowDimensions.x / windowDimensions.y;
-		float normalizedX, normalizedY;
-
-		float scale = windowDimensions.y / initialHeight;
-
-		normalizedX = (2.0f * pixelPosition.x) / windowDimensions.x + 1.0f;
-		normalizedY = 1.0f - (2.0f * pixelPosition.y) / windowDimensions.y;
-
-		return glm::vec2(normalizedX * aspectRatio * scale, normalizedY * scale);
-	}
-
 	glm::vec2 RendererUI::NDCFromPixel(const glm::vec2& pixelPosition, const Orientation orientation)
 	{
 		VL_PROFILE_FUNCTION();

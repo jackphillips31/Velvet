@@ -11,7 +11,13 @@ namespace Velvet {
 	class OrthographicCameraController
 	{
 	public:
-		OrthographicCameraController(glm::vec2 initialWindowDimensions, bool rotation = false);
+		struct CameraSettings
+		{
+			bool rotation = false;
+			bool zoom = true;
+		};
+	public:
+		OrthographicCameraController(glm::vec2 initialWindowDimensions, bool rotation = false, bool zoom = true);
 		
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
@@ -23,6 +29,8 @@ namespace Velvet {
 
 		float GetZoomLevel() const { return m_ZoomLevel; }
 		void SetZoomLevel(float level) { m_ZoomLevel = level; }
+
+		void SetCameraSettings(CameraSettings settings) { m_Rotation = settings.rotation; m_Zoom = settings.zoom; }
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
@@ -33,6 +41,7 @@ namespace Velvet {
 		OrthographicCamera m_Camera;
 
 		bool m_Rotation;
+		bool m_Zoom;
 
 		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 0.0f };
 		float m_CameraRotation = 0.0f; // In degrees, in the anti-clockwise direction
