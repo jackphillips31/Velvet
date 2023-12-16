@@ -6,8 +6,11 @@
 
 namespace Velvet {
 
-	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-		: m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
+	OrthographicCameraController::OrthographicCameraController(glm::vec2 initialWindowDimensions, bool rotation) :
+		m_Scale(1.0f),
+		m_AspectRatio(initialWindowDimensions.x / initialWindowDimensions.y),
+		m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, initialWindowDimensions),
+		m_Rotation(rotation)
 	{
 	}
 
@@ -69,8 +72,9 @@ namespace Velvet {
 
 	void OrthographicCameraController::OnResize(float width, float height)
 	{
+		m_Scale = height / m_Camera.GetInitialWindowDimensions().y;
 		m_AspectRatio = width / height;
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel * m_Scale, m_AspectRatio * m_ZoomLevel * m_Scale, -m_ZoomLevel * m_Scale, m_ZoomLevel * m_Scale);
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
@@ -79,7 +83,7 @@ namespace Velvet {
 
 		m_ZoomLevel -= e.GetYOffset() * 0.2f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel * m_Scale, m_AspectRatio * m_ZoomLevel * m_Scale, -m_ZoomLevel * m_Scale, m_ZoomLevel * m_Scale);
 		return false;
 	}
 

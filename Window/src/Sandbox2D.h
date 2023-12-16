@@ -15,7 +15,9 @@ public:
 	virtual void OnImGuiRender() override;
 	void OnEvent(Velvet::Event& e) override;
 private:
+	Velvet::Window& m_Window;
 	Velvet::OrthographicCameraController m_CameraController;
+	Velvet::OrthographicCameraController m_UICameraController;
 
 	// Temporary
 	Velvet::Ref<Velvet::VertexArray> m_SquareVAO;

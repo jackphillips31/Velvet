@@ -11,7 +11,7 @@ namespace Velvet {
 	class OrthographicCameraController
 	{
 	public:
-		OrthographicCameraController(float aspectRatio, bool rotation = false);
+		OrthographicCameraController(glm::vec2 initialWindowDimensions, bool rotation = false);
 		
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
@@ -27,6 +27,7 @@ namespace Velvet {
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 	private:
+		float m_Scale;
 		float m_AspectRatio;
 		float m_ZoomLevel = 1.0f;
 		OrthographicCamera m_Camera;

@@ -7,7 +7,10 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 
 Sandbox2D::Sandbox2D()
-	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f)
+	: Layer("Sandbox2D"),
+	m_Window(Velvet::Application::Get().GetWindow()),
+	m_CameraController(glm::vec2(m_Window.GetWidth(), m_Window.GetHeight())),
+	m_UICameraController(glm::vec2(m_Window.GetWidth(), m_Window.GetHeight()))
 {
 }
 
@@ -52,11 +55,30 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 	{
 		VL_PROFILE_SCOPE("Renderer UI");
 
-		Velvet::RendererUI::BeginScene(m_CameraController.GetCamera());
+		Velvet::RendererUI::BeginScene(m_UICameraController.GetCamera());
 		Velvet::RendererUI::DrawButton(
 			{ 0.0f, 0.0f },
 			{ 0.8f, 1.0f },
-			{ 0.2f, 0.8f, 0.2f, 1.0f }
+			{ 0.2f, 0.8f, 0.2f, 1.0f },
+			Velvet::RendererUI::Orientation::TopLeft
+		);
+		Velvet::RendererUI::DrawButton(
+			{ 0.0f, 0.0f },
+			{ 0.8f, 1.0f },
+			{ 0.2f, 0.8f, 0.2f, 1.0f },
+			Velvet::RendererUI::Orientation::BottomLeft
+		);
+		Velvet::RendererUI::DrawButton(
+			{ 0.0f, 0.0f },
+			{ 0.8f, 1.0f },
+			{ 0.2f, 0.2f, 0.8f, 1.0f },
+			Velvet::RendererUI::Orientation::TopRight
+		);
+		Velvet::RendererUI::DrawButton(
+			{ 0.0f, 0.0f },
+			{ 0.8f, 1.0f },
+			{ 0.2f, 0.2f, 0.8f, 1.0f },
+			Velvet::RendererUI::Orientation::BottomRight
 		);
 		Velvet::RendererUI::EndScene();
 	}
@@ -78,4 +100,5 @@ void Sandbox2D::OnImGuiRender()
 void Sandbox2D::OnEvent(Velvet::Event& e)
 {
 	m_CameraController.OnEvent(e);
+	m_UICameraController.OnEvent(e);
 }
