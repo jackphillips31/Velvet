@@ -13,6 +13,7 @@ namespace Velvet {
 		m_Rotation(rotation),
 		m_Zoom(zoom)
 	{
+		VL_PROFILE_FUNCTION();
 	}
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)

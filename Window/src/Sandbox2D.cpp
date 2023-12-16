@@ -12,7 +12,13 @@ Sandbox2D::Sandbox2D()
 	m_CameraController(glm::vec2(m_Window.GetWidth(), m_Window.GetHeight())),
 	m_UICameraController(glm::vec2(m_Window.GetWidth(), m_Window.GetHeight()))
 {
-	Velvet::OrthographicCameraController::CameraSettings UICameraSettings;
+	Velvet::OrthographicCameraController::CameraSettings SandboxCameraSettings, UICameraSettings;
+
+	SandboxCameraSettings.rotation = true;
+	SandboxCameraSettings.zoom = true;
+	m_CameraController.SetCameraSettings(SandboxCameraSettings);
+	
+	UICameraSettings.rotation = false;
 	UICameraSettings.zoom = false;
 	m_UICameraController.SetCameraSettings(UICameraSettings);
 }
