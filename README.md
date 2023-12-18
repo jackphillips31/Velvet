@@ -74,9 +74,12 @@ m_UIController.AddButton(
 );
 ```
 ## Dependencies
-- [spdlog @ ddce421](https://github.com/gabime/spdlog) in Velvet/vendor/spdlog
-- [GLFW @ d2232ef](https://github.com/glfw/glfw) in Velvet/vendor/GLFW
-- [imgui @ 05487c1](https://github.com/jackphillips31/imgui) in Velvet/vendor/imgui
+- [spdlog @ 5e11d94](https://github.com/jackphillips31/spdlog/tree/5e11d945a08d7497aee195d643a4d5e4f61a4410) in Velvet/vendor/spdlog
+- [GLFW @ ad65e22](https://github.com/jackphillips31/glfw/tree/ad65e224f20e6aba4730046a1b3003b12192ed8f) in Velvet/vendor/GLFW
+- [imgui @ ff0eae3](https://github.com/jackphillips31/imgui/tree/ff0eae33663920b41d89afab59b22de592c235e1) in Velvet/vendor/imgui
+- [glm @ 586a402](https://github.com/g-truc/glm/tree/586a402397dd35d66d7a079049856d1e2cbab300) in Velvet/vendor/glm
+- [GLAD gl 4.6](https://glad.dav1d.de) in Velvet/vendor/GLAD
+- [stb_image](https://github.com/nothings/stb/tree/master) in Velvet/vendor/stb_image
 ## Installation
 Install Velvet with Git Bash or simply download and extract it to your desired directory. If you download the zip, make sure you download and extract the required dependencies to their respective directories.
 
