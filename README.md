@@ -21,6 +21,7 @@ Velvet is an open-source physics and game engine written in C++. It's designed t
   <img alt="An image showing the window created when building and running Velvet" src="/Resources/images/Current-State-Banner.png">
 </picture>
 
+[Click here for full photo](/Resources/images/Current-State-1.png)
 ### What does this show?
 Presently, we can draw primitives to the screen. What isn't so obvious is the abstraction that is taking place behind the scenes. Using Modern OpenGL it isn't so hard to do what is shown, but I have abstracted away the OpenGL calls. For example, this is how the red quad in the middle of the screen was drawn...
 
