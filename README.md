@@ -1,13 +1,78 @@
-![Velvet Banner](https://github.com/jackphillips31/Velvet/blob/dev/Window/assets/textures/Velvet-Banner-S.png)
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="/Resources/images/Velvet-Banner-S.png">
+ <source media="(prefers-color-scheme: light)" srcset="/Resources/images/Velvet-Banner-S-LM.png">
+ <img alt="Velvet Logo" src="/Resources/images/Velvet-Banner-S.png">
+</picture>
 
 Velvet is an open-source physics and game engine written in C++. It's designed to be beginner-friendly, making application development with Velvet easy and enjoyable.
 ## Table of Contents
+- [Current State](#the-state-of-velvet)
+- [What is being worked on now](#next-step)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Generate Project Files](#generate-project-files)
 - [Building Velvet](#building-velvet)
 - [Contributing](#contributing-to-velvet)
 - [License](#license)
+# The State of Velvet
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="/Resources/images/Current-State-Banner.png">
+  <source media="(prefers-color-scheme: light)" srcset="/Resources/images/Current-State-Banner-LM.png">
+  <img alt="An image showing the window created when building and running Velvet" src="/Resources/images/Current-State-Banner.png">
+</picture>
+
+### What does this show?
+Presently, we can draw primitives to the screen. What isn't so obvious is the abstraction that is taking place behind the scenes. Using Modern OpenGL it isn't so hard to do what is shown, but I have abstracted away the OpenGL calls. For example, this is how the red quad in the middle of the screen was drawn...
+
+[Sandbox2D.cpp](/Window/src/Sandbox2D.cpp)
+```c++
+Velvet::Renderer2D::BeginScene(m_CameraController.GetCamera());
+Velvet::Renderer2D::DrawQuad(
+	{ 0.0f, 0.0f },
+	{ 1.0f, 1.0f },
+	{ 0.8f, 0.2f, 0.3f, 1.0f }
+);
+Velvet::Renderer2D::EndScene();
+```
+The first two arguments being position and size (which haven't been implemented yet) and the third argument is color. Thanks to the abstraction, adding functionality to the first two arguments will be relatively simple.
+### What isn't so easy to see?
+A lot of the functionality isn't apparent when looking at that screenshot of the current build. There is a multitude of functionalities so far including but not limited to:
+- Input Polling
+- Event handling
+- Dear ImGui integration
+- Projection Matrix scaling on Window Resize
+- Camera movement (translation, rotation, and zoom)
+- Pixel Coordinates to Normalized Device Coordinates conversion
+- and more!
+### What is currently being worked on?
+I am currently working on the 2D renderer. Specifically, attempting to implement a UI system for the 2D renderer. The quads being rendered in the corners of the windows are the beginning of this work. Currently, they stay in place and are scaled correctly when the window is resized. (They maintain the same pixel dimensions now matter what the window's size is)
+### Next Step
+The current goal is to implement user interaction with the UI elements. Since the element's vertices use Normalized Device Coordinates I will have to convert those to pixel coordinates accounting for scale that way I can use the converted values to compare with the mouse's position. Currently, the Sandbox2D layer has its own ```UICamera``` that it passes on to the ```RendererUI```. The ```RendererUI``` is a static object and although the camera is passed in the ```BeginScene``` function, the draw functions don't have access to it. Because of this, I am thinking of implementing a ```UIController``` that will be instantiated in the Sandbox2D Layer. This ```UIController``` would have ownership over ```RendererUI``` and the ```UICamera```. The box on the bottom-left of the screen is currently drawn using this code:
+
+[Sandbox2D.cpp](/Window/src/Sandbox2D.cpp)
+```c++
+Velvet::RendererUI::BeginScene(m_UICameraController.GetCamera());
+Velvet::RendererUI::DrawButton(
+	{ 0.0f, 0.0f },
+	{ 0.8f, 1.0f },
+	{ 0.2f, 0.8f, 0.2f, 1.0f },
+	Velvet::RendererUI::Orientation::BottomLeft
+);
+Velvet::RendererUI::EndScene();
+```
+With the ```UIController``` it would look something like this:
+```c++
+// Instantiating it
+Scope<Velvet::UIController> m_UIController = CreateScope<Velvet::UIController>();
+
+// Using it
+m_UIController.AddButton(
+	{ 0.0f, 0.0f },
+	{ 0.8f, 1.0f },
+	{ 0.2f, 0.8f, 0.2f, 1.0f },
+	Velvet::RendererUI::Orientation::BottomLeft
+);
+```
 ## Dependencies
 - [spdlog @ ddce421](https://github.com/gabime/spdlog) in Velvet/vendor/spdlog
 - [GLFW @ d2232ef](https://github.com/glfw/glfw) in Velvet/vendor/GLFW
