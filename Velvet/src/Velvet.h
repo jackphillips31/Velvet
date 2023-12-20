@@ -21,8 +21,8 @@
 //---------------------------------------------
 #include "Velvet/Renderer/Renderer.h"
 #include "Velvet/Renderer/Renderer2D.h"
-#include "Velvet/Renderer/RendererUI.h"
 #include "Velvet/Renderer/RenderCommand.h"
+#include "Velvet/Renderer/UIController.h"
 
 #include "Velvet/Renderer/Buffer.h"
 #include "Velvet/Renderer/Shader.h"

@@ -17,11 +17,6 @@ public:
 private:
 	Velvet::Window& m_Window;
 	Velvet::OrthographicCameraController m_CameraController;
-	Velvet::OrthographicCameraController m_UICameraController;
-
-	// Temporary
-	Velvet::Ref<Velvet::VertexArray> m_SquareVAO;
-	Velvet::Ref<Velvet::Shader> m_FlatColorShader;
 
 	glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };

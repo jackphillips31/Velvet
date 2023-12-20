@@ -1,9 +1,8 @@
 #include <vlpch.h>
 #include "Renderer.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
 #include "Renderer2D.h"
-#include "RendererUI.h"
+#include "UIController.h"
 
 #include "Velvet/Assets/Shaders/FlatColorShaderSource.h"
 #include "Velvet/Assets/Shaders/TextureShaderSource.h"
@@ -22,12 +21,13 @@ namespace Velvet {
 
 		RenderCommand::Init();
 		Renderer2D::Init();
-		RendererUI::Init();
+		UIController::Init();
 	}
 
 	void Renderer::Shutdown()
 	{
 		Renderer2D::Shutdown();
+		UIController::Shutdown();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
