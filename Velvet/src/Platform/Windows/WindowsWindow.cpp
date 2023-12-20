@@ -16,11 +16,6 @@ namespace Velvet {
 		VL_CORE_ERROR("GLFW Error ({}): {}", error, description);
 	}
 
-	Scope<Window> Window::Create(const WindowProps& props)
-	{
-		return CreateScope<WindowsWindow>(props);
-	}
-
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
 		VL_PROFILE_FUNCTION();
