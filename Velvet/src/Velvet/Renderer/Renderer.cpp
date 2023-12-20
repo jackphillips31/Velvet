@@ -5,13 +5,20 @@
 #include "Renderer2D.h"
 #include "RendererUI.h"
 
+#include "Velvet/Assets/Shaders/FlatColorShaderSource.h"
+#include "Velvet/Assets/Shaders/TextureShaderSource.h"
+
 namespace Velvet {
 
 	Scope<Renderer::SceneData> Renderer::m_SceneData = CreateScope<Renderer::SceneData>();
+	Scope<ShaderLibrary> Renderer::m_ShaderLibrary = CreateScope<ShaderLibrary>();
 
 	void Renderer::Init()
 	{
 		VL_PROFILE_FUNCTION();
+
+		m_ShaderLibrary->Load("FlatColor", FlatColorShaderSource);
+		m_ShaderLibrary->Load("Texture", TextureShaderSource);
 
 		RenderCommand::Init();
 		Renderer2D::Init();
@@ -41,8 +48,8 @@ namespace Velvet {
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->Bind();
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Transform", transform);
+		shader->SetMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+		shader->SetMat4("u_Transform", transform);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

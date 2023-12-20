@@ -24,6 +24,7 @@ namespace Velvet {
 		);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
+		inline static ShaderLibrary& GetShaderLibrary() { return *m_ShaderLibrary; }
 	private:
 		struct SceneData
 		{
@@ -31,6 +32,7 @@ namespace Velvet {
 		};
 
 		static Scope<SceneData> m_SceneData;
+		static Scope<ShaderLibrary> m_ShaderLibrary;
 	};
 
 }

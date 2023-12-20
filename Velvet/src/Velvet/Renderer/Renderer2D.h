@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Shader.h"
 #include "OrthographicCamera.h"
 
 namespace Velvet {

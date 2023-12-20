@@ -58,6 +58,11 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 			{ 1.0f, 1.0f },
 			{ 0.8f, 0.2f, 0.3f, 1.0f }
 		);
+		Velvet::Renderer2D::DrawQuad(
+			{ 0.5f, 0.5f },
+			{ 0.2f, 0.3f },
+			{ 0.4f, 0.4f, 0.2f, 1.0f }
+		);
 		Velvet::Renderer2D::EndScene();
 	}
 
@@ -91,10 +96,6 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 		);
 		Velvet::RendererUI::EndScene();
 	}
-
-	// TODO: Add these functions - Shader::SetMat4, Shader::SetFloat4
-	// std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->Bind();
-	// std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
 }
 
 void Sandbox2D::OnImGuiRender()

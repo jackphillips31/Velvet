@@ -1,3 +1,6 @@
+#pragma once
+
+const char* FlatColorShaderSource = R"(
 #type vertex
 #version 330 core
 
@@ -22,3 +25,4 @@ void main()
 {
 	color = u_Color;
 }
+)";

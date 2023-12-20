@@ -4,6 +4,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "RenderCommand.h"
+#include "Renderer.h"
 
 #include "Velvet/Core/Application.h"
 
@@ -45,7 +46,8 @@ namespace Velvet {
 
 		s_UIData->ButtonVertexArray->AddVertexBuffer(squareVBO);
 		s_UIData->ButtonVertexArray->SetIndexBuffer(squareIBO);
-		s_UIData->FlatColorShader = Shader::Create("assets/shaders/FlatColor.glsl");
+
+		s_UIData->FlatColorShader = Renderer::GetShaderLibrary().Get("FlatColor");
 	}
 
 	void RendererUI::Shutdown()
