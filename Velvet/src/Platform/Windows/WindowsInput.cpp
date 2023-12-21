@@ -6,7 +6,7 @@
 
 namespace Velvet {
 
-	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
+	Scope<Input> Input::s_Instance = nullptr;
 
 	bool WindowsInput::IsKeyPressedImpl(int keycode)
 	{

@@ -1,9 +1,10 @@
 #include <vlpch.h>
 #include "Application.h"
 
-#include "Velvet/Renderer/Renderer.h"
-
 #include "Input.h"
+
+#include "Velvet/Renderer/Renderer.h"
+#include "Velvet/Renderer/UIController.h"
 
 #include <glfw/glfw3.h>
 
@@ -22,6 +23,7 @@ namespace Velvet {
 		m_Window = Window::Create();
 		m_Window->SetEventCallback(VL_BIND_EVENT_FN(Application::OnEvent));
 
+		Input::Init();
 		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
@@ -33,6 +35,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		Renderer::Shutdown();
+		Input::Shutdown();
 		m_Window.reset();
 	}
 
@@ -89,6 +92,8 @@ namespace Velvet {
 	void Application::OnEvent(Event& e)
 	{
 		VL_PROFILE_FUNCTION();
+
+		UIController::OnEvent(e);
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(VL_BIND_EVENT_FN(Application::OnWindowClose));

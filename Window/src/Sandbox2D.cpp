@@ -103,5 +103,4 @@ void Sandbox2D::OnImGuiRender()
 void Sandbox2D::OnEvent(Velvet::Event& e)
 {
 	m_CameraController.OnEvent(e);
-	Velvet::UIController::OnEvent(e);
 }

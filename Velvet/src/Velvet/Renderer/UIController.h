@@ -22,10 +22,10 @@ namespace Velvet {
 	public:
 		static void Init();
 		static void Shutdown();
+		static void OnEvent(Event& e);
 
 		static void AddElement(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation);
 		static void Render();
-		static void OnEvent(Event& e);
 	private:
 		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();

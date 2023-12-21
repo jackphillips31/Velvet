@@ -159,6 +159,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		glfwDestroyWindow(m_Window);
+		m_Context.reset();
 	}
 
 	void WindowsWindow::OnUpdate()

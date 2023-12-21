@@ -59,6 +59,11 @@ namespace Velvet {
 		m_UIElements.reset();
 	}
 
+	void UIController::OnEvent(Event& e)
+	{
+		m_UIData->UICameraController.OnEvent(e);
+	}
+
 	void UIController::AddElement(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
 	{
 		UIElement newElement(pixelPosition, size, color, orientation);
@@ -83,11 +88,6 @@ namespace Velvet {
 			}
 		}
 		EndScene();
-	}
-
-	void UIController::OnEvent(Event& e)
-	{
-		m_UIData->UICameraController.OnEvent(e);
 	}
 
 	void UIController::BeginScene(const OrthographicCamera& camera)
