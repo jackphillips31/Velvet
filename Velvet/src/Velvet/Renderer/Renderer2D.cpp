@@ -1,7 +1,6 @@
 #include <vlpch.h>
 #include "Renderer2D.h"
 
-#include "VertexArray.h"
 #include "RenderCommand.h"
 #include "Renderer.h"
 
@@ -9,20 +8,14 @@
 
 namespace Velvet {
 
-	struct Renderer2DStorage
-	{
-		Ref<VertexArray> QuadVertexArray;
-		Ref<Shader> FlatColorShader;
-	};
-
-	static Scope<Renderer2DStorage> s_Data;
+	Scope<Renderer2D::Renderer2DStorage> Renderer2D::m_Data = nullptr;
 
 	void Renderer2D::Init()
 	{
 		VL_PROFILE_FUNCTION();
 
-		s_Data = CreateScope<Renderer2DStorage>();
-		s_Data->QuadVertexArray = VertexArray::Create();
+		m_Data = CreateScope<Renderer2DStorage>();
+		m_Data->QuadVertexArray = VertexArray::Create();
 
 		float squareVertices[3 * 4] = {
 			-0.5f, -0.5f, 0.0f,
@@ -39,25 +32,25 @@ namespace Velvet {
 			{ ShaderDataType::Float3, "a_Position" }
 		});
 
-		s_Data->QuadVertexArray->AddVertexBuffer(squareVBO);
-		s_Data->QuadVertexArray->SetIndexBuffer(squareIBO);
+		m_Data->QuadVertexArray->AddVertexBuffer(squareVBO);
+		m_Data->QuadVertexArray->SetIndexBuffer(squareIBO);
 
-		s_Data->FlatColorShader = Renderer::GetShaderLibrary().Get("FlatColor");
+		m_Data->FlatColorShader = Renderer::GetShaderLibrary().Get("FlatColor");
 	}
 
 	void Renderer2D::Shutdown()
 	{
 		VL_PROFILE_FUNCTION();
 
-		s_Data.release();
+		m_Data.reset();
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		VL_PROFILE_FUNCTION();
 
-		s_Data->FlatColorShader->Bind();
-		s_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		m_Data->FlatColorShader->Bind();
+		m_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
@@ -76,13 +69,13 @@ namespace Velvet {
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		s_Data->FlatColorShader->Bind();
-		s_Data->FlatColorShader->SetFloat4("u_Color", color);
-		s_Data->FlatColorShader->SetMat4("u_Transform", transform);
+		m_Data->FlatColorShader->Bind();
+		m_Data->FlatColorShader->SetFloat4("u_Color", color);
+		m_Data->FlatColorShader->SetMat4("u_Transform", transform);
 
-		s_Data->QuadVertexArray->Bind();
+		m_Data->QuadVertexArray->Bind();
 
-		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+		RenderCommand::DrawIndexed(m_Data->QuadVertexArray);
 	}
 
 }

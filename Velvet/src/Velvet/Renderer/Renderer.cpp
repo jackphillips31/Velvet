@@ -9,12 +9,15 @@
 
 namespace Velvet {
 
-	Scope<Renderer::SceneData> Renderer::m_SceneData = CreateScope<Renderer::SceneData>();
-	Scope<ShaderLibrary> Renderer::m_ShaderLibrary = CreateScope<ShaderLibrary>();
+	Scope<Renderer::SceneData> Renderer::m_SceneData = nullptr;
+	Scope<ShaderLibrary> Renderer::m_ShaderLibrary = nullptr;
 
 	void Renderer::Init()
 	{
 		VL_PROFILE_FUNCTION();
+
+		m_SceneData = CreateScope<Renderer::SceneData>();
+		m_ShaderLibrary = CreateScope<ShaderLibrary>();
 
 		m_ShaderLibrary->Load("FlatColor", FlatColorShaderSource);
 		m_ShaderLibrary->Load("Texture", TextureShaderSource);
@@ -26,8 +29,13 @@ namespace Velvet {
 
 	void Renderer::Shutdown()
 	{
+		VL_PROFILE_FUNCTION();
+
+		RenderCommand::Shutdown();
 		Renderer2D::Shutdown();
 		UIController::Shutdown();
+		m_SceneData.reset();
+		m_ShaderLibrary.reset();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

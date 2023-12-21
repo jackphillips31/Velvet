@@ -55,7 +55,8 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		m_UIData.release();
+		m_UIData.reset();
+		m_UIElements.reset();
 	}
 
 	void UIController::AddElement(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)

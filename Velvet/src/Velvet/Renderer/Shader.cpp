@@ -48,6 +48,7 @@ namespace Velvet {
 	void ShaderLibrary::Add(const Ref<Shader>& shader)
 	{
 		auto& name = shader->GetName();
+		VL_CORE_ASSERT(!Exists(name), "Shader already exists!");
 		Add(name, shader);
 	}
 

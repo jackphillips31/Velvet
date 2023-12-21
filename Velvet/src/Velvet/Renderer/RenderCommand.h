@@ -2,6 +2,8 @@
 
 #include "RendererAPI.h"
 
+#include "Platform/OpenGL/OpenGLRendererAPI.h"
+
 namespace Velvet {
 
 	class RenderCommand
@@ -9,7 +11,13 @@ namespace Velvet {
 	public:
 		inline static void Init()
 		{
+			s_RendererAPI = CreateScope<OpenGLRendererAPI>();
 			s_RendererAPI->Init();
+		}
+
+		inline static void Shutdown()
+		{
+			s_RendererAPI.reset();
 		}
 
 		inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

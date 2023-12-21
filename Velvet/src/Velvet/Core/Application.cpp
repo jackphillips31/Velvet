@@ -33,6 +33,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		Renderer::Shutdown();
+		m_Window.reset();
 	}
 
 	void Application::PushLayer(Layer* layer)
