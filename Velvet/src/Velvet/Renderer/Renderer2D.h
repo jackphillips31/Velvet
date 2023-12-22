@@ -2,6 +2,7 @@
 
 #include "OrthographicCamera.h"
 #include "Shader.h"
+#include "Texture.h"
 #include "VertexArray.h"
 
 namespace Velvet {
@@ -18,11 +19,14 @@ namespace Velvet {
 		// Primitives
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture);
 	private:
 		struct Renderer2DStorage
 		{
 			Ref<VertexArray> QuadVertexArray;
 			Ref<Shader> FlatColorShader;
+			Ref<Shader> TextureShader;
 		};
 
 		static Scope<Renderer2DStorage> m_Data;

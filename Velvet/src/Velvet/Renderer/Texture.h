@@ -2,6 +2,8 @@
 
 #include "Velvet/Core/Core.h"
 
+#include "Velvet/Core/ResourceManager.h"
+
 namespace Velvet {
 
 	class Texture
@@ -19,6 +21,7 @@ namespace Velvet {
 	{
 	public:
 		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(Ref<RawImageData>& imageData);
 	};
 
 }

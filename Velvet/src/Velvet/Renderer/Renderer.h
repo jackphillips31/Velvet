@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Velvet/Core/ResourceManager.h"
+
 #include "RenderCommand.h"
 
 #include "OrthographicCamera.h"

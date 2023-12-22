@@ -15,6 +15,7 @@ namespace Velvet {
 	void Renderer::Init()
 	{
 		VL_PROFILE_FUNCTION();
+		VL_CORE_INFO("Initializing Renderer");
 
 		m_SceneData = CreateScope<Renderer::SceneData>();
 		m_ShaderLibrary = CreateScope<ShaderLibrary>();

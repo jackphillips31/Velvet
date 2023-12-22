@@ -14,7 +14,7 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		VL_CORE_INFO("UIController Init");
+		VL_CORE_INFO("Initializing UIController");
 
 		Window& tempWindowRef = Application::Get().GetWindow();
 		glm::vec2 windowDimensions(tempWindowRef.GetWidth(), tempWindowRef.GetHeight());

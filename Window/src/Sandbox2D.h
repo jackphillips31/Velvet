@@ -18,5 +18,7 @@ private:
 	Velvet::Window& m_Window;
 	Velvet::OrthographicCameraController m_CameraController;
 
+	Velvet::Ref<Velvet::Texture2D> m_DefaultTexture;
+
 	glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };

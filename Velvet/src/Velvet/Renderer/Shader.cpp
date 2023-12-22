@@ -41,7 +41,10 @@ namespace Velvet {
 
 	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
 	{
+		VL_PROFILE_FUNCTION();
+
 		VL_CORE_ASSERT(!Exists(name), "Shader already exists!");
+		VL_CORE_INFO("Adding {} to ShaderLibrary!", name);
 		m_Shaders[name] = shader;
 	}
 	
@@ -68,6 +71,7 @@ namespace Velvet {
 
 	Ref<Shader> ShaderLibrary::Get(const std::string& name)
 	{
+		VL_PROFILE_FUNCTION();
 		VL_CORE_ASSERT(Exists(name), "Shader not found!");
 		return m_Shaders[name];
 	}

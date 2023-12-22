@@ -30,7 +30,7 @@ namespace Velvet {
 		float GetZoomLevel() const { return m_ZoomLevel; }
 		void SetZoomLevel(float level) { m_ZoomLevel = level; }
 
-		void inline SetCameraSettings(CameraSettings settings) { m_Rotation = settings.rotation; m_Zoom = settings.zoom; }
+		void SetCameraSettings(CameraSettings settings) { m_Rotation = settings.rotation; m_Zoom = settings.zoom; }
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);

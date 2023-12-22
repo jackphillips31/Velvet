@@ -91,7 +91,7 @@ namespace Velvet {
 			return false;
 		}
 		else
-			return true;
+			return false;
 	}
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)

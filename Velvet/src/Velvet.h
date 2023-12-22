@@ -6,6 +6,8 @@
 #include "Velvet/Core/Log.h"
 #include "Velvet/Core/Timestep.h"
 
+#include "Velvet/Core/ResourceManager.h"
+
 #include "Velvet/Core/Input.h"
 #include "Velvet/Core/KeyCodes.h"
 #include "Velvet/Core/MouseButtonCodes.h"

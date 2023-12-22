@@ -35,6 +35,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		Renderer::Shutdown();
+		ResourceManager::Shutdown();
 		Input::Shutdown();
 		m_Window.reset();
 	}
