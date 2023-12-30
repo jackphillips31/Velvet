@@ -5,6 +5,8 @@
 #include "Velvet/Events/MouseEvent.h"
 #include "Velvet/Events/KeyEvent.h"
 
+#include "Velvet/Renderer/Renderer.h"
+
 namespace Velvet {
 
 	static uint8_t s_GLFWWindowCount = 0;
@@ -48,6 +50,10 @@ namespace Velvet {
 		}
 		{
 			VL_PROFILE_SCOPE("glfwCreateWindow");
+			#if defined(VL_DEBUG)
+			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+			#endif
 
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 			++s_GLFWWindowCount;
