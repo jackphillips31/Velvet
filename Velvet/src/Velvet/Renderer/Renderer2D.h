@@ -25,8 +25,8 @@ namespace Velvet {
 		struct Renderer2DStorage
 		{
 			Ref<VertexArray> QuadVertexArray;
-			Ref<Shader> FlatColorShader;
 			Ref<Shader> TextureShader;
+			Ref<Texture2D> WhiteTexture;
 		};
 
 		static Scope<Renderer2DStorage> m_Data;

@@ -99,7 +99,7 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 	}
 
 	{
-		VL_PROFILE_SCOPE("Renderer UI")
+		VL_PROFILE_SCOPE("Renderer UI");
 
 		Velvet::UIController::Render();
 	}

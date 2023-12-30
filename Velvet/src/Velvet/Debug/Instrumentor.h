@@ -27,6 +27,7 @@ namespace Velvet {
 		InstrumentationSession* m_CurrentSession;
 		std::ofstream m_OutputStream;
 		int m_ProfileCount;
+		long long lastStartTime = 0;
 	public:
 		Instrumentor()
 			: m_CurrentSession(nullptr), m_ProfileCount(0)
@@ -57,14 +58,24 @@ namespace Velvet {
 			std::string name = result.Name;
 			std::replace(name.begin(), name.end(), '"', '\'');
 
+			long long duration = result.End - result.Start;
+			if (duration == 0)
+				duration = 10;
+
+			long long showStart = result.Start;
+			if (result.Start == lastStartTime)
+				showStart += 2;
+
+			lastStartTime = result.Start;
+
 			m_OutputStream << "{";
 			m_OutputStream << "\"cat\":\"function\",";
-			m_OutputStream << "\"dur\":" << (result.End - result.Start) << ",";
+			m_OutputStream << "\"dur\":" << duration << ",";
 			m_OutputStream << "\"name\":\"" << name << "\",";
 			m_OutputStream << "\"ph\":\"X\",";
 			m_OutputStream << "\"pid\":0,";
 			m_OutputStream << "\"tid\":" << result.ThreadID << ",";
-			m_OutputStream << "\"ts\":" << result.Start;
+			m_OutputStream << "\"ts\":" << showStart;
 			m_OutputStream << "}";
 
 			m_OutputStream.flush();

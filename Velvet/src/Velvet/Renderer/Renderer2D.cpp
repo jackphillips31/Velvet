@@ -37,7 +37,10 @@ namespace Velvet {
 		m_Data->QuadVertexArray->AddVertexBuffer(squareVBO);
 		m_Data->QuadVertexArray->SetIndexBuffer(squareIBO);
 
-		m_Data->FlatColorShader = Renderer::GetShaderLibrary().Get("FlatColor");
+		m_Data->WhiteTexture = Texture2D::Create(1,1);
+		uint32_t whiteTextureData = 0xffffffff;
+		m_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+
 		m_Data->TextureShader = Renderer::GetShaderLibrary().Get("Texture");
 		m_Data->TextureShader->Bind();
 		m_Data->TextureShader->SetInt("u_Texture", 0);
@@ -53,9 +56,6 @@ namespace Velvet {
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		VL_PROFILE_FUNCTION();
-
-		m_Data->FlatColorShader->Bind();
-		m_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
 		m_Data->TextureShader->Bind();
 		m_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
@@ -77,9 +77,9 @@ namespace Velvet {
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		m_Data->FlatColorShader->Bind();
-		m_Data->FlatColorShader->SetFloat4("u_Color", color);
-		m_Data->FlatColorShader->SetMat4("u_Transform", transform);
+		m_Data->TextureShader->SetFloat4("u_Color", color);
+		m_Data->WhiteTexture->Bind();
+		m_Data->TextureShader->SetMat4("u_Transform", transform);
 
 		m_Data->QuadVertexArray->Bind();
 		RenderCommand::DrawIndexed(m_Data->QuadVertexArray);
@@ -96,10 +96,9 @@ namespace Velvet {
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		m_Data->TextureShader->Bind();
-		m_Data->TextureShader->SetMat4("u_Transform", transform);
-
+		m_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
 		texture->Bind();
+		m_Data->TextureShader->SetMat4("u_Transform", transform);
 
 		m_Data->QuadVertexArray->Bind();
 		RenderCommand::DrawIndexed(m_Data->QuadVertexArray);
