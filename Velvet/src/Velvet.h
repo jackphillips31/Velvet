@@ -12,7 +12,7 @@
 
 #include "Velvet/Core/Input.h"
 #include "Velvet/Core/KeyCodes.h"
-#include "Velvet/Core/MouseButtonCodes.h"
+#include "Velvet/Core/MouseCodes.h"
 
 #include "Velvet/Events/ApplicationEvent.h"
 #include "Velvet/Events/Event.h"
