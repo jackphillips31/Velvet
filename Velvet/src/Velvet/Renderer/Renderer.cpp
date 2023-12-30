@@ -4,7 +4,6 @@
 #include "Velvet/Renderer/Renderer2D.h"
 #include "Velvet/Renderer/UIController.h"
 
-#include "Velvet/Assets/Shaders/FlatColorShaderSource.h"
 #include "Velvet/Assets/Shaders/TextureShaderSource.h"
 
 namespace Velvet {
@@ -20,7 +19,6 @@ namespace Velvet {
 		m_SceneData = CreateScope<Renderer::SceneData>();
 		m_ShaderLibrary = CreateScope<ShaderLibrary>();
 
-		m_ShaderLibrary->Load("FlatColor", FlatColorShaderSource);
 		m_ShaderLibrary->Load("Texture", TextureShaderSource);
 
 		RenderCommand::Init();

@@ -48,7 +48,13 @@ namespace Velvet {
 		m_UIData->QuadVertexArray->AddVertexBuffer(squareVBO);
 		m_UIData->QuadVertexArray->SetIndexBuffer(squareIBO);
 
-		m_UIData->FlatColorShader = Renderer::GetShaderLibrary().Get("FlatColor");
+		m_UIData->WhiteTexture = Texture2D::Create(1, 1);
+		uint32_t whiteTextureData = 0xffffffff;
+		m_UIData->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+
+		m_UIData->TextureShader = Renderer::GetShaderLibrary().Get("Texture");
+		m_UIData->TextureShader->Bind();
+		m_UIData->TextureShader->SetInt("u_Texture", 0);
 	}
 
 	void UIController::Shutdown()
@@ -94,8 +100,8 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		m_UIData->FlatColorShader->Bind();
-		m_UIData->FlatColorShader->SetMat4("u_ViewProjection", camera.GetProjectionMatrix());
+		m_UIData->TextureShader->Bind();
+		m_UIData->TextureShader->SetMat4("u_ViewProjection", camera.GetProjectionMatrix());
 	}
 
 	void UIController::EndScene()
@@ -110,12 +116,11 @@ namespace Velvet {
 		glm::vec2 normalizedPos = NDCFromPixel(pixelPosition, orientation);
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { normalizedPos.x, normalizedPos.y, 1.0f }) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		m_UIData->FlatColorShader->Bind();
-		m_UIData->FlatColorShader->SetFloat4("u_Color", color);
-		m_UIData->FlatColorShader->SetMat4("u_Transform", transform);
+		m_UIData->TextureShader->SetFloat4("u_Color", color);
+		m_UIData->WhiteTexture->Bind();
+		m_UIData->TextureShader->SetMat4("u_Transform", transform);
 
 		m_UIData->QuadVertexArray->Bind();
-
 		RenderCommand::DrawIndexed(m_UIData->QuadVertexArray);
 	}
 

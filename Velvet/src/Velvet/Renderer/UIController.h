@@ -4,6 +4,7 @@
 
 #include "Velvet/Renderer/OrthographicCameraController.h"
 #include "Velvet/Renderer/Shader.h"
+#include "Velvet/Renderer/Texture.h"
 #include "Velvet/Renderer/VertexArray.h"
 
 namespace Velvet {
@@ -44,6 +45,8 @@ namespace Velvet {
 			glm::vec2 InitialWindowDimensions;
 			Ref<VertexArray> QuadVertexArray;
 			Ref<Shader> FlatColorShader;
+			Ref<Shader> TextureShader;
+			Ref<Texture2D> WhiteTexture;
 		};
 
 		struct UIElement
