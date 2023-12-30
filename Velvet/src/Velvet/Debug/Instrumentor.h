@@ -138,12 +138,33 @@ namespace Velvet {
 }
 
 #if VL_PROFILE
+	// Resolve which function signature macro will be used. Note that this only
+	// is resolved when the (pre)compiler starts, so the syntax highlighting
+	// could mark the wrong one in your editor!
+	#if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600)) || defined(__ghs__)
+		#define VL_FUNC_SIG __PRETTY_FUNCTION__
+	#elif defined(__DMC__) && (__DMC__ >= 0x810)
+		#define VL_FUNC_SIG __PRETTY_FUNCTION__
+	#elif defined(__FUNCSIG__)
+		#define VL_FUNC_SIG __FUNCSIG__
+	#elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMCPP__) && (__IBMCPP__ >= 500))
+		#define VL_FUNC_SIG __FUNCTION__
+	#elif defined(__BORLANDC__) && (__BORLANDC__ >= 0x550)
+		#define VL_FUNC_SIG __FUNC__
+	#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
+		#define VL_FUNC_SIG __func__
+	#elif defined(__cplusplus) && (__cplusplus >= 201103)
+		#define VL_FUNC_SIG __func__
+	#else
+		#define VL_FUNC_SIG "VL_FUNC_SIG Unknown!"
+	#endif
+
 	#define COMBINE1(X, Y) X##Y
 	#define COMBINE(X, Y) COMBINE1(X, Y)
 	#define VL_PROFILE_BEGIN_SESSION(name, filepath) ::Velvet::Instrumentor::Get().BeginSession(name, filepath)
 	#define VL_PROFILE_END_SESSION() ::Velvet::Instrumentor::Get().EndSession()
 	#define VL_PROFILE_SCOPE(name) ::Velvet::InstrumentationTimer COMBINE(timer, __LINE__)(name)
-	#define VL_PROFILE_FUNCTION() VL_PROFILE_SCOPE(__FUNCTION__)
+	#define VL_PROFILE_FUNCTION() VL_PROFILE_SCOPE(VL_FUNC_SIG)
 #else
 	#define VL_PROFILE_BEGIN_SESSION(name, filepath)
 	#define VL_PROFILE_END_SESSION()
