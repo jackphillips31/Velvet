@@ -9,7 +9,7 @@
 
 namespace Velvet {
 
-	static bool s_GLFWInitialized = false;
+	static uint8_t s_GLFWWindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
@@ -40,20 +40,21 @@ namespace Velvet {
 
 		VL_CORE_INFO("Initializing WindowsWindow: {} ({}, {})", props.Title, props.Width, props.Height);
 
-		if (!s_GLFWInitialized)
+		if (s_GLFWWindowCount == 0)
 		{
 			VL_PROFILE_SCOPE("glfwInit");
 
-			// TODO: glfwTerminate on system shutdown
+			VL_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			VL_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
-			s_GLFWInitialized = true;
 		}
 		{
 			VL_PROFILE_SCOPE("glfwCreateWindow");
 
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+			++s_GLFWWindowCount;
+
 			glfwSetWindowSizeLimits(m_Window, 1280, 720, GLFW_DONT_CARE, GLFW_DONT_CARE);
 		}
 
@@ -160,6 +161,11 @@ namespace Velvet {
 
 		glfwDestroyWindow(m_Window);
 		m_Context.reset();
+		if (--s_GLFWWindowCount == 0)
+		{
+			VL_CORE_INFO("Terminating GLFW");
+			glfwTerminate();
+		}
 	}
 
 	void WindowsWindow::OnUpdate()
