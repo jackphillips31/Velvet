@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
-#include <chrono>
 #include <algorithm>
+#include <chrono>
 #include <fstream>
 
+#include <string>
 #include <thread>
 
 namespace Velvet {
@@ -13,7 +13,7 @@ namespace Velvet {
 	{
 		std::string Name;
 		long long Start, End;
-		uint32_t ThreadID;
+		std::thread::id ThreadID;
 	};
 
 	struct InstrumentationSession
@@ -24,66 +24,89 @@ namespace Velvet {
 	class Instrumentor
 	{
 	private:
+		std::mutex m_Mutex;
 		InstrumentationSession* m_CurrentSession;
 		std::ofstream m_OutputStream;
-		int m_ProfileCount;
 		long long lastStartTime = 0;
 	public:
 		Instrumentor()
-			: m_CurrentSession(nullptr), m_ProfileCount(0)
+			: m_CurrentSession(nullptr)
 		{
 		}
 
 		void BeginSession(const std::string& name, const std::string& filepath = "results.json")
 		{
+			std::lock_guard lock(m_Mutex);
+			if (m_CurrentSession)
+			{
+				// If there is already a current session, then close it before beginning a new one.
+				// Subsequent profiling output meant for the original session will end up in the
+				// newly opened session instead. That's better than having badly formatted
+				// profiling count.
+				if (Log::GetCoreLogger())
+				{ // Edge case: BeginSession() might be before Log::Init()
+					VL_CORE_ERROR("Instrumentor::BeginSession('{}') when session '{}' already open.", name, m_CurrentSession->Name);
+				}
+				InternalEndSession();
+			}
 			m_OutputStream.open(filepath);
-			WriteHeader();
-			m_CurrentSession = new InstrumentationSession{ name };
+			if (m_OutputStream.is_open())
+			{
+				m_CurrentSession = new InstrumentationSession({ name });
+				WriteHeader();
+			}
+			else
+			{
+				if (Log::GetCoreLogger())
+				{ // Edge case: BeginSession() might be before Log::Init()
+					VL_CORE_ERROR("Instrumentor could not open results file '{}'.", filepath);
+				}
+			}
+
 		}
 
 		void EndSession()
 		{
-			WriteFooter();
-			m_OutputStream.close();
-			delete m_CurrentSession;
-			m_CurrentSession = nullptr;
-			m_ProfileCount = 0;
+			std::lock_guard lock(m_Mutex);
+			InternalEndSession();
 		}
 
 		void WriteProfile(const ProfileResult& result)
 		{
-			if (m_ProfileCount++ > 0)
-				m_OutputStream << ",";
+			std::stringstream json;
 
 			std::string name = result.Name;
 			std::replace(name.begin(), name.end(), '"', '\'');
 
-			long long duration = result.End - result.Start;
-			if (duration == 0)
-				duration = 10;
+			json << ",{";
+			json << "\"cat\":\"function\",";
+			json << "\"dur\":" << (result.End - result.Start) << ",";
+			json << "\"name\":\"" << name << "\",";
+			json << "\"ph\":\"X\",";
+			json << "\"pid\":0,";
+			json << "\"tid\":" << result.ThreadID << ",";
+			json << "\"ts\":" << result.Start;
+			json << "}";
 
-			long long showStart = result.Start;
-			if (result.Start == lastStartTime)
-				showStart += 2;
-
-			lastStartTime = result.Start;
-
-			m_OutputStream << "{";
-			m_OutputStream << "\"cat\":\"function\",";
-			m_OutputStream << "\"dur\":" << duration << ",";
-			m_OutputStream << "\"name\":\"" << name << "\",";
-			m_OutputStream << "\"ph\":\"X\",";
-			m_OutputStream << "\"pid\":0,";
-			m_OutputStream << "\"tid\":" << result.ThreadID << ",";
-			m_OutputStream << "\"ts\":" << showStart;
-			m_OutputStream << "}";
-
-			m_OutputStream.flush();
+			std::lock_guard lock(m_Mutex);
+			if (m_CurrentSession)
+			{
+				m_OutputStream << json.str();
+				m_OutputStream.flush();
+			}
 		}
+
+		static Instrumentor& Get()
+		{
+			static Instrumentor instance;
+			return instance;
+		}
+
+	private:
 
 		void WriteHeader()
 		{
-			m_OutputStream << "{\"otherData\": {},\"traceEvents\":[";
+			m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
 			m_OutputStream.flush();
 		}
 
@@ -93,10 +116,17 @@ namespace Velvet {
 			m_OutputStream.flush();
 		}
 
-		static Instrumentor& Get()
+		// Note: you must already own lock on m_Mutex before
+		// calling InternalEndSession()
+		void InternalEndSession()
 		{
-			static Instrumentor instance;
-			return instance;
+			if (m_CurrentSession)
+			{
+				WriteFooter();
+				m_OutputStream.close();
+				delete m_CurrentSession;
+				m_CurrentSession = nullptr;
+			}
 		}
 	};
 
@@ -124,8 +154,7 @@ namespace Velvet {
 			long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
 			long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
 
-			uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
-			Instrumentor::Get().WriteProfile({ m_Name, start, end, threadID });
+			Instrumentor::Get().WriteProfile({ m_Name, start, end, std::this_thread::get_id() });
 
 			m_Stopped = true;
 		}
