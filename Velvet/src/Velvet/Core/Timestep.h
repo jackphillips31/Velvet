@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Velvet/Core/Core.h"
+
 namespace Velvet {
 
 	class Timestep

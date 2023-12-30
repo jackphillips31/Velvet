@@ -1,8 +1,8 @@
 #pragma once
 
-#include "VertexArray.h"
-
 #include <glm/glm.hpp>
+
+#include "Velvet/Renderer/VertexArray.h"
 
 namespace Velvet {
 

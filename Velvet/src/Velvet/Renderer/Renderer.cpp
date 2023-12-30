@@ -1,8 +1,8 @@
 #include <vlpch.h>
-#include "Renderer.h"
+#include "Velvet/Renderer/Renderer.h"
 
-#include "Renderer2D.h"
-#include "UIController.h"
+#include "Velvet/Renderer/Renderer2D.h"
+#include "Velvet/Renderer/UIController.h"
 
 #include "Velvet/Assets/Shaders/FlatColorShaderSource.h"
 #include "Velvet/Assets/Shaders/TextureShaderSource.h"

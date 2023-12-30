@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "OpenGLVertexArray.h"
+#include "Platform/OpenGL/OpenGLVertexArray.h"
 
 #include <glad/glad.h>
 
@@ -9,17 +9,17 @@ namespace Velvet {
 	{
 		switch (type)
 		{
-			case Velvet::ShaderDataType::Float:		return GL_FLOAT;
-			case Velvet::ShaderDataType::Float2:	return GL_FLOAT;
-			case Velvet::ShaderDataType::Float3:	return GL_FLOAT;
-			case Velvet::ShaderDataType::Float4:	return GL_FLOAT;
-			case Velvet::ShaderDataType::Mat3:		return GL_FLOAT;
-			case Velvet::ShaderDataType::Mat4:		return GL_FLOAT;
-			case Velvet::ShaderDataType::Int:		return GL_INT;
-			case Velvet::ShaderDataType::Int2:		return GL_INT;
-			case Velvet::ShaderDataType::Int3:		return GL_INT;
-			case Velvet::ShaderDataType::Int4:		return GL_INT;
-			case Velvet::ShaderDataType::Bool:		return GL_BOOL;
+			case ShaderDataType::Float:		return GL_FLOAT;
+			case ShaderDataType::Float2:	return GL_FLOAT;
+			case ShaderDataType::Float3:	return GL_FLOAT;
+			case ShaderDataType::Float4:	return GL_FLOAT;
+			case ShaderDataType::Mat3:		return GL_FLOAT;
+			case ShaderDataType::Mat4:		return GL_FLOAT;
+			case ShaderDataType::Int:		return GL_INT;
+			case ShaderDataType::Int2:		return GL_INT;
+			case ShaderDataType::Int3:		return GL_INT;
+			case ShaderDataType::Int4:		return GL_INT;
+			case ShaderDataType::Bool:		return GL_BOOL;
 		}
 
 		VL_CORE_ASSERT(false, "Unknown ShaderDataType!");

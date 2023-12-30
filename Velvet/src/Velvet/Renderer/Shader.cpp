@@ -1,7 +1,7 @@
 #include <vlpch.h>
-#include "Shader.h"
+#include "Velvet/Renderer/Shader.h"
 
-#include "Renderer.h"
+#include "Velvet/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Velvet {

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Layer.h"
+#include "Velvet/Core/Core.h"
+#include "Velvet/Core/Layer.h"
 
 #include <vector>
 
@@ -9,7 +10,7 @@ namespace Velvet {
 	class LayerStack
 	{
 	public:
-		LayerStack();
+		LayerStack() = default;
 		~LayerStack();
 
 		void PushLayer(Layer* layer);

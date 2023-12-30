@@ -1,8 +1,7 @@
 #include <vlpch.h>
-#include "Buffer.h"
+#include "Velvet/Renderer/Buffer.h"
 
-#include "Renderer.h"
-
+#include "Velvet/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
 namespace Velvet {

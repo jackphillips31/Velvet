@@ -1,11 +1,9 @@
 #include <vlpch.h>
-#include "WindowsWindow.h"
+#include "Platform/Windows/WindowsWindow.h"
 
 #include "Velvet/Events/ApplicationEvent.h"
 #include "Velvet/Events/MouseEvent.h"
 #include "Velvet/Events/KeyEvent.h"
-
-#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Velvet {
 
@@ -44,7 +42,6 @@ namespace Velvet {
 		{
 			VL_PROFILE_SCOPE("glfwInit");
 
-			VL_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			VL_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
@@ -58,7 +55,7 @@ namespace Velvet {
 			glfwSetWindowSizeLimits(m_Window, 1280, 720, GLFW_DONT_CARE, GLFW_DONT_CARE);
 		}
 
-		m_Context = CreateScope<OpenGLContext>(m_Window);
+		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -160,10 +157,10 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		glfwDestroyWindow(m_Window);
+		--s_GLFWWindowCount;
 		m_Context.reset();
-		if (--s_GLFWWindowCount == 0)
+		if (s_GLFWWindowCount == 0)
 		{
-			VL_CORE_INFO("Terminating GLFW");
 			glfwTerminate();
 		}
 	}

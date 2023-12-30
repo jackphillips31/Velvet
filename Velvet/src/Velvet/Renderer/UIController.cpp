@@ -1,7 +1,7 @@
 #include <vlpch.h>
-#include "UIController.h"
+#include "Velvet/Renderer/UIController.h"
 
-#include "Renderer.h"
+#include "Velvet/Renderer/Renderer.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

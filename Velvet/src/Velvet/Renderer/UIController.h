@@ -2,9 +2,9 @@
 
 #include "Velvet/Core/Application.h"
 
-#include "OrthographicCameraController.h"
-#include "Shader.h"
-#include "VertexArray.h"
+#include "Velvet/Renderer/OrthographicCameraController.h"
+#include "Velvet/Renderer/Shader.h"
+#include "Velvet/Renderer/VertexArray.h"
 
 namespace Velvet {
 

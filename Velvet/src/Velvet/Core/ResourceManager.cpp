@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "ResourceManager.h"
+#include "Velvet/Core/ResourceManager.h"
 
 namespace Velvet {
 

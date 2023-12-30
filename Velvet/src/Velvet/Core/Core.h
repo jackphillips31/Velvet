@@ -44,22 +44,6 @@
 #endif
 // End of platform detection
 
-// DLL support
-#ifdef VL_PLATFORM_WINDOWS
-	#if VL_DYNAMIC_LINK
-		#ifdef VL_BUILD_DLL
-			#define VELVET_API __declspec(dllexport)
-		#else
-			#define VELVET_API __declspec(dllimport)
-		#endif
-	#else
-		#define VELVET_API
-	#endif
-#else
-	#error "Velvet only supports Windows!"
-#endif
-// End of DLL support
-
 #ifdef VL_DEBUG
 	#define VL_ENABLE_ASSERTS
 	#define VL_PROFILE 0

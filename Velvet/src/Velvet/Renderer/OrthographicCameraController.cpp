@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "OrthographicCameraController.h"
+#include "Velvet/Renderer/OrthographicCameraController.h"
 
 #include "Velvet/Core/Input.h"
 #include "Velvet/Core/KeyCodes.h"

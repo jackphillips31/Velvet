@@ -1,8 +1,6 @@
 #pragma once
 
-#include "RendererAPI.h"
-
-#include "Platform/OpenGL/OpenGLRendererAPI.h"
+#include "Velvet/Renderer/RendererAPI.h"
 
 namespace Velvet {
 
@@ -11,7 +9,7 @@ namespace Velvet {
 	public:
 		inline static void Init()
 		{
-			s_RendererAPI = CreateScope<OpenGLRendererAPI>();
+			s_RendererAPI = RendererAPI::Create();
 			s_RendererAPI->Init();
 		}
 

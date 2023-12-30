@@ -1,7 +1,7 @@
 #include <vlpch.h>
-#include "Texture.h"
+#include "Velvet/Renderer/Texture.h"
 
-#include "Renderer.h"
+#include "Velvet/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGlTexture.h"
 
 namespace Velvet {

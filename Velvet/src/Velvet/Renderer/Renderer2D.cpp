@@ -1,8 +1,8 @@
 #include <vlpch.h>
-#include "Renderer2D.h"
+#include "Velvet/Renderer/Renderer2D.h"
 
-#include "RenderCommand.h"
-#include "Renderer.h"
+#include "Velvet/Renderer/Renderer.h"
+#include "Velvet/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

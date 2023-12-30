@@ -1,10 +1,9 @@
 #pragma once
 
-#include "Core.h"
-#include "Window.h"
-#include "LayerStack.h"
-#include "Timestep.h"
+#include "Velvet/Core/Core.h"
 
+#include "Velvet/Core/Window.h"
+#include "Velvet/Core/LayerStack.h"
 #include "Velvet/Events/Event.h"
 #include "Velvet/Events/ApplicationEvent.h"
 

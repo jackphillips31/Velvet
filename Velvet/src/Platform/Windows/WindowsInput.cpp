@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "WindowsInput.h"
+#include "Platform/Windows/WindowsInput.h"
 
 #include "Velvet/Core/Application.h"
 #include <GLFW/glfw3.h>

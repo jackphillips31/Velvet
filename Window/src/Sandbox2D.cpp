@@ -6,8 +6,6 @@
 
 #include "Assets/Textures/DefaultTexture.h"
 
-#include <string>
-
 Sandbox2D::Sandbox2D()
 	: Layer("Sandbox2D"),
 	m_Window(Velvet::Application::Get().GetWindow()),

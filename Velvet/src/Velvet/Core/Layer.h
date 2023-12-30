@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core.h"
-#include "Timestep.h"
+#include "Velvet/Core/Core.h"
+#include "Velvet/Core/Timestep.h"
 #include "Velvet/Events/Event.h"
 
 namespace Velvet {

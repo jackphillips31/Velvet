@@ -1,9 +1,9 @@
 #pragma once
 
-#include "OrthographicCamera.h"
-#include "Shader.h"
-#include "Texture.h"
-#include "VertexArray.h"
+#include "Velvet/Renderer/OrthographicCamera.h"
+#include "Velvet/Renderer/Shader.h"
+#include "Velvet/Renderer/Texture.h"
+#include "Velvet/Renderer/VertexArray.h"
 
 namespace Velvet {
 

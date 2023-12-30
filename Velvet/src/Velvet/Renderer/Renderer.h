@@ -1,11 +1,11 @@
 #pragma once
 
+#include "Velvet/Renderer/RenderCommand.h"
+
+#include "Velvet/Renderer/OrthographicCamera.h"
+#include "Velvet/Renderer/Shader.h"
+
 #include "Velvet/Core/ResourceManager.h"
-
-#include "RenderCommand.h"
-
-#include "OrthographicCamera.h"
-#include "Shader.h"
 
 namespace Velvet {
 

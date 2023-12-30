@@ -1,4 +1,5 @@
 #pragma once
+#include "Velvet/Core/Core.h"
 
 #ifdef VL_PLATFORM_WINDOWS
 

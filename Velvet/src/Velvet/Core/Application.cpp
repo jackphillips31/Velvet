@@ -1,7 +1,7 @@
 #include <vlpch.h>
-#include "Application.h"
+#include "Velvet/Core/Application.h"
 
-#include "Input.h"
+#include "Velvet/Core/Input.h"
 
 #include "Velvet/Renderer/Renderer.h"
 #include "Velvet/Renderer/UIController.h"

@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "Window.h"
+#include "Velvet/Core/Window.h"
 
 #ifdef VL_PLATFORM_WINDOWS
 	#include "Platform/Windows/WindowsWindow.h"
