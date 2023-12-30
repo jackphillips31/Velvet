@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "Input.h"
+#include "Velvet/Core/Input.h"
 
 #ifdef VL_PLATFORM_WINDOWS
 	#include "Platform/Windows/WindowsInput.h"
@@ -7,13 +7,15 @@
 
 namespace Velvet {
 
-	void Input::Init()
+	Scope<Input> Input::s_Instance = Input::Create();
+
+	Scope<Input> Input::Create()
 	{
 	#ifdef VL_PLATFORM_WINDOWS
-		s_Instance = CreateScope<WindowsInput>();
+		return CreateScope<WindowsInput>();
 	#else
 		VL_CORE_ASSERT(false, "Unknown Platform!");
-		s_Instance = nullptr;
+		return nullptr;
 	#endif
 	}
 

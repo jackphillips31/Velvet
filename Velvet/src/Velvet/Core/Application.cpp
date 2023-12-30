@@ -23,7 +23,6 @@ namespace Velvet {
 		m_Window = Window::Create();
 		m_Window->SetEventCallback(VL_BIND_EVENT_FN(Application::OnEvent));
 
-		Input::Init();
 		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();

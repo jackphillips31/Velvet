@@ -6,8 +6,6 @@
 
 namespace Velvet {
 
-	Scope<Input> Input::s_Instance = nullptr;
-
 	bool WindowsInput::IsKeyPressedImpl(KeyCode key)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());

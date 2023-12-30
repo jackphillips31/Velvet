@@ -9,8 +9,6 @@ namespace Velvet {
 	class Input
 	{
 	public:
-		static void Init();
-
 		inline static bool IsKeyPressed(KeyCode key) { return s_Instance->IsKeyPressedImpl(key); }
 
 		inline static bool IsMouseButtonPressed(MouseCode button) { return s_Instance->IsMouseButtonPressedImpl(button); }
@@ -18,6 +16,7 @@ namespace Velvet {
 		inline static float GetMouseX() { return s_Instance->GetMouseXImpl(); }
 		inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 
+		static Scope<Input> Create();
 		inline static void Shutdown() { s_Instance.reset(); }
 	protected:
 		virtual bool IsKeyPressedImpl(KeyCode key) = 0;
