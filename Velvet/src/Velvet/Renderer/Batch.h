@@ -40,8 +40,8 @@ namespace Velvet {
 		uint32_t GetBufferCount() const { return m_BufferCount; }
 		uint32_t GetQuadCount() const { return m_QuadCount; }
 
-		Scope<float[]> CreateVertexBuffer();
-		Scope<uint32_t[]> CreateIndexBuffer();
+		Ref<VertexBuffer> CreateVertexBuffer();
+		Ref<IndexBuffer> CreateIndexBuffer();
 	private:
 		void CalculateSizeAndCount();
 		void AddBufferElement(QuadVertex& bufferElement);
@@ -52,6 +52,9 @@ namespace Velvet {
 		std::vector<QuadVertex> m_BufferElements;
 		std::vector<uint32_t> m_IndexBufferArray;
 		BufferLayout m_Layout;
+
+		Ref<VertexBuffer> m_VertexBufferObject;
+		Ref<IndexBuffer> m_IndexBufferObject;
 	};
 
 }

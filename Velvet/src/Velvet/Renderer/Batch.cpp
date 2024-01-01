@@ -40,11 +40,11 @@ namespace Velvet {
 		m_QuadCount++;
 	}
 
-	Scope<float[]> RenderBatch::CreateVertexBuffer()
+	Ref<VertexBuffer> RenderBatch::CreateVertexBuffer()
 	{
 		VL_PROFILE_FUNCTION();
 
-		Scope<float[]> result = CreateScope<float[]>(m_BufferCount);
+		float* result = new float[m_BufferCount];
 
 		uint32_t index = 0;
 		for (const QuadVertex& source : m_BufferElements)
@@ -57,26 +57,24 @@ namespace Velvet {
 				source.TexCoord.x, source.TexCoord.y,
 				source.Color.x, source.Color.y, source.Color.z, source.Color.w
 			};
-			std::memcpy(reinterpret_cast<char*>(result.get()) + bufferOffset, tempArray, bufferSize);
+			std::memcpy(reinterpret_cast<char*>(result) + bufferOffset, tempArray, bufferSize);
 
 			index++;
 		}
 
-		return result;
+		m_VertexBufferObject = VertexBuffer::Create(result, GetBufferSize());
+		delete[] result;
+		return m_VertexBufferObject;
 	}
 
-	Scope<uint32_t[]> RenderBatch::CreateIndexBuffer()
+	Ref<IndexBuffer> RenderBatch::CreateIndexBuffer()
 	{
 		VL_PROFILE_FUNCTION();
 
 		const int indicesPerQuad = 6;
-		const size_t indiceCount = indicesPerQuad * m_QuadCount;
 
-		Scope<uint32_t[]> result = CreateScope<uint32_t[]>(indiceCount);
-
-		std::memcpy(reinterpret_cast<char*>(result.get()), m_IndexBufferArray.data(), indiceCount * 4);
-
-		return result;
+		m_IndexBufferObject = IndexBuffer::Create(m_IndexBufferArray.data(), GetQuadCount() * indicesPerQuad);
+		return m_IndexBufferObject;
 	}
 
 	void RenderBatch::CalculateSizeAndCount()

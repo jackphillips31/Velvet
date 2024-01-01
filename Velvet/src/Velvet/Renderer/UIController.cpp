@@ -65,11 +65,8 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		Scope<float[]> BatchVertexBuffer = m_UIData->UIRenderBatch.CreateVertexBuffer();
-		Scope<uint32_t[]> BatchIndexBuffer = m_UIData->UIRenderBatch.CreateIndexBuffer();
-
-		Ref<VertexBuffer> batchVBO = VertexBuffer::Create(BatchVertexBuffer.get(), m_UIData->UIRenderBatch.GetBufferSize());
-		Ref<IndexBuffer> batchIBO = IndexBuffer::Create(BatchIndexBuffer.get(), m_UIData->UIRenderBatch.GetQuadCount() * 6);
+		Ref<VertexBuffer> batchVBO = m_UIData->UIRenderBatch.CreateVertexBuffer();
+		Ref<IndexBuffer> batchIBO = m_UIData->UIRenderBatch.CreateIndexBuffer();
 		batchVBO->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
 			{ ShaderDataType::Float2, "a_TexCoord"},
@@ -91,8 +88,6 @@ namespace Velvet {
 		m_UIData->BatchVertexArray->Bind();
 		RenderCommand::DrawIndexed(m_UIData->BatchVertexArray);
 
-		BatchVertexBuffer.reset();
-		BatchIndexBuffer.reset();
 		m_UIData->BatchVertexArray.reset();
 		batchVBO.reset();
 		batchIBO.reset();
