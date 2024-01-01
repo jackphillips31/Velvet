@@ -18,11 +18,11 @@ namespace Velvet {
 		m_Data = CreateScope<Renderer2DStorage>();
 		m_Data->QuadVertexArray = VertexArray::Create();
 
-		float squareVertices[5 * 4] = {
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
+		float squareVertices[9 * 4] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f
 		};
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
@@ -31,7 +31,8 @@ namespace Velvet {
 
 		squareVBO->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float2, "a_TexCoord" }
+			{ ShaderDataType::Float2, "a_TexCoord" },
+			{ ShaderDataType::Float4, "a_Color"}
 		});
 
 		m_Data->QuadVertexArray->AddVertexBuffer(squareVBO);
@@ -78,8 +79,8 @@ namespace Velvet {
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 		m_Data->TextureShader->SetFloat4("u_Color", color);
-		m_Data->WhiteTexture->Bind();
 		m_Data->TextureShader->SetMat4("u_Transform", transform);
+		m_Data->WhiteTexture->Bind();
 
 		m_Data->QuadVertexArray->Bind();
 		RenderCommand::DrawIndexed(m_Data->QuadVertexArray);
@@ -97,8 +98,8 @@ namespace Velvet {
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 		m_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
-		texture->Bind();
 		m_Data->TextureShader->SetMat4("u_Transform", transform);
+		texture->Bind();
 
 		m_Data->QuadVertexArray->Bind();
 		RenderCommand::DrawIndexed(m_Data->QuadVertexArray);

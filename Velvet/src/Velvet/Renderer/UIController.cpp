@@ -28,26 +28,6 @@ namespace Velvet {
 
 		m_UIData->UICameraController.SetCameraSettings(UICameraSettings);
 
-		m_UIData->QuadVertexArray = VertexArray::Create();
-
-		float squareVertices[3 * 4] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f
-		};
-		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-
-		Ref<VertexBuffer> squareVBO = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
-		Ref<IndexBuffer> squareIBO = IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
-
-		squareVBO->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" }
-			});
-
-		m_UIData->QuadVertexArray->AddVertexBuffer(squareVBO);
-		m_UIData->QuadVertexArray->SetIndexBuffer(squareIBO);
-
 		m_UIData->WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		m_UIData->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
@@ -74,25 +54,49 @@ namespace Velvet {
 	{
 		UIElement newElement(pixelPosition, size, color, orientation);
 		m_UIElements->push_back(newElement);
+
+		glm::vec3 normPos = { NDCFromPixel(pixelPosition, orientation), 1.0f };
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), normPos);
+
+		m_UIData->UIRenderBatch.AddQuadBufferElement(QuadBufferElement(normPos, transform, color));
 	}
 
 	void UIController::Render()
 	{
 		VL_PROFILE_FUNCTION();
 
+		Scope<float[]> BatchVertexBuffer = m_UIData->UIRenderBatch.CreateVertexBuffer();
+		Scope<uint32_t[]> BatchIndexBuffer = m_UIData->UIRenderBatch.CreateIndexBuffer();
+
+		Ref<VertexBuffer> batchVBO = VertexBuffer::Create(BatchVertexBuffer.get(), m_UIData->UIRenderBatch.GetBufferSize());
+		Ref<IndexBuffer> batchIBO = IndexBuffer::Create(BatchIndexBuffer.get(), m_UIData->UIRenderBatch.GetQuadCount() * 6);
+		batchVBO->SetLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float2, "a_TexCoord"},
+			{ ShaderDataType::Float4, "a_Color" }
+		});
+
+		m_UIData->BatchVertexArray = VertexArray::Create();
+		m_UIData->BatchVertexArray->AddVertexBuffer(batchVBO);
+		m_UIData->BatchVertexArray->SetIndexBuffer(batchIBO);
+		
 		BeginScene(m_UIData->UICameraController.GetCamera());
-		if (m_UIElements->empty())
-		{
-			VL_CORE_ASSERT(false, "No UI Elements to render!");
-		}
-		else
-		{
-			for (UIElement& elementRef : *m_UIElements)
-			{
-				//VL_CORE_INFO("Render Element!");
-				DrawButton(elementRef.PixelPosition, elementRef.Size, elementRef.Color, elementRef.ElementOrientation);
-			}
-		}
+
+		glm::mat4 transform = glm::mat4(1.0f);
+
+		m_UIData->TextureShader->SetFloat4("u_Color", { 1.0f, 1.0f, 1.0f, 1.0f });
+		m_UIData->TextureShader->SetMat4("u_Transform", transform);
+		m_UIData->WhiteTexture->Bind();
+
+		m_UIData->BatchVertexArray->Bind();
+		RenderCommand::DrawIndexed(m_UIData->BatchVertexArray);
+
+		BatchVertexBuffer.reset();
+		BatchIndexBuffer.reset();
+		m_UIData->BatchVertexArray.reset();
+		batchVBO.reset();
+		batchIBO.reset();
+
 		EndScene();
 	}
 
@@ -107,21 +111,6 @@ namespace Velvet {
 	void UIController::EndScene()
 	{
 		VL_PROFILE_FUNCTION();
-	}
-
-	void UIController::DrawButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
-	{
-		VL_PROFILE_FUNCTION();
-
-		glm::vec2 normalizedPos = NDCFromPixel(pixelPosition, orientation);
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { normalizedPos.x, normalizedPos.y, 1.0f }) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-		m_UIData->TextureShader->SetFloat4("u_Color", color);
-		m_UIData->WhiteTexture->Bind();
-		m_UIData->TextureShader->SetMat4("u_Transform", transform);
-
-		m_UIData->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(m_UIData->QuadVertexArray);
 	}
 
 	glm::vec2 UIController::GetWindowDimensions()
