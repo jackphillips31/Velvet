@@ -73,7 +73,7 @@ namespace Velvet {
 				element.GetComponentCount(),
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
-				layout.GetStride(),
+				(GLsizei)layout.GetStride(),
 				(const void*)element.Offset
 			);
 			index++;

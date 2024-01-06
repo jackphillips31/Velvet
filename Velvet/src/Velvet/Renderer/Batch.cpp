@@ -83,7 +83,7 @@ namespace Velvet {
 				index++;
 			}
 
-			m_VertexBufferObject = VertexBuffer::Create(result, GetBufferSize());
+			m_VertexBufferObject = VertexBuffer::Create(result, (uint32_t)GetBufferSize());
 			delete[] result;
 			m_VBOExist = true;
 		}

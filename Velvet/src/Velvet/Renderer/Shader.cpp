@@ -34,9 +34,12 @@ namespace Velvet {
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None:	VL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:	return CreateRef<OpenGLShader>(name, shaderSource);
+			case RendererAPI::API::None:	VL_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::OpenGL:	return CreateRef<OpenGLShader>(name, shaderSource);
 		}
+
+		VL_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
 	}
 
 	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
