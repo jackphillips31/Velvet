@@ -18,8 +18,12 @@ namespace Velvet {
 
 		m_SceneData = CreateScope<Renderer::SceneData>();
 		m_ShaderLibrary = CreateScope<ShaderLibrary>();
+		m_Texture2DLibrary = CreateScope<Texture2DLibrary>();
 
 		m_ShaderLibrary->Load("Texture", TextureShaderSource);
+
+		m_Texture2DLibrary->LoadSimple("DefaultWhite", 0xffffffff);
+
 
 		RenderCommand::Init();
 		Renderer2D::Init();

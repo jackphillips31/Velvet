@@ -6,7 +6,7 @@
 
 namespace Velvet {
 
-	OrthographicCameraController::OrthographicCameraController(glm::vec2 initialWindowDimensions, bool rotation, bool zoom) :
+	OrthographicCameraController::OrthographicCameraController(glm::vec2& initialWindowDimensions, bool rotation, bool zoom) :
 		m_Scale(1.0f),
 		m_AspectRatio(initialWindowDimensions.x / initialWindowDimensions.y),
 		m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, initialWindowDimensions),

@@ -46,9 +46,17 @@ namespace Velvet {
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
 		stbi_image_free(data);
+
+		// Extract name from filepath
+		auto lastSlash = path.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = path.rfind('.');
+		auto count = lastDot == std::string::npos ? path.size() - lastSlash : lastDot - lastSlash;
+		m_Name = path.substr(lastSlash, count);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(Ref<RawImageData>& imageData)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& name, Ref<RawImageData>& imageData)
+		: m_Name(name)
 	{
 		VL_PROFILE_FUNCTION();
 
@@ -72,6 +80,9 @@ namespace Velvet {
 			dataFormat = GL_RGB;
 		}
 
+		m_InternalFormat = internalFormat;
+		m_DataFormat = dataFormat;
+
 		VL_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
@@ -85,8 +96,8 @@ namespace Velvet {
 		stbi_image_free(data);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-		: m_Width(width), m_Height(height)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& name, uint32_t width, uint32_t height)
+		:m_Name(name), m_Width(width), m_Height(height)
 	{
 		m_InternalFormat = GL_RGBA8;
 		m_DataFormat = GL_RGBA;

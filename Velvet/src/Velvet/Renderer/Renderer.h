@@ -4,6 +4,7 @@
 
 #include "Velvet/Renderer/OrthographicCamera.h"
 #include "Velvet/Renderer/Shader.h"
+#include "Velvet/Renderer/Texture.h"
 
 #include "Velvet/Core/ResourceManager.h"
 
@@ -27,6 +28,7 @@ namespace Velvet {
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		inline static ShaderLibrary& GetShaderLibrary() { return *m_ShaderLibrary; }
+		inline static Texture2DLibrary& GetTexture2DLibrary() { return *m_Texture2DLibrary; }
 	private:
 		struct SceneData
 		{
@@ -35,6 +37,7 @@ namespace Velvet {
 
 		static Scope<SceneData> m_SceneData;
 		static Scope<ShaderLibrary> m_ShaderLibrary;
+		static Scope<Texture2DLibrary> m_Texture2DLibrary;
 	};
 
 }

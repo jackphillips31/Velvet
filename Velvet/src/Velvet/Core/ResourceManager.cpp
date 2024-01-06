@@ -35,6 +35,11 @@ namespace Velvet {
 		return m_Images.find(name) != m_Images.end();
 	}
 
+	void ResourceManager::DeleteImage(const std::string& name)
+	{
+		m_Images.erase(name);
+	}
+
 	void ResourceManager::Shutdown()
 	{
 		m_Images.clear();

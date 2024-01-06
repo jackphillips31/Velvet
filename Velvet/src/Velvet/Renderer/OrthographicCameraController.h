@@ -17,7 +17,7 @@ namespace Velvet {
 			bool zoom = true;
 		};
 	public:
-		OrthographicCameraController(glm::vec2 initialWindowDimensions, bool rotation = false, bool zoom = true);
+		OrthographicCameraController(glm::vec2& initialWindowDimensions, bool rotation = false, bool zoom = true);
 		
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);

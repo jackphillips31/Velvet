@@ -20,6 +20,8 @@ namespace Velvet {
 		static Ref<RawImageData> GetImage(const std::string& name);
 		static bool Exists(const std::string& name);
 
+		static void DeleteImage(const std::string& name);
+
 		static void Shutdown();
 	private:
 		static std::unordered_map<std::string, Ref<RawImageData>> m_Images;
