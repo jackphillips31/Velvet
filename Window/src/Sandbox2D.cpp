@@ -48,7 +48,7 @@ void Sandbox2D::OnAttach()
 		Velvet::UIController::Orientation::TopRight
 	);
 
-	Velvet::Ref<Velvet::RawImageData> defaultImage = Velvet::ResourceManager::LoadImage("DefaultTexture", DefaultTexturePNGData, SizeOfDefaultTexturePNGData);
+	Velvet::Ref<Velvet::RawImageData> defaultImage = Velvet::ResourceManager::LoadImage("DefaultTexture", DefaultTexturePNGData, (const int)SizeOfDefaultTexturePNGData);
 
 	m_DefaultTexture = Velvet::Texture2D::Create(defaultImage);
 
