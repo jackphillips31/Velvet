@@ -10,6 +10,7 @@ namespace Velvet {
 
 	Scope<Renderer::SceneData> Renderer::m_SceneData = nullptr;
 	Scope<ShaderLibrary> Renderer::m_ShaderLibrary = nullptr;
+	Scope<Texture2DLibrary> Renderer::m_Texture2DLibrary = nullptr;
 
 	void Renderer::Init()
 	{
@@ -21,7 +22,6 @@ namespace Velvet {
 		m_Texture2DLibrary = CreateScope<Texture2DLibrary>();
 
 		m_ShaderLibrary->Load("Texture", TextureShaderSource);
-
 		m_Texture2DLibrary->LoadSimple("DefaultWhite", 0xffffffff);
 
 

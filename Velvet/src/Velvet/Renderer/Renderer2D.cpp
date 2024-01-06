@@ -38,9 +38,9 @@ namespace Velvet {
 		m_Data->QuadVertexArray->AddVertexBuffer(squareVBO);
 		m_Data->QuadVertexArray->SetIndexBuffer(squareIBO);
 
+		m_Data->TextureShader = Renderer::GetShaderLibrary().Get("Texture");
 		m_Data->WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
 
-		m_Data->TextureShader = Renderer::GetShaderLibrary().Get("Texture");
 		m_Data->TextureShader->Bind();
 		m_Data->TextureShader->SetInt("u_Texture", 0);
 	}

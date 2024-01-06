@@ -58,28 +58,28 @@ namespace Velvet {
 
 	Ref<Texture2D> Texture2DLibrary::Load(const std::string& filepath)
 	{
-		Ref<Texture2D> result = CreateRef<Texture2D>(filepath);
+		Ref<Texture2D> result = Texture2D::Create(filepath);
 		Add(result);
 		return result;
 	}
 
 	Ref<Texture2D> Texture2DLibrary::Load(const std::string& name, const Ref<RawImageData>& imageData)
 	{
-		Ref<Texture2D> result = CreateRef<Texture2D>(name, imageData);
+		Ref<Texture2D> result = Texture2D::Create((std::string&)name, (Ref<RawImageData>&)imageData);
 		Add(result);
 		return result;
 	}
 
 	Ref<Texture2D> Texture2DLibrary::Load(const std::string& name, uint32_t width, uint32_t height)
 	{
-		Ref<Texture2D> result = CreateRef<Texture2D>(name, width, height);
+		Ref<Texture2D> result = Texture2D::Create(name, width, height);
 		Add(result);
 		return result;
 	}
 
 	Ref<Texture2D> Texture2DLibrary::LoadSimple(const std::string& name, uint32_t data)
 	{
-		Ref<Texture2D> result = CreateRef<Texture2D>(name, 1, 1);
+		Ref<Texture2D> result = Texture2D::Create(name, 1, 1);
 		result->SetData(&data, sizeof(uint32_t));
 		Add(result);
 		return result;

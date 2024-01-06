@@ -50,7 +50,8 @@ void Sandbox2D::OnAttach()
 
 	Velvet::Ref<Velvet::RawImageData> defaultImage = Velvet::ResourceManager::LoadImage("DefaultTexture", DefaultTexturePNGData, (const int)SizeOfDefaultTexturePNGData);
 
-	m_DefaultTexture = Velvet::Texture2D::Create(defaultImage);
+	Velvet::Texture2DLibrary& textureLibrary = Velvet::Renderer::GetTexture2DLibrary();
+	m_DefaultTexture = textureLibrary.Load("DefaultTexture", defaultImage);
 
 	Velvet::UIController::PreRender();
 }

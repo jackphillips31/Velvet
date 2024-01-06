@@ -26,11 +26,9 @@ namespace Velvet {
 
 		m_UIData->UICameraController.SetCameraSettings(UICameraSettings);
 
-		m_UIData->WhiteTexture = Texture2D::Create(1, 1);
-		uint32_t whiteTextureData = 0xffffffff;
-		m_UIData->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
-
 		m_UIData->TextureShader = Renderer::GetShaderLibrary().Get("Texture");
+		m_UIData->WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
+
 		m_UIData->TextureShader->Bind();
 		m_UIData->TextureShader->SetInt("u_Texture", 0);
 	}
