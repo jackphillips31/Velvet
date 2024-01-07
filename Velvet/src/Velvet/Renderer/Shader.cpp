@@ -47,7 +47,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		VL_CORE_ASSERT(!Exists(name), "Shader already exists!");
-		VL_CORE_INFO("Adding {} to ShaderLibrary!", name);
+		VL_CORE_WARN("Adding {} to ShaderLibrary!", name);
 		m_Shaders[name] = shader;
 	}
 	

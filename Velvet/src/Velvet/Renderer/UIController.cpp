@@ -11,7 +11,6 @@ namespace Velvet {
 	void UIController::Init()
 	{
 		VL_PROFILE_FUNCTION();
-
 		VL_CORE_INFO("Initializing UIController");
 
 		Window& tempWindowRef = Application::Get().GetWindow();
@@ -51,6 +50,8 @@ namespace Velvet {
 
 	void UIController::AddElement(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
 	{
+		VL_PROFILE_FUNCTION();
+
 		UIElement newElement(pixelPosition, size, color, orientation);
 		m_UIElements->push_back(newElement);
 
@@ -145,8 +146,6 @@ namespace Velvet {
 
 	glm::vec2 UIController::NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation)
 	{
-		VL_PROFILE_FUNCTION();
-
 		glm::vec2& windowDimensions = GetWindowDimensions();
 		glm::vec2& orientationFactors = GetOrientationFactors(orientation);
 		float aspectRatio = windowDimensions.x / windowDimensions.y;

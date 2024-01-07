@@ -47,7 +47,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		VL_CORE_ASSERT(!Exists(name), "Texture with this name already exists!");
-		VL_CORE_INFO("Adding {} to Texture2DLibrary!", name);
+		VL_CORE_WARN("Adding {} to Texture2DLibrary!", name);
 		m_Textures2D[name] = texture;
 	}
 

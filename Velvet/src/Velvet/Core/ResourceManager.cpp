@@ -12,7 +12,7 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 		VL_CORE_ASSERT(!Exists(name), "Image already exists!");
-		VL_CORE_INFO("Adding {} to ResourceManager", name);
+		VL_CORE_WARN("Adding {} to ResourceManager", name);
 		m_Images[name] = newImage;
 	}
 

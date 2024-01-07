@@ -8,10 +8,12 @@ namespace Velvet {
 	RenderBatch::RenderBatch(Ref<std::vector<Ref<QuadBufferElement>>> quadBuffer)
 		: m_BufferSize(0), m_BufferCount(0), m_QuadCount(0), m_QuadBufferElements(quadBuffer), m_VBOExist(false), m_IBOExist(false)
 	{
+		VL_PROFILE_FUNCTION();
 	}
 
 	RenderBatch::~RenderBatch()
 	{
+		VL_PROFILE_FUNCTION();
 	}
 
 	void RenderBatch::AddBufferElement(QuadVertex& bufferElement)
@@ -23,6 +25,8 @@ namespace Velvet {
 
 	void RenderBatch::AddQuadBufferElement(Ref<QuadBufferElement>& bufferElement)
 	{
+		VL_PROFILE_FUNCTION();
+
 		m_QuadBufferElements->push_back(bufferElement);
 
 		AddBufferElement(bufferElement->x);
@@ -48,6 +52,7 @@ namespace Velvet {
 	{
 		return m_VertexBufferObject;
 	}
+
 	Ref<IndexBuffer> RenderBatch::GetIndexBufferObject()
 	{
 		return m_IndexBufferObject;
@@ -55,14 +60,14 @@ namespace Velvet {
 
 	void RenderBatch::CreateBuffers()
 	{
+		VL_PROFILE_FUNCTION();
+
 		CreateVertexBuffer();
 		CreateIndexBuffer();
 	}
 
 	Ref<VertexBuffer> RenderBatch::CreateVertexBuffer()
 	{
-		VL_PROFILE_FUNCTION();
-
 		if (!m_VBOExist)
 		{
 			float* result = new float[m_BufferCount];
@@ -92,8 +97,6 @@ namespace Velvet {
 
 	Ref<IndexBuffer> RenderBatch::CreateIndexBuffer()
 	{
-		VL_PROFILE_FUNCTION();
-
 		if (!m_IBOExist)
 		{
 			const int indicesPerQuad = 6;

@@ -109,6 +109,8 @@ namespace Velvet {
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
+		VL_PROFILE_FUNCTION();
+
 		m_Running = false;
 		return true;
 	}
