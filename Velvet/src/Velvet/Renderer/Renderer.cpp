@@ -1,6 +1,7 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/Renderer.h"
 
+#include "Velvet/Renderer/BatchBuffer.h"
 #include "Velvet/Renderer/Renderer2D.h"
 #include "Velvet/Renderer/UIController.h"
 
@@ -26,6 +27,7 @@ namespace Velvet {
 
 
 		RenderCommand::Init();
+		BatchBuffer::Init();
 		Renderer2D::Init();
 		UIController::Init();
 	}
@@ -35,6 +37,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		RenderCommand::Shutdown();
+		BatchBuffer::Shutdown();
 		Renderer2D::Shutdown();
 		UIController::Shutdown();
 		m_SceneData.reset();

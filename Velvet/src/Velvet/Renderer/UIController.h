@@ -2,11 +2,9 @@
 
 #include "Velvet/Core/Application.h"
 
-#include "Velvet/Renderer/Batch.h"
 #include "Velvet/Renderer/OrthographicCameraController.h"
 #include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/Texture.h"
-#include "Velvet/Renderer/VertexArray.h"
 
 namespace Velvet {
 
@@ -26,13 +24,12 @@ namespace Velvet {
 		static void Shutdown();
 		static void OnEvent(Event& e);
 
-		static void AddElement(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation);
-		static void PreRender();
-		static void Render();
-	private:
-		static void BeginScene(const OrthographicCamera& camera);
-		static void EndScene();
+		static void AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation);
+		static void AddQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 
+		static void BeginScene();
+		static void EndScene();
+	private:
 		static bool OnWindowResize(WindowResizeEvent& e);
 
 		static glm::vec2 GetWindowDimensions();
@@ -48,24 +45,9 @@ namespace Velvet {
 			glm::vec2 InitialWindowDimensions;
 			Ref<Shader> TextureShader;
 			Ref<Texture2D> WhiteTexture;
-
-			Ref<VertexArray> BatchVertexArray;
-			Ref<std::vector<Ref<QuadBufferElement>>> QuadElementBuffer;
-			RenderBatch UIRenderBatch;
-		};
-
-		struct UIElement
-		{
-			UIElement(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation);
-
-			glm::vec2 PixelPosition;
-			glm::vec2 Size;
-			glm::vec4 Color;
-			Orientation ElementOrientation;
 		};
 
 		static Scope<UIData> m_UIData;
-		static Scope<std::vector<UIElement>> m_UIElements;
 	};
 
 }

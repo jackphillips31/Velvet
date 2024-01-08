@@ -47,7 +47,7 @@ namespace Velvet {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void OpenGLVertexBuffer::SetData(float* vertices, uint32_t size) const
+	void OpenGLVertexBuffer::SetData(const void* vertices, uint32_t size) const
 	{
 		VL_PROFILE_FUNCTION();
 

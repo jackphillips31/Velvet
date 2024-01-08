@@ -23,37 +23,9 @@ void Sandbox2D::OnAttach()
 	SandboxCameraSettings.zoom = true;
 	m_CameraController.SetCameraSettings(SandboxCameraSettings);
 
-	Velvet::UIController::AddElement(
-		{ 0.0f, 0.0f },
-		{ 1.0f, 1.0f },
-		{ 0.2f, 0.8f, 0.2f, 1.0f },
-		Velvet::UIController::Orientation::TopLeft
-	);
-	Velvet::UIController::AddElement(
-		{ 0.0f, 0.0f },
-		{ 1.0f, 1.0f },
-		{ 0.2f, 0.8f, 0.2f, 1.0f },
-		Velvet::UIController::Orientation::BottomLeft
-	);
-	Velvet::UIController::AddElement(
-		{ 0.0f, 0.0f },
-		{ 1.0f, 1.0f },
-		{ 0.2f, 0.2f, 0.8f, 1.0f },
-		Velvet::UIController::Orientation::BottomRight
-	);
-	Velvet::UIController::AddElement(
-		{ 0.0f, 0.0f },
-		{ 1.0f, 1.0f },
-		{ 0.2f, 0.2f, 0.8f, 1.0f },
-		Velvet::UIController::Orientation::TopRight
-	);
-
 	Velvet::Ref<Velvet::RawImageData> defaultImage = Velvet::ResourceManager::LoadImage("DefaultTexture", DefaultTexturePNGData, (const int)SizeOfDefaultTexturePNGData);
-
 	Velvet::Texture2DLibrary& textureLibrary = Velvet::Renderer::GetTexture2DLibrary();
 	m_DefaultTexture = textureLibrary.Load("DefaultTexture", defaultImage);
-
-	Velvet::UIController::PreRender();
 }
 
 void Sandbox2D::OnDetach()
@@ -102,8 +74,15 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 	{
 		VL_PROFILE_SCOPE("Renderer UI");
 
-		Velvet::UIController::Render();
+		Velvet::UIController::BeginScene();
+		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::UIController::Orientation::TopLeft);
+		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::UIController::Orientation::TopRight);
+		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::UIController::Orientation::BottomRight);
+		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::UIController::Orientation::BottomLeft);
+		Velvet::UIController::EndScene();
 	}
+
+
 }
 
 void Sandbox2D::OnImGuiRender()

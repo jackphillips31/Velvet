@@ -1,12 +1,14 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/UIController.h"
 
+#include "Velvet/Renderer/BatchBuffer.h"
 #include "Velvet/Renderer/Renderer.h"
+
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Velvet {
 
 	Scope<UIController::UIData> UIController::m_UIData = nullptr;
-	Scope<std::vector<UIController::UIElement>> UIController::m_UIElements = nullptr;
 
 	void UIController::Init()
 	{
@@ -17,7 +19,6 @@ namespace Velvet {
 		glm::vec2 windowDimensions(tempWindowRef.GetWidth(), tempWindowRef.GetHeight());
 
 		m_UIData = CreateScope<UIData>(tempWindowRef, windowDimensions);
-		m_UIElements = CreateScope<std::vector<UIElement>>();
 
 		OrthographicCameraController::CameraSettings UICameraSettings;
 		UICameraSettings.rotation = false;
@@ -37,7 +38,6 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		m_UIData.reset();
-		m_UIElements.reset();
 	}
 
 	void UIController::OnEvent(Event& e)
@@ -48,77 +48,41 @@ namespace Velvet {
 		dispatcher.Dispatch<WindowResizeEvent>(VL_STATIC_BIND_EVENT_FN(UIController::OnWindowResize));
 	}
 
-	void UIController::AddElement(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
+	void UIController::AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
 	{
-		VL_PROFILE_FUNCTION();
-
-		UIElement newElement(pixelPosition, size, color, orientation);
-		m_UIElements->push_back(newElement);
-
 		glm::vec3 normPos = { NDCFromPixel(pixelPosition, orientation), 1.0f };
-
-		Ref<QuadBufferElement> quadElement = CreateRef<QuadBufferElement>(normPos, color);
-		m_UIData->UIRenderBatch.AddQuadBufferElement(quadElement);
+		AddQuad(normPos, size, color);
 	}
 
-	void UIController::PreRender()
+	void UIController::AddQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		VL_PROFILE_FUNCTION();
 
-		m_UIData->UIRenderBatch.CreateBuffers();
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		m_UIData->UIRenderBatch.GetVertexBufferObject()->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float2, "a_TexCoord"},
-			{ ShaderDataType::Float4, "a_Color" }
-			});
-
-		m_UIData->BatchVertexArray = VertexArray::Create();
-		m_UIData->BatchVertexArray->AddVertexBuffer(m_UIData->UIRenderBatch.GetVertexBufferObject());
-		m_UIData->BatchVertexArray->SetIndexBuffer(m_UIData->UIRenderBatch.GetIndexBufferObject());
+		BatchBuffer::AddQuad(transform, color, 12);
 	}
 
-	void UIController::Render()
+	void UIController::BeginScene()
 	{
 		VL_PROFILE_FUNCTION();
 
-		BeginScene(m_UIData->UICameraController.GetCamera());
-
-		glm::mat4 transform = glm::mat4(1.0f);
-
-		m_UIData->TextureShader->SetFloat4("u_Color", { 1.0f, 1.0f, 1.0f, 1.0f });
-		m_UIData->TextureShader->SetMat4("u_Transform", transform);
-		m_UIData->WhiteTexture->Bind();
-
-		m_UIData->BatchVertexArray->Bind();
-		RenderCommand::DrawIndexed(m_UIData->BatchVertexArray);
-
-		EndScene();
-	}
-
-	void UIController::BeginScene(const OrthographicCamera& camera)
-	{
-		VL_PROFILE_FUNCTION();
+		BatchBuffer::StartBatch();
 
 		m_UIData->TextureShader->Bind();
-		m_UIData->TextureShader->SetMat4("u_ViewProjection", camera.GetProjectionMatrix());
+		m_UIData->TextureShader->SetMat4("u_ViewProjection", m_UIData->UICameraController.GetCamera().GetProjectionMatrix());
 	}
 
 	void UIController::EndScene()
 	{
 		VL_PROFILE_FUNCTION();
+
+		BatchBuffer::Flush();
 	}
 
 	bool UIController::OnWindowResize(WindowResizeEvent& e)
 	{
-		uint32_t index = 0;
-		for (Ref<QuadBufferElement>& element : *m_UIData->QuadElementBuffer)
-		{
-			VL_CORE_WARN("---------------- QUAD {} ----------------", index);
-
-			index++;
-		}
-
 		return false;
 	}
 
@@ -159,16 +123,8 @@ namespace Velvet {
 	}
 
 	UIController::UIData::UIData(Window& window, glm::vec2& windowDimensions)
-		: WindowRef(window), UICameraController(windowDimensions), InitialWindowDimensions(windowDimensions), QuadElementBuffer(CreateRef<std::vector<Ref<QuadBufferElement>>>()), UIRenderBatch(QuadElementBuffer)
+		: WindowRef(window), UICameraController(windowDimensions), InitialWindowDimensions(windowDimensions)
 	{
-	}
-
-	UIController::UIElement::UIElement(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
-	{
-		PixelPosition = pixelPosition;
-		Size = size;
-		Color = color;
-		ElementOrientation = orientation;
 	}
 
 }
