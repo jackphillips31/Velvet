@@ -27,6 +27,7 @@ namespace Velvet {
 		OrthographicCamera& GetCamera() { return m_Camera; }
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
 
+		float GetScale() const { return m_Scale; }
 		float GetZoomLevel() const { return m_ZoomLevel; }
 		void SetZoomLevel(float level) { m_ZoomLevel = level; }
 

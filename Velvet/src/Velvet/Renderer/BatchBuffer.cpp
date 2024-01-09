@@ -164,7 +164,7 @@ namespace Velvet {
 			BatchData.WhiteTexture->Bind();
 
 			BatchData.BatchVAO->Bind();
-			RenderCommand::DrawIndexed(BatchData.BatchVAO, BatchData.IndexBufferArray.size());
+			RenderCommand::DrawIndexed(BatchData.BatchVAO, (uint32_t)BatchData.IndexBufferArray.size());
 		}
 
 		// Delete any extra buffers if they exist

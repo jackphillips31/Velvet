@@ -8,6 +8,13 @@
 
 namespace Velvet {
 
+	struct UIElement
+	{
+		glm::vec2 x;
+		glm::vec2 y;
+		uint32_t ElementID;
+	};
+
 	class UIController
 	{
 	public:
@@ -30,11 +37,17 @@ namespace Velvet {
 		static void BeginScene();
 		static void EndScene();
 	private:
-		static bool OnWindowResize(WindowResizeEvent& e);
-
 		static glm::vec2 GetWindowDimensions();
 		static glm::vec2 GetOrientationFactors(const Orientation& orientation);
 		static glm::vec2 NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation);
+		static glm::vec2 PixelFromNDC(const glm::vec2& position);
+		static float PixelPerNDC();
+
+		static void AddElement(const glm::vec2& position, const glm::vec2& size);
+		static bool CheckElementHover(const glm::vec2& mousePosition);
+		
+		static bool OnWindowResize(WindowResizeEvent& e);
+		static bool OnMouseMoved(MouseMovedEvent& e);
 	private:
 		struct UIData
 		{
@@ -45,6 +58,9 @@ namespace Velvet {
 			glm::vec2 InitialWindowDimensions;
 			Ref<Shader> TextureShader;
 			Ref<Texture2D> WhiteTexture;
+
+			uint32_t IDCounter = 0;
+			std::vector<UIElement*> UIElements;
 		};
 
 		static Scope<UIData> m_UIData;
