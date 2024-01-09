@@ -217,7 +217,7 @@ namespace Velvet {
 		return currentBuffer;
 	}
 
-	void BatchBuffer::MoveBufferPointer(const QuadVertexBufferElement* initialPtr, int count)
+	void BatchBuffer::MoveBufferPointer(QuadVertexBufferElement* initialPtr, int count)
 	{
 		VL_PROFILE_FUNCTION();
 
