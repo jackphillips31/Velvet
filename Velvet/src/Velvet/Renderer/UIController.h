@@ -39,15 +39,14 @@ namespace Velvet {
 	private:
 		static glm::vec2 GetWindowDimensions();
 		static glm::vec2 GetOrientationFactors(const Orientation& orientation);
-		static glm::vec2 NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation);
-		static glm::vec2 PixelFromNDC(const glm::vec2& position);
-		static float PixelPerNDC();
+		static glm::vec2 NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation = Orientation::TopLeft);
 
 		static void AddElement(const glm::vec2& position, const glm::vec2& size);
 		static bool CheckElementHover(const glm::vec2& mousePosition);
+		static void ClearUIElements();
 		
 		static bool OnWindowResize(WindowResizeEvent& e);
-		static bool OnMouseMoved(MouseMovedEvent& e);
+		static bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 	private:
 		struct UIData
 		{

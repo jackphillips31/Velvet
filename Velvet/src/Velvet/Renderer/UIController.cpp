@@ -37,14 +37,7 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		for (size_t i = m_UIData->UIElements.size(); i > 0; i--)
-		{
-			auto it = m_UIData->UIElements.begin() + i - 1;
-			delete* it;
-			m_UIData->UIElements.erase(it);
-		}
-		m_UIData->UIElements.clear();
-
+		ClearUIElements();
 		m_UIData.reset();
 	}
 
@@ -53,8 +46,8 @@ namespace Velvet {
 		m_UIData->UICameraController.OnEvent(e);
 
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowResizeEvent>(VL_STATIC_BIND_EVENT_FN(OnWindowResize));
-		dispatcher.Dispatch<MouseMovedEvent>(VL_STATIC_BIND_EVENT_FN(OnMouseMoved));
+		dispatcher.Dispatch<WindowResizeEvent>(VL_STATIC_BIND_EVENT_FN(UIController::OnWindowResize));
+		dispatcher.Dispatch<MouseButtonPressedEvent>(VL_STATIC_BIND_EVENT_FN(UIController::OnMouseButtonPressed));
 	}
 
 	void UIController::AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
@@ -67,18 +60,19 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		glm::vec2 pixelPos = PixelFromNDC({ position.x, position.y });
-		AddElement(pixelPos, size);
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 		BatchBuffer::AddQuad(transform, color, 12);
+		AddElement(position, size);
 	}
 
 	void UIController::BeginScene()
 	{
 		VL_PROFILE_FUNCTION();
+
+		m_UIData->IDCounter = 0;
+		ClearUIElements();
 
 		BatchBuffer::StartBatch();
 
@@ -91,19 +85,6 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		BatchBuffer::Flush();
-	}
-
-	bool UIController::OnWindowResize(WindowResizeEvent& e)
-	{
-		return false;
-	}
-
-	bool UIController::OnMouseMoved(MouseMovedEvent& e)
-	{
-		VL_CORE_WARN(e);
-		bool hover = CheckElementHover(glm::vec2(e.GetX(), e.GetY()));
-		VL_CORE_WARN("{}", hover);
-		return false;
 	}
 
 	glm::vec2 UIController::GetWindowDimensions()
@@ -130,11 +111,11 @@ namespace Velvet {
 
 	glm::vec2 UIController::NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation)
 	{
-		glm::vec2& windowDimensions = GetWindowDimensions();
-		glm::vec2& orientationFactors = GetOrientationFactors(orientation);
+		glm::vec2 windowDimensions = GetWindowDimensions();
+		glm::vec2 orientationFactors = GetOrientationFactors(orientation);
 		float aspectRatio = windowDimensions.x / windowDimensions.y;
 
-		float scale = windowDimensions.y / m_UIData->InitialWindowDimensions.y;
+		float scale = m_UIData->UICameraController.GetScale();
 
 		float normalizedX = (2.0f * pixelPosition.x) / windowDimensions.x + orientationFactors.x;
 		float normalizedY = orientationFactors.y - (2.0f * pixelPosition.y) / windowDimensions.y;
@@ -142,36 +123,18 @@ namespace Velvet {
 		return glm::vec2(normalizedX * aspectRatio * scale, normalizedY * scale);
 	}
 
-	glm::vec2 UIController::PixelFromNDC(const glm::vec2& position)
-	{
-		glm::vec2& windowDimensions = GetWindowDimensions();
-		float aspectRatio = windowDimensions.x / windowDimensions.y;
-		float scale = windowDimensions.y / m_UIData->InitialWindowDimensions.y;
-
-		float pixelPositionX = (((position.x / (aspectRatio * scale)) + 1) * windowDimensions.x) / 2;
-		float pixelPositionY = ((position.y - 1) * windowDimensions.y) / -2;
-
-		return glm::vec2(pixelPositionX, pixelPositionY);
-	}
-
-	float UIController::PixelPerNDC()
-	{
-		float height = m_UIData->WindowRef.GetHeight();
-		float scale = 2 * m_UIData->UICameraController.GetScale();
-		return height / scale;
-	}
-
 	void UIController::AddElement(const glm::vec2& position, const glm::vec2& size)
 	{
-		float pxPerNDC = PixelPerNDC();
+		VL_PROFILE_FUNCTION();
+
 		float xFactor = size.x / 2;
 		float yFactor = size.y / 2;
 
 		UIElement* newElement = new UIElement;
-		newElement->x.x = position.x - pxPerNDC * xFactor;
-		newElement->x.y = position.x + pxPerNDC * xFactor;
-		newElement->y.x = position.y - pxPerNDC * yFactor;
-		newElement->y.y = position.y + pxPerNDC * yFactor;
+		newElement->x.x = position.x - xFactor;
+		newElement->x.y = position.x + xFactor;
+		newElement->y.x = position.y - yFactor;
+		newElement->y.y = position.y + yFactor;
 		newElement->ElementID = m_UIData->IDCounter;
 
 		m_UIData->UIElements.push_back(newElement);
@@ -180,12 +143,42 @@ namespace Velvet {
 
 	bool UIController::CheckElementHover(const glm::vec2& mousePosition)
 	{
+		glm::vec2 newPos = NDCFromPixel(mousePosition);
 		for (UIElement* ptr : m_UIData->UIElements)
 		{
-			bool isBetween = (mousePosition.x >= ptr->x.x && mousePosition.x <= ptr->x.y && mousePosition.y >= ptr->y.x && mousePosition.y <= ptr->y.y);
+			bool isBetween = (newPos.x >= ptr->x.x && newPos.x <= ptr->x.y && newPos.y >= ptr->y.x && newPos.y <= ptr->y.y);
 			if (isBetween)
 				return isBetween;
 		}
+		return false;
+	}
+
+	void UIController::ClearUIElements()
+	{
+		VL_PROFILE_FUNCTION();
+
+		for (size_t i = m_UIData->UIElements.size(); i > 0; i--)
+		{
+			auto it = m_UIData->UIElements.begin() + i - 1;
+			delete* it;
+			m_UIData->UIElements.erase(it);
+		}
+		m_UIData->UIElements.clear();
+	}
+
+	bool UIController::OnWindowResize(WindowResizeEvent& e)
+	{
+		return false;
+	}
+
+	bool UIController::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	{
+		std::pair<float, float> mousePosition = Input::GetMousePosition();
+
+		bool result = CheckElementHover({ mousePosition.first, mousePosition.second });
+		if (result && e.GetMouseButton() == VL_MOUSE_BUTTON_0)
+			VL_CORE_INFO("Element Clicked!");
+
 		return false;
 	}
 
