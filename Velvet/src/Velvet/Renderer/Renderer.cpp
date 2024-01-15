@@ -37,7 +37,6 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		RenderCommand::Shutdown();
-		BatchBuffer::Shutdown();
 		Renderer2D::Shutdown();
 		UIController::Shutdown();
 		m_SceneData.reset();

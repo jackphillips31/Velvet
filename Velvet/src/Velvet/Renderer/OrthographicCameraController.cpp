@@ -6,6 +6,16 @@
 
 namespace Velvet {
 
+	OrthographicCameraController::OrthographicCameraController(bool rotation, bool zoom) :
+		m_Scale(1.0f),
+		m_AspectRatio(0.0f),
+		m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, glm::vec2(0.0f, 0.0f)),
+		m_Rotation(rotation),
+		m_Zoom(zoom)
+	{
+		VL_PROFILE_FUNCTION();
+	}
+
 	OrthographicCameraController::OrthographicCameraController(glm::vec2& initialWindowDimensions, bool rotation, bool zoom) :
 		m_Scale(1.0f),
 		m_AspectRatio(initialWindowDimensions.x / initialWindowDimensions.y),
@@ -77,6 +87,13 @@ namespace Velvet {
 		m_Scale = height / m_Camera.GetInitialWindowDimensions().y;
 		m_AspectRatio = width / height;
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel * m_Scale, m_AspectRatio * m_ZoomLevel * m_Scale, -m_ZoomLevel * m_Scale, m_ZoomLevel * m_Scale);
+	}
+
+	void OrthographicCameraController::SetInitialWindowDimensions(const glm::vec2& initialWindowDimensions)
+	{
+		float aspectRatio = initialWindowDimensions.x / initialWindowDimensions.y;
+		m_Camera.SetInitialWindowDimensions(initialWindowDimensions);
+		m_Camera.SetProjection(-aspectRatio * m_ZoomLevel * m_Scale, aspectRatio * m_ZoomLevel * m_Scale, -m_ZoomLevel * m_Scale, m_ZoomLevel * m_Scale);
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)

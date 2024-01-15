@@ -2,6 +2,7 @@
 
 #include "Velvet/Core/Application.h"
 
+#include "Velvet/Renderer/BatchBuffer.h"
 #include "Velvet/Renderer/OrthographicCameraController.h"
 #include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/Texture.h"
@@ -37,7 +38,6 @@ namespace Velvet {
 		static void BeginScene();
 		static void EndScene();
 	private:
-		static glm::vec2 GetWindowDimensions();
 		static glm::vec2 GetOrientationFactors(const Orientation& orientation);
 		static glm::vec2 NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation = Orientation::TopLeft);
 
@@ -45,24 +45,9 @@ namespace Velvet {
 		static bool CheckElementHover(const glm::vec2& mousePosition);
 		static void ClearUIElements();
 		
-		static bool OnWindowResize(WindowResizeEvent& e);
 		static bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 	private:
-		struct UIData
-		{
-			UIData(Window& window, glm::vec2& windowDimensions);
-
-			Window& WindowRef;
-			OrthographicCameraController UICameraController;
-			glm::vec2 InitialWindowDimensions;
-			Ref<Shader> TextureShader;
-			Ref<Texture2D> WhiteTexture;
-
-			uint32_t IDCounter = 0;
-			std::vector<UIElement*> UIElements;
-		};
-
-		static Scope<UIData> m_UIData;
+		static OrthographicCameraController m_UICameraController;
 	};
 
 }

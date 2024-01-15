@@ -1,10 +1,6 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/BatchBuffer.h"
 
-#include "Velvet/Renderer/Buffer.h"
-#include "Velvet/Renderer/VertexArray.h"
-
-#include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/Texture.h"
 #include "Velvet/Renderer/Renderer.h"
 
@@ -16,169 +12,174 @@ namespace Velvet {
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32;
-		static const int IndicesPerQuad = 6;
-		static const int VertexPerQuad = 4;
 
-		glm::vec4 QuadVertexPositions[4];
-		glm::vec2 TextureCoords[4];
-		int InitialIndices[IndicesPerQuad];
-		std::vector<QuadVertexBufferElement*> QuadBufferBases;
-		std::vector<QuadVertexBufferElement*> QuadBufferPtrs;
-		std::vector<Ref<VertexBuffer>> QuadVBOs;
-		std::vector<Ref<IndexBuffer>> QuadIBOs;
-		std::vector<uint32_t> IndexBufferArray;
-		Ref<VertexArray> BatchVAO;
-		uint32_t QuadCount = 0;
-		uint32_t BufferIndex = 0;
-		uint32_t BuffersUsed = 0;
+		bool isInitialized = false;
 
-		Ref<Shader> TextureShader;
-		Ref<Texture2D> WhiteTexture;
+		glm::vec4 DefaultVertexPositions[4] = {
+			{ -0.5f, -0.5f, 0.0f, 1.0f },
+			{ 0.5f, -0.5f, 0.0f, 1.0f },
+			{ 0.5f,  0.5f, 0.0f, 1.0f },
+			{ -0.5f,  0.5f, 0.0f, 1.0f }
+		};
+		glm::vec2 DefaultTextureCoords[4] = {
+			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f }
+		};
+		int DefaultIndices[6] = {
+			0, 1, 2, 2, 3, 0
+		};
+
+		Ref<Shader> DefaultTextureShader;
+		Ref<Texture2D> DefaultWhiteTexture;
 	};
 
 	static BatchBufferData BatchData;
+
+	BatchBuffer::BatchBuffer(BatchType type)
+		: m_Type(type), m_BatchVAO(VertexArray::Create())
+	{
+		VL_PROFILE_FUNCTION();
+		VL_CORE_ASSERT(!(type == BatchType::None), "BatchType::None is not supported!");
+
+		switch (type)
+		{
+		case BatchType::None:
+			m_IndicesPerElement = 0;
+			m_VerticesPerElement = 0;
+			break;
+		case BatchType::Quad:
+			m_IndicesPerElement = 6;
+			m_VerticesPerElement = 4;
+			VL_CORE_WARN("Creating 'Quad' BatchBuffer");
+			break;
+		default:
+			m_IndicesPerElement = 0;
+			m_VerticesPerElement = 0;
+			break;
+		}
+
+		m_Shader = BatchData.DefaultTextureShader;
+	}
+
+	BatchBuffer::~BatchBuffer()
+	{
+		VL_PROFILE_FUNCTION();
+
+		// We can use this to delete the buffers
+		for (size_t i = m_BufferBases.size(); i > 0; i--)
+		{
+			auto itBase = m_BufferBases.begin() + i - 1;
+			auto itPtr = m_BufferPtrs.begin() + i - 1;
+
+			delete[] * itBase;
+			m_BufferBases.erase(itBase);
+			m_BufferPtrs.erase(itPtr);
+		}
+
+		BatchData.DefaultTextureShader.reset();
+		BatchData.DefaultWhiteTexture.reset();
+	}
 
 	void BatchBuffer::Init()
 	{
 		VL_PROFILE_FUNCTION();
 		VL_CORE_INFO("Initializing BatchBuffer");
 
-		BatchData.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-		BatchData.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
-		BatchData.QuadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
-		BatchData.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+		BatchData.DefaultTextureShader = Renderer::GetShaderLibrary().Get("Texture");
+		BatchData.DefaultWhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
 
-		BatchData.TextureCoords[0] = { 0.0f, 0.0f };
-		BatchData.TextureCoords[1] = { 1.0f, 0.0f };
-		BatchData.TextureCoords[2] = { 1.0f, 1.0f };
-		BatchData.TextureCoords[3] = { 0.0f, 1.0f };
-
-		BatchData.InitialIndices[0] = 0;
-		BatchData.InitialIndices[1] = 1;
-		BatchData.InitialIndices[2] = 2;
-		BatchData.InitialIndices[3] = 2;
-		BatchData.InitialIndices[4] = 3;
-		BatchData.InitialIndices[5] = 0;
-
-		BatchData.BatchVAO = VertexArray::Create();
-
-		BatchData.TextureShader = Renderer::GetShaderLibrary().Get("Texture");
-		BatchData.WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
+		BatchData.isInitialized = true;
 	}
 
-	void BatchBuffer::Shutdown()
+	Scope<BatchBuffer> BatchBuffer::Create(BatchType type)
 	{
-		VL_PROFILE_FUNCTION();
-
-		// We can use this to delete the buffers
-		for (size_t i = BatchData.QuadBufferBases.size(); i > 0; i--)
-		{
-			auto itBase = BatchData.QuadBufferBases.begin() + i - 1;
-			auto itPtr = BatchData.QuadBufferPtrs.begin() + i - 1;
-
-			delete[] *itBase;
-			BatchData.QuadBufferBases.erase(itBase);
-			BatchData.QuadBufferPtrs.erase(itPtr);
-		}
-
-		// Or this one
-		/*
-		while (!BatchData.QuadBufferBases.empty())
-		{
-			QuadVertexBufferElement* ptr = BatchData.QuadBufferBases.back();
-			delete[] ptr;
-			BatchData.QuadBufferBases.pop_back();
-		}
-		while (!BatchData.QuadBufferPtrs.empty())
-		{
-			BatchData.QuadBufferPtrs.pop_back();
-		}
-		*/
+		VL_CORE_ASSERT(BatchData.isInitialized, "BatchData has not been initialized!");
+		return CreateScope<BatchBuffer>(type);
 	}
 
 	void BatchBuffer::AddQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
 		VL_PROFILE_FUNCTION();
 
-		constexpr size_t quadVertexCount = 4;
-
 		QuadVertexBufferElement* currentBuffer = GetBuffer();
 
-		for (size_t i = 0; i < quadVertexCount; i++)
+		for (size_t i = 0; i < m_VerticesPerElement; i++)
 		{
-			currentBuffer->Position = transform * BatchData.QuadVertexPositions[i];
+			currentBuffer->Position = transform * BatchData.DefaultVertexPositions[i];
 			currentBuffer->Color = color;
-			currentBuffer->TexCoord = BatchData.TextureCoords[i];
+			currentBuffer->TexCoord = BatchData.DefaultTextureCoords[i];
 
 			currentBuffer++;
 		}
 
-		for (int i = 0; i < BatchData.IndicesPerQuad; i++)
+		for (int i = 0; i < m_IndicesPerElement; i++)
 		{
-			uint32_t offset = BatchData.VertexPerQuad * BatchData.QuadCount;
-			BatchData.IndexBufferArray.push_back(BatchData.InitialIndices[i] + offset);
+			uint32_t offset = m_VerticesPerElement * m_ElementCount;
+			m_IndexBufferArray.push_back(BatchData.DefaultIndices[i] + offset);
 		}
 
-		BatchData.QuadCount++;
-		BatchData.BufferIndex += quadVertexCount;
+		m_ElementCount++;
+		m_BufferIndex += m_VerticesPerElement;
 	}
 
 	void BatchBuffer::StartBatch()
 	{
 		VL_PROFILE_FUNCTION();
 
-		if (BatchData.QuadBufferBases.size() == 0 && BatchData.QuadBufferPtrs.size() == 0)
+		if (m_BufferBases.size() == 0 && m_BufferPtrs.size() == 0)
 		{
 			AddNewQuadBuffer();
 			AddNewQuadBuffer();
 		}
 
-		BatchData.QuadBufferPtrs = BatchData.QuadBufferBases;
+		m_BufferPtrs = m_BufferBases;
 
-		BatchData.QuadCount = 0;
-		BatchData.BufferIndex = 0;
-		BatchData.BuffersUsed = 1;
+		m_ElementCount = 0;
+		m_BufferIndex = 0;
+		m_BuffersUsed = 1;
 	}
 
 	void BatchBuffer::Flush()
 	{
 		VL_PROFILE_FUNCTION();
 
-		for (uint32_t i = 0; i < BatchData.BuffersUsed; i++)
+		for (uint32_t i = 0; i < m_BuffersUsed; i++)
 		{
-			QuadVertexBufferElement* currentBase = BatchData.QuadBufferBases[i];
-			QuadVertexBufferElement* currentPtr = BatchData.QuadBufferPtrs[i];
+			QuadVertexBufferElement* currentBase = (QuadVertexBufferElement*)m_BufferBases[i];
+			QuadVertexBufferElement* currentPtr = (QuadVertexBufferElement*)m_BufferPtrs[i];
 
 			uint32_t bufferSize = (uint32_t)((uint8_t*)currentPtr - (uint8_t*)currentBase);
-			BatchData.QuadVBOs[i]->SetData(BatchData.QuadBufferBases[i], bufferSize);
+			m_VBOs[i]->SetData(m_BufferBases[i], bufferSize);
 
-			Ref<IndexBuffer> newIBO = IndexBuffer::Create(BatchData.IndexBufferArray.data(), BatchData.QuadCount * BatchData.IndicesPerQuad);
+			Ref<IndexBuffer> newIBO = IndexBuffer::Create(m_IndexBufferArray.data(), m_ElementCount * m_IndicesPerElement);
 			
-			BatchData.BatchVAO->AddVertexBuffer(BatchData.QuadVBOs[i]);
-			BatchData.BatchVAO->SetIndexBuffer(newIBO);
+			m_BatchVAO->AddVertexBuffer(m_VBOs[i]);
+			m_BatchVAO->SetIndexBuffer(newIBO);
 
 			glm::mat4 transform = glm::mat4(1.0f);
 
-			BatchData.TextureShader->SetFloat4("u_Color", { 1.0f, 1.0f, 1.0f, 1.0f });
-			BatchData.TextureShader->SetMat4("u_Transform", transform);
-			BatchData.WhiteTexture->Bind();
+			m_Shader->SetFloat4("u_Color", { 1.0f, 1.0f, 1.0f, 1.0f });
+			m_Shader->SetMat4("u_Transform", transform);
+			BatchData.DefaultWhiteTexture->Bind();
 
-			BatchData.BatchVAO->Bind();
-			RenderCommand::DrawIndexed(BatchData.BatchVAO, (uint32_t)BatchData.IndexBufferArray.size());
+			m_BatchVAO->Bind();
+			RenderCommand::DrawIndexed(m_BatchVAO, (uint32_t)m_IndexBufferArray.size());
 		}
 
 		// Delete any extra buffers if they exist
-		if (BatchData.QuadBufferBases.size() > BatchData.BuffersUsed + 1)
+		if (m_BufferBases.size() > m_BuffersUsed + 1)
 		{
-			for (size_t i = BatchData.QuadBufferBases.size(); i > BatchData.BuffersUsed + 1; --i)
+			for (size_t i = m_BufferBases.size(); i > m_BuffersUsed + 1; --i)
 			{
-				auto itBase = BatchData.QuadBufferBases.begin() + i;
-				auto itPtr = BatchData.QuadBufferPtrs.begin() + i;
+				auto itBase = m_BufferBases.begin() + i;
+				auto itPtr = m_BufferPtrs.begin() + i;
 
 				delete[] *itBase;
 				delete[] *itPtr;
-				BatchData.QuadBufferBases.erase(itBase);
-				BatchData.QuadBufferPtrs.erase(itPtr);
+				m_BufferBases.erase(itBase);
+				m_BufferPtrs.erase(itPtr);
 			}
 		}
 	}
@@ -186,15 +187,15 @@ namespace Velvet {
 	QuadVertexBufferElement* BatchBuffer::GetBuffer()
 	{
 		VL_PROFILE_FUNCTION();
-		VL_CORE_ASSERT(BatchData.BuffersUsed, "StartBatch has not been run!");
+		VL_CORE_ASSERT(m_BuffersUsed, "StartBatch has not been run!");
 
-		if (BatchData.BufferIndex == BatchData.MaxVertices)
+		if (m_BufferIndex == BatchData.MaxVertices)
 		{
 			return NewBatch();
 		}
 		else
 		{
-			QuadVertexBufferElement* currentBuffer = BatchData.QuadBufferPtrs[BatchData.BuffersUsed - 1];
+			QuadVertexBufferElement* currentBuffer = (QuadVertexBufferElement*)m_BufferPtrs[m_BuffersUsed - 1];
 			MoveBufferPointer(currentBuffer);
 
 			return currentBuffer;
@@ -205,13 +206,13 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		BatchData.BufferIndex = 0;
-		BatchData.BuffersUsed++;
-		BatchData.IndexBufferArray.clear();
+		m_BufferIndex = 0;
+		m_BuffersUsed++;
+		m_IndexBufferArray.clear();
 
 		AddNewQuadBuffer();
 
-		QuadVertexBufferElement* currentBuffer = BatchData.QuadBufferPtrs[BatchData.BuffersUsed - 1];
+		QuadVertexBufferElement* currentBuffer = (QuadVertexBufferElement*)m_BufferPtrs[m_BuffersUsed - 1];
 		MoveBufferPointer(currentBuffer);
 
 		return currentBuffer;
@@ -222,7 +223,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		QuadVertexBufferElement* nextBuffer = initialPtr += 4;
-		BatchData.QuadBufferPtrs[BatchData.BuffersUsed - 1] = nextBuffer;
+		m_BufferPtrs[m_BuffersUsed - 1] = nextBuffer;
 	}
 
 	void BatchBuffer::AddNewQuadBuffer()
@@ -237,9 +238,9 @@ namespace Velvet {
 			{ ShaderDataType::Float4, "a_Color" }
 		});
 
-		BatchData.QuadBufferBases.push_back(newBuffer);
-		BatchData.QuadBufferPtrs.push_back(newBuffer);
-		BatchData.QuadVBOs.push_back(newVBO);
+		m_BufferBases.push_back(newBuffer);
+		m_BufferPtrs.push_back(newBuffer);
+		m_VBOs.push_back(newVBO);
 	}
 
 }
