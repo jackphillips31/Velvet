@@ -9,13 +9,6 @@
 
 namespace Velvet {
 
-	struct QuadVertexBufferElement
-	{
-		glm::vec3 Position;
-		glm::vec2 TexCoord;
-		glm::vec4 Color;
-	};
-
 	enum class BatchType
 	{
 		None = 0,
@@ -25,13 +18,15 @@ namespace Velvet {
 	class BatchBuffer
 	{
 	public:
-		BatchBuffer(BatchType type);
+		BatchBuffer(const BatchType& type, const BufferLayout& layout);
 		~BatchBuffer();
 
 		static void Init();
-		static Scope<BatchBuffer> Create(BatchType type);
+		static Scope<BatchBuffer> Create(const BatchType& type);
+		static Scope<BatchBuffer> Create(const BatchType& type, const BufferLayout& layout);
 
-		void AddQuad(const glm::mat4& transform, const glm::vec4& color, int entityID);
+		void AddData(const void* data, size_t size);
+		// void AddQuad(const glm::mat4& transform, const glm::vec4& color, int entityID);
 		void StartBatch();
 		void Flush();
 	private:
@@ -41,7 +36,6 @@ namespace Velvet {
 		std::vector<uint32_t> m_IndexBufferArray;
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<VertexArray> m_BatchVAO;
-		uint32_t m_ElementCount;
 		Ref<Shader> m_Shader;
 
 		Scope<BufferController> m_BufferController;

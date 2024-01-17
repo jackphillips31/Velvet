@@ -37,11 +37,10 @@ namespace Velvet {
 
 	static BatchBufferData BatchData;
 
-	BatchBuffer::BatchBuffer(BatchType type) :
+	BatchBuffer::BatchBuffer(const BatchType& type, const BufferLayout& layout) :
 		m_Type(type),
 		m_IndexBuffer(IndexBuffer::Create(BatchData.MaxIndices)),
 		m_BatchVAO(VertexArray::Create()),
-		m_ElementCount(0),
 		m_Shader(BatchData.DefaultTextureShader)
 	{
 		VL_PROFILE_FUNCTION();
@@ -72,12 +71,7 @@ namespace Velvet {
 			}
 		}
 
-		BufferLayout layout = BufferLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float4, "a_Color" }
-		});
-		m_BufferController = BufferController::Create(sizeof(QuadVertexBufferElement), BatchData.MaxVertices, layout);
+		m_BufferController = BufferController::Create(layout.GetStride(), BatchData.MaxVertices, layout);
 	}
 
 	BatchBuffer::~BatchBuffer()
@@ -98,12 +92,29 @@ namespace Velvet {
 		BatchData.isInitialized = true;
 	}
 
-	Scope<BatchBuffer> BatchBuffer::Create(BatchType type)
+	Scope<BatchBuffer> BatchBuffer::Create(const BatchType& type)
 	{
-		VL_CORE_ASSERT(BatchData.isInitialized, "BatchData has not been initialized!");
-		return CreateScope<BatchBuffer>(type);
+		BufferLayout layout = BufferLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float2, "a_TexCoord" },
+			{ ShaderDataType::Float4, "a_Color" }
+		});
+
+		return Create(type, layout);
 	}
 
+	Scope<BatchBuffer> BatchBuffer::Create(const BatchType& type, const BufferLayout& layout)
+	{
+		VL_CORE_ASSERT(BatchData.isInitialized, "BatchData has not been initialized!");
+		return CreateScope<BatchBuffer>(type, layout);
+	}
+
+	void BatchBuffer::AddData(const void* data, size_t size)
+	{
+		m_BufferController->AddToVertexBuffer(data, size);
+	}
+
+	/*
 	void BatchBuffer::AddQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
 		VL_PROFILE_FUNCTION();
@@ -117,9 +128,8 @@ namespace Velvet {
 
 			m_BufferController->AddToVertexBuffer(static_cast<void*>(&bufferElement), sizeof(QuadVertexBufferElement));
 		}
-
-		m_ElementCount++;
 	}
+	*/
 
 	void BatchBuffer::StartBatch()
 	{
@@ -140,7 +150,8 @@ namespace Velvet {
 
 			void* vertexData = m_BufferController->GetVertexBuffer(i);
 			uint32_t vertexSize = m_BufferController->GetVertexBufferSize(i);
-			uint32_t indexSize = m_ElementCount * m_IndicesPerElement * sizeof(uint32_t);
+			uint32_t elementCount = m_BufferController->GetVertexCount(i) / m_VerticesPerElement;
+			uint32_t indexSize = elementCount * m_IndicesPerElement * sizeof(uint32_t);
 
 			VBO->SetData(vertexData, vertexSize);
 			m_IndexBuffer->SetData(indexData, indexSize);
@@ -159,7 +170,6 @@ namespace Velvet {
 		}
 
 		m_BufferController->DeleteExtraVertexBuffers();
-		m_ElementCount = 0;
 	}
 
 }

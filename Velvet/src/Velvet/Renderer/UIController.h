@@ -9,6 +9,13 @@
 
 namespace Velvet {
 
+	struct QuadVertex
+	{
+		glm::vec3 Position;
+		glm::vec2 TexCoord;
+		glm::vec4 Color;
+	};
+
 	struct UIElement
 	{
 		glm::vec2 x;
