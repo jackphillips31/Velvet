@@ -1,7 +1,7 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/Renderer.h"
 
-#include "Velvet/Renderer/BatchBuffer.h"
+#include "Velvet/Renderer/Batch/BatchBuffer.h"
 #include "Velvet/Renderer/Renderer2D.h"
 #include "Velvet/Renderer/UIController.h"
 

@@ -28,7 +28,7 @@
 #include "Velvet/Renderer/RenderCommand.h"
 #include "Velvet/Renderer/UIController.h"
 
-#include "Velvet/Renderer/BatchBuffer.h"
+#include "Velvet/Renderer/Batch/BatchBuffer.h"
 #include "Velvet/Renderer/Buffer.h"
 #include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/Texture.h"
