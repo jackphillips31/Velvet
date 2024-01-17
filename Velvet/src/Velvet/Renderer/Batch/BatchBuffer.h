@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Velvet/Renderer/Batch/BufferController.h"
 #include "Velvet/Renderer/Buffer.h"
 #include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/VertexArray.h"
@@ -34,24 +35,16 @@ namespace Velvet {
 		void StartBatch();
 		void Flush();
 	private:
-		QuadVertexBufferElement* GetBuffer();
-		QuadVertexBufferElement* NewBatch();
-		void MoveBufferPointer(QuadVertexBufferElement* initialPtr, int count = 4);
-		void AddNewQuadBuffer();
-	private:
 		const BatchType m_Type;
 		int m_IndicesPerElement;
 		int m_VerticesPerElement;
-		std::vector<void*> m_BufferBases;
-		std::vector<void*> m_BufferPtrs;
-		std::vector<Ref<VertexBuffer>> m_VBOs;
-		std::vector<Ref<IndexBuffer>> m_IBOs;
 		std::vector<uint32_t> m_IndexBufferArray;
+		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<VertexArray> m_BatchVAO;
 		uint32_t m_ElementCount;
-		uint32_t m_BufferIndex;
-		uint32_t m_BuffersUsed;
 		Ref<Shader> m_Shader;
+
+		Scope<BufferController> m_BufferController;
 	};
 
 }

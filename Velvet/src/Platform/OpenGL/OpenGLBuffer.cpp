@@ -58,6 +58,15 @@ namespace Velvet {
 	//--------------------------------------------------------------
 	//------------------------ Index Buffer ------------------------
 	//--------------------------------------------------------------
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t size)
+	{
+		VL_PROFILE_FUNCTION();
+
+		glCreateBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
+
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
 		: m_Count(count)
 	{
@@ -87,6 +96,14 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+
+	void OpenGLIndexBuffer::SetData(const void* indices, uint32_t size) const
+	{
+		VL_PROFILE_FUNCTION();
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_DYNAMIC_DRAW);
 	}
 
 }
