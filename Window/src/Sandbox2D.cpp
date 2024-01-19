@@ -78,9 +78,8 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 		Velvet::UIController::BeginScene();
 		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::UIController::Orientation::TopLeft);
 		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::UIController::Orientation::TopRight);
-		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::UIController::Orientation::BottomRight);
-		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::UIController::Orientation::BottomLeft);
-		Velvet::UIController::AddButton({ 300.0f, 300.0f }, { 1.0f, 1.0f }, m_DefaultTexture, Velvet::UIController::Orientation::TopLeft);
+		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_SquareColor, Velvet::UIController::Orientation::BottomRight);
+		Velvet::UIController::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_DefaultTexture, Velvet::UIController::Orientation::BottomLeft);
 		Velvet::UIController::EndScene();
 	}
 

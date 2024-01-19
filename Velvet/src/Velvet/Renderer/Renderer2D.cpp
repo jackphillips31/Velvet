@@ -1,63 +1,63 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/Renderer2D.h"
 
+#include "Velvet/Renderer/Batch/BatchBuffer.h"
+#include "Velvet/Renderer/Primitives.h"
 #include "Velvet/Renderer/Renderer.h"
-#include "Velvet/Renderer/RenderCommand.h"
+#include "Velvet/Renderer/Shader.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Velvet {
 
-	Scope<Renderer2D::Renderer2DStorage> Renderer2D::m_Data = nullptr;
+	struct Render2DData
+	{
+		Ref<BatchBuffer> Batch;
+		Ref<Shader> TextureShader;
+		Ref<Texture2D> WhiteTexture;
+
+		BufferLayout BatchLayout = BufferLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float2, "a_TexCoord" },
+			{ ShaderDataType::Float4, "a_Color" }
+		});
+	};
+
+	static Render2DData s_Data;
 
 	void Renderer2D::Init()
 	{
 		VL_PROFILE_FUNCTION();
 		VL_CORE_INFO("Initializing Renderer2D");
 
-		m_Data = CreateScope<Renderer2DStorage>();
-		m_Data->QuadVertexArray = VertexArray::Create();
+		s_Data.TextureShader = Renderer::GetShaderLibrary().Get("Texture");
+		s_Data.WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
 
-		float squareVertices[9 * 4] = {
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f
-		};
-		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetInt("u_Texture", 0);
 
-		Ref<VertexBuffer> squareVBO = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
-		Ref<IndexBuffer> squareIBO = IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
+		BatchSettings Renderer2DBatchSettings(
+			BatchType::Quad,
+			s_Data.TextureShader,
+			s_Data.WhiteTexture,
+			s_Data.BatchLayout,
+			Primitives::Quad::Indices
+		);
 
-		squareVBO->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float4, "a_Color"}
-		});
-
-		m_Data->QuadVertexArray->AddVertexBuffer(squareVBO);
-		m_Data->QuadVertexArray->SetIndexBuffer(squareIBO);
-
-		m_Data->TextureShader = Renderer::GetShaderLibrary().Get("Texture");
-		m_Data->WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
-
-		m_Data->TextureShader->Bind();
-		m_Data->TextureShader->SetInt("u_Texture", 0);
+		s_Data.Batch = BatchBuffer::Create(Renderer2DBatchSettings);
 	}
 
 	void Renderer2D::Shutdown()
 	{
 		VL_PROFILE_FUNCTION();
-
-		m_Data.reset();
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		VL_PROFILE_FUNCTION();
 
-		m_Data->TextureShader->Bind();
-		m_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
@@ -74,14 +74,18 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		m_Data->TextureShader->SetFloat4("u_Color", color);
-		m_Data->TextureShader->SetMat4("u_Transform", transform);
-		m_Data->WhiteTexture->Bind();
+		for (int i = 0; i < 4; i++)
+		{
+			Primitives::QuadVertex bufferElement;
+			bufferElement.Position = transform * Primitives::Quad::Vertices[i];
+			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
+			bufferElement.Color = color;
 
-		m_Data->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(m_Data->QuadVertexArray);
+			s_Data.Batch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
+		}
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture)
@@ -93,14 +97,27 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		BatchSettings textureBatchSettings(
+			BatchType::Quad,
+			s_Data.TextureShader,
+			texture,
+			s_Data.BatchLayout,
+			Primitives::Quad::Indices
+		);
+		Ref<BatchBuffer> textureBatch = BatchBuffer::Create(textureBatchSettings);
 
-		m_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
-		m_Data->TextureShader->SetMat4("u_Transform", transform);
-		texture->Bind();
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		m_Data->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(m_Data->QuadVertexArray);
+		for (int i = 0; i < 4; i++)
+		{
+			Primitives::QuadVertex bufferElement;
+			bufferElement.Position = transform * Primitives::Quad::Vertices[i];
+			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
+			bufferElement.Color = glm::vec4(1.0f);
+
+			textureBatch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
+		}
 	}
 
 }

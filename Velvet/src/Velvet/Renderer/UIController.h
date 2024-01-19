@@ -2,9 +2,7 @@
 
 #include "Velvet/Core/Application.h"
 
-#include "Velvet/Renderer/Batch/BatchBuffer.h"
 #include "Velvet/Renderer/OrthographicCameraController.h"
-#include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/Texture.h"
 
 namespace Velvet {
@@ -50,7 +48,6 @@ namespace Velvet {
 		static bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 	private:
 		static OrthographicCameraController m_UICameraController;
-		static std::unordered_map<Ref<Texture2D>, Ref<BatchBuffer>> m_TextureBatches;
 	};
 
 }

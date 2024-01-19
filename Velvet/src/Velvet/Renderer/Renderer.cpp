@@ -23,6 +23,7 @@ namespace Velvet {
 		m_Texture2DLibrary = CreateScope<Texture2DLibrary>();
 
 		m_ShaderLibrary->Load("Texture", TextureShaderSource);
+		m_ShaderLibrary->Load("UITexture", TextureShaderSource);
 		m_Texture2DLibrary->LoadSimple("DefaultWhite", 0xffffffff);
 
 
@@ -37,6 +38,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		RenderCommand::Shutdown();
+		BatchBuffer::Shutdown();
 		Renderer2D::Shutdown();
 		UIController::Shutdown();
 		m_SceneData.reset();

@@ -1,8 +1,10 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/UIController.h"
 
+#include "Velvet/Renderer/Batch/BatchBuffer.h"
 #include "Velvet/Renderer/Primitives.h"
 #include "Velvet/Renderer/Renderer.h"
+#include "Velvet/Renderer/Shader.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -18,7 +20,7 @@ namespace Velvet {
 			{ ShaderDataType::Float3, "a_Position" },
 			{ ShaderDataType::Float2, "a_TexCoord" },
 			{ ShaderDataType::Float4, "a_Color" }
-			});
+		});
 
 		glm::vec2 InitialWindowDimensions;
 		uint32_t IDCounter = 0;
@@ -44,7 +46,7 @@ namespace Velvet {
 		m_UICameraController.SetCameraSettings(UICameraSettings);
 		m_UICameraController.SetInitialWindowDimensions(windowDimensions);
 
-		UIControllerData.TextureShader = Renderer::GetShaderLibrary().Get("Texture");
+		UIControllerData.TextureShader = Renderer::GetShaderLibrary().Get("UITexture");
 		UIControllerData.WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
 
 		UIControllerData.TextureShader->Bind();

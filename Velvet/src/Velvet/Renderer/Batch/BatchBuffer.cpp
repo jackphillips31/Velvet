@@ -2,7 +2,6 @@
 #include "Velvet/Renderer/Batch/BatchBuffer.h"
 
 #include "Velvet/Renderer/Primitives.h"
-#include "Velvet/Renderer/Texture.h"
 #include "Velvet/Renderer/Renderer.h"
 
 namespace Velvet {
@@ -13,15 +12,11 @@ namespace Velvet {
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32;
-
-		bool isInitialized = false;
-
-		Ref<Shader> DefaultTextureShader;
-		Ref<Texture2D> DefaultWhiteTexture;
 	};
 
 	static BatchBufferData BatchData;
 
+	bool BatchBuffer::m_IsInitialized = false;
 	Ref<IndexBuffer> BatchBuffer::m_IndexBuffer = nullptr;
 	Ref<VertexArray> BatchBuffer::m_BatchVAO = nullptr;
 	std::unordered_map<BatchSettings, Ref<BatchBuffer>> BatchBuffer::m_Instances;
@@ -47,10 +42,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 		VL_CORE_INFO("Initializing BatchBuffer");
 
-		BatchData.DefaultTextureShader = Renderer::GetShaderLibrary().Get("Texture");
-		BatchData.DefaultWhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
-
-		BatchData.isInitialized = true;
+		m_IsInitialized = true;
 
 
 		m_IndexBuffer = IndexBuffer::Create(BatchData.MaxIndices);
@@ -64,7 +56,7 @@ namespace Velvet {
 
 	Ref<BatchBuffer> BatchBuffer::Create(const BatchSettings& settings)
 	{
-		VL_CORE_ASSERT(BatchData.isInitialized, "BatchData has not been initialized!");
+		VL_CORE_ASSERT(m_IsInitialized, "BatchData has not been initialized!");
 
 		auto it = m_Instances.find(settings);
 
@@ -96,16 +88,16 @@ namespace Velvet {
 		}
 	}
 
+	void BatchBuffer::AddData(const void* data, size_t size)
+	{
+		m_BufferController->AddToVertexBuffer(data, size);
+	}
+
 	void BatchBuffer::StartBatch()
 	{
 		VL_PROFILE_FUNCTION();
 
 		m_BufferController->Reset();
-	}
-
-	void BatchBuffer::AddData(const void* data, size_t size)
-	{
-		m_BufferController->AddToVertexBuffer(data, size);
 	}
 
 	void BatchBuffer::Flush()
@@ -131,6 +123,7 @@ namespace Velvet {
 
 			glm::mat4 transform = glm::mat4(1.0f);
 
+			m_Settings.Shader->Bind();
 			m_Settings.Shader->SetFloat4("u_Color", glm::vec4(1.0f));
 			m_Settings.Shader->SetMat4("u_Transform", transform);
 			m_Settings.Texture->Bind();

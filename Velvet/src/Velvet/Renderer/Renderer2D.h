@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Velvet/Renderer/OrthographicCamera.h"
-#include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/Texture.h"
-#include "Velvet/Renderer/VertexArray.h"
 
 namespace Velvet {
 
@@ -21,15 +19,6 @@ namespace Velvet {
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture);
-	private:
-		struct Renderer2DStorage
-		{
-			Ref<VertexArray> QuadVertexArray;
-			Ref<Shader> TextureShader;
-			Ref<Texture2D> WhiteTexture;
-		};
-
-		static Scope<Renderer2DStorage> m_Data;
 	};
 
 }

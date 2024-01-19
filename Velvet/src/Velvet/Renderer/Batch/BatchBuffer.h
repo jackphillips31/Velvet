@@ -48,10 +48,10 @@ namespace Velvet {
 		static void StartAllBatches();
 		static void FlushAllBatches();
 
-		void StartBatch();
 		void AddData(const void* data, size_t size);
-		void Flush();
 	private:
+		void StartBatch();
+		void Flush();
 		void GenerateIndexBuffer();
 		void SetDataPerElement();
 	private:
@@ -62,6 +62,7 @@ namespace Velvet {
 
 		Scope<BufferController> m_BufferController;
 
+		static bool m_IsInitialized;
 		static Ref<IndexBuffer> m_IndexBuffer;
 		static Ref<VertexArray> m_BatchVAO;
 		static std::unordered_map<BatchSettings, Ref<BatchBuffer>> m_Instances;
