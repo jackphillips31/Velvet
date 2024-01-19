@@ -43,16 +43,17 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 	m_CameraController.OnUpdate(ts);
 
 
-	// Render
+	// Render Prep
 	{
 		VL_PROFILE_SCOPE("Renderer Prep");
 
 		Velvet::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Velvet::RenderCommand::Clear();
-		Velvet::Batch::StartAllBatches();
 	}
 
+	// Main Rendering Pass
 	{
+		Velvet::Batch::StartAllBatches();
 		VL_PROFILE_SCOPE("Renderer2D");
 
 		Velvet::Renderer2D::BeginScene(m_CameraController.GetCamera());
@@ -72,20 +73,22 @@ void Sandbox2D::OnUpdate(Velvet::Timestep ts)
 			m_DefaultTexture
 		);
 		Velvet::Renderer2D::EndScene();
+		Velvet::Batch::FlushAllBatches();
 	}
 
+	// UI Rendering Pass
 	{
 		VL_PROFILE_SCOPE("RendererUI");
+		Velvet::Batch::StartAllBatches();
 
 		Velvet::RendererUI::BeginScene();
-		Velvet::RendererUI::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::RendererUI::Orientation::TopLeft);
+		Velvet::RendererUI::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 0.2f }, Velvet::RendererUI::Orientation::TopLeft);
 		Velvet::RendererUI::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 1.0f, 0.2f, 1.0f }, Velvet::RendererUI::Orientation::TopRight);
 		Velvet::RendererUI::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_SquareColor, Velvet::RendererUI::Orientation::BottomRight);
 		Velvet::RendererUI::AddButton({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_DefaultTexture, Velvet::RendererUI::Orientation::BottomLeft);
 		Velvet::RendererUI::EndScene();
+		Velvet::Batch::FlushAllBatches();
 	}
-
-	Velvet::Batch::FlushAllBatches();
 }
 
 void Sandbox2D::OnImGuiRender()

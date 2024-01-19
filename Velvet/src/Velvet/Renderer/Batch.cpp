@@ -8,7 +8,7 @@ namespace Velvet {
 
 	struct BatchBufferData
 	{
-		static const uint32_t MaxQuads = 100;
+		static const uint32_t MaxQuads = 2000;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32;
@@ -121,23 +121,26 @@ namespace Velvet {
 			void* vertexData = m_BatchBuffer->GetVertexBuffer(i);
 			uint32_t vertexSize = m_BatchBuffer->GetVertexBufferSize(i);
 			uint32_t elementCount = m_BatchBuffer->GetVertexCount(i) / m_VerticesPerElement;
-			uint32_t indexCount = elementCount * m_IndicesPerElement;
-			uint32_t indexSize = indexCount * sizeof(uint32_t);
+			if (elementCount)
+			{
+				uint32_t indexCount = elementCount * m_IndicesPerElement;
+				uint32_t indexSize = indexCount * sizeof(uint32_t);
 
-			VBO->SetData(vertexData, vertexSize);
-			m_IndexBuffer->SetData(indexData, indexSize);
+				VBO->SetData(vertexData, vertexSize);
+				m_IndexBuffer->SetData(indexData, indexSize);
 
-			m_BatchVAO->AddVertexBuffer(VBO);
-			m_BatchVAO->SetIndexBuffer(m_IndexBuffer);
+				m_BatchVAO->AddVertexBuffer(VBO);
+				m_BatchVAO->SetIndexBuffer(m_IndexBuffer);
 
-			glm::mat4 transform = glm::mat4(1.0f);
+				glm::mat4 transform = glm::mat4(1.0f);
 
-			m_Settings.Shader->Bind();
-			m_Settings.Shader->SetFloat4("u_Color", glm::vec4(1.0f));
-			m_Settings.Shader->SetMat4("u_Transform", transform);
-			m_Settings.Texture->Bind();
+				m_Settings.Shader->Bind();
+				m_Settings.Shader->SetFloat4("u_Color", glm::vec4(1.0f));
+				m_Settings.Shader->SetMat4("u_Transform", transform);
+				m_Settings.Texture->Bind();
 
-			RenderCommand::DrawIndexed(m_BatchVAO, indexCount);
+				RenderCommand::DrawIndexed(m_BatchVAO, indexCount);
+			}
 		}
 
 		m_BatchBuffer->DeleteExtraVertexBuffers();
