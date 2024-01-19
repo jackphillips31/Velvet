@@ -121,7 +121,8 @@ namespace Velvet {
 			void* vertexData = m_BatchBuffer->GetVertexBuffer(i);
 			uint32_t vertexSize = m_BatchBuffer->GetVertexBufferSize(i);
 			uint32_t elementCount = m_BatchBuffer->GetVertexCount(i) / m_VerticesPerElement;
-			uint32_t indexSize = elementCount * m_IndicesPerElement * sizeof(uint32_t);
+			uint32_t indexCount = elementCount * m_IndicesPerElement;
+			uint32_t indexSize = indexCount * sizeof(uint32_t);
 
 			VBO->SetData(vertexData, vertexSize);
 			m_IndexBuffer->SetData(indexData, indexSize);
@@ -136,8 +137,7 @@ namespace Velvet {
 			m_Settings.Shader->SetMat4("u_Transform", transform);
 			m_Settings.Texture->Bind();
 
-			m_BatchVAO->Bind();
-			RenderCommand::DrawIndexed(m_BatchVAO, indexSize);
+			RenderCommand::DrawIndexed(m_BatchVAO, indexCount);
 		}
 
 		m_BatchBuffer->DeleteExtraVertexBuffers();

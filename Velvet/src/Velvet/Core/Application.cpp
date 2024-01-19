@@ -36,7 +36,6 @@ namespace Velvet {
 		Renderer::Shutdown();
 		ResourceManager::Shutdown();
 		Input::Shutdown();
-		m_Window.reset();
 	}
 
 	void Application::PushLayer(Layer* layer)

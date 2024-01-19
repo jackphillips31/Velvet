@@ -50,6 +50,10 @@ namespace Velvet {
 	void Renderer2D::Shutdown()
 	{
 		VL_PROFILE_FUNCTION();
+
+		s_Data.Batch.reset();
+		s_Data.TextureShader.reset();
+		s_Data.WhiteTexture.reset();
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)

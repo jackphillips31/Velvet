@@ -97,4 +97,9 @@ namespace Velvet {
 		return m_Textures2D.find(name) != m_Textures2D.end();
 	}
 
+	void Texture2DLibrary::Clear()
+	{
+		m_Textures2D.clear();
+	}
+
 }

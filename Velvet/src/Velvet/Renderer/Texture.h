@@ -38,10 +38,10 @@ namespace Velvet {
 		Ref<Texture2D> Load(const std::string& name, const Ref<RawImageData>& imageData);
 		Ref<Texture2D> Load(const std::string& name, uint32_t width, uint32_t height);
 		Ref<Texture2D> LoadSimple(const std::string& name, uint32_t data);
-
 		Ref<Texture2D> Get(const std::string& name);
 
 		bool Exists(const std::string& name) const;
+		void Clear();
 	private:
 		std::unordered_map<std::string, Ref<Texture2D>> m_Textures2D;
 	};

@@ -84,4 +84,9 @@ namespace Velvet {
 		return m_Shaders.find(name) != m_Shaders.end();
 	}
 
+	void ShaderLibrary::Clear()
+	{
+		m_Shaders.clear();
+	}
+
 }

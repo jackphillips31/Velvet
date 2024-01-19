@@ -41,8 +41,12 @@ namespace Velvet {
 		Batch::Shutdown();
 		Renderer2D::Shutdown();
 		RendererUI::Shutdown();
+		m_ShaderLibrary->Clear();
+		m_Texture2DLibrary->Clear();
+
 		m_SceneData.reset();
 		m_ShaderLibrary.reset();
+		m_Texture2DLibrary.reset();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -66,8 +70,17 @@ namespace Velvet {
 		shader->SetMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
 		shader->SetMat4("u_Transform", transform);
 
-		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+	}
+
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<Texture2D> texture, const Ref<VertexArray>& vertexArray, const uint32_t& indexCount, const glm::mat4& transform)
+	{
+		shader->Bind();
+		shader->SetFloat4("u_Color", glm::vec4(1.0f));
+		shader->SetMat4("u_Transform", transform);
+		texture->Bind();
+
+		RenderCommand::DrawIndexed(vertexArray, indexCount);
 	}
 
 }

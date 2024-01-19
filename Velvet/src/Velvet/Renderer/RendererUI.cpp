@@ -12,7 +12,7 @@ namespace Velvet {
 
 	struct UIData
 	{
-		Ref<Batch> BatchBufferController;
+		Ref<Batch> Batch;
 		Ref<Shader> TextureShader;
 		Ref<Texture2D> WhiteTexture;
 
@@ -60,7 +60,7 @@ namespace Velvet {
 			Primitives::Quad::Indices
 		);
 
-		s_Data.BatchBufferController = Batch::Create(UIBatchSettings);
+		s_Data.Batch = Batch::Create(UIBatchSettings);
 	}
 
 	void RendererUI::Shutdown()
@@ -68,7 +68,7 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		ClearUIElements();
-		s_Data.BatchBufferController.reset();
+		s_Data.Batch.reset();
 		s_Data.TextureShader.reset();
 		s_Data.WhiteTexture.reset();
 	}
@@ -123,7 +123,7 @@ namespace Velvet {
 			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
 			bufferElement.Color = color;
 
-			s_Data.BatchBufferController->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
+			s_Data.Batch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
 		}
 		AddElement(position, size);
 	}

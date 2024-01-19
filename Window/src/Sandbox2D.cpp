@@ -31,6 +31,8 @@ void Sandbox2D::OnAttach()
 void Sandbox2D::OnDetach()
 {
 	VL_PROFILE_FUNCTION();
+
+	m_DefaultTexture.reset();
 }
 
 void Sandbox2D::OnUpdate(Velvet::Timestep ts)
