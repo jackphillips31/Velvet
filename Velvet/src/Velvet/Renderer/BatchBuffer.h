@@ -4,13 +4,13 @@
 
 namespace Velvet {
 
-	class BufferController
+	class BatchBuffer
 	{
 	public:
-		BufferController(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout);
-		~BufferController();
+		BatchBuffer(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout);
+		~BatchBuffer();
 
-		static Scope<BufferController> Create(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout);
+		static Scope<BatchBuffer> Create(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout);
 
 		void Reset();
 		void AddToVertexBuffer(const void* data, const size_t size);

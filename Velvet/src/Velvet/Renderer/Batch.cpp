@@ -1,5 +1,5 @@
 #include <vlpch.h>
-#include "Velvet/Renderer/Batch/BatchBuffer.h"
+#include "Velvet/Renderer/Batch.h"
 
 #include "Velvet/Renderer/Primitives.h"
 #include "Velvet/Renderer/Renderer.h"
@@ -16,31 +16,33 @@ namespace Velvet {
 
 	static BatchBufferData BatchData;
 
-	bool BatchBuffer::m_IsInitialized = false;
-	Ref<IndexBuffer> BatchBuffer::m_IndexBuffer = nullptr;
-	Ref<VertexArray> BatchBuffer::m_BatchVAO = nullptr;
-	std::unordered_map<BatchSettings, Ref<BatchBuffer>> BatchBuffer::m_Instances;
+	bool Batch::m_IsInitialized = false;
+	Ref<IndexBuffer> Batch::m_IndexBuffer = nullptr;
+	Ref<VertexArray> Batch::m_BatchVAO = nullptr;
+	std::unordered_map<BatchSettings, Ref<Batch>> Batch::m_Instances;
 
-	BatchBuffer::BatchBuffer(const BatchSettings& settings) :
+	Batch::Batch(const BatchSettings& settings) :
 		m_Settings(settings)
  	{
+		VL_PROFILE_FUNCTION();
+
 		SetDataPerElement();
 		GenerateIndexBuffer();
 
-		m_BufferController = BufferController::Create(m_Settings.Layout.GetStride(), BatchData.MaxVertices, m_Settings.Layout);
+		m_BatchBuffer = BatchBuffer::Create(m_Settings.Layout.GetStride(), BatchData.MaxVertices, m_Settings.Layout);
  	}
 
-	BatchBuffer::~BatchBuffer()
+	Batch::~Batch()
 	{
 		VL_PROFILE_FUNCTION();
 
-		m_BufferController->DeleteAllVertexBuffers();
+		m_BatchBuffer->DeleteAllVertexBuffers();
 	}
 
-	void BatchBuffer::Init()
+	void Batch::Init()
 	{
 		VL_PROFILE_FUNCTION();
-		VL_CORE_INFO("Initializing BatchBuffer");
+		VL_CORE_INFO("Initializing Batch");
 
 		m_IsInitialized = true;
 
@@ -49,12 +51,14 @@ namespace Velvet {
 		m_BatchVAO = VertexArray::Create();
 	}
 
-	void BatchBuffer::Shutdown()
+	void Batch::Shutdown()
 	{
+		VL_PROFILE_FUNCTION();
+
 		m_Instances.clear();
 	}
 
-	Ref<BatchBuffer> BatchBuffer::Create(const BatchSettings& settings)
+	Ref<Batch> Batch::Create(const BatchSettings& settings)
 	{
 		VL_CORE_ASSERT(m_IsInitialized, "BatchData has not been initialized!");
 
@@ -66,53 +70,57 @@ namespace Velvet {
 		}
 		else
 		{
-			Ref<BatchBuffer> result = CreateRef<BatchBuffer>(settings);
+			Ref<Batch> result = CreateRef<Batch>(settings);
 			m_Instances[settings] = result;
 			return result;
 		}
 	}
 
-	void BatchBuffer::StartAllBatches()
+	void Batch::StartAllBatches()
 	{
+		VL_PROFILE_FUNCTION();
+
 		for (const auto& pair : m_Instances)
 		{
 			pair.second->StartBatch();
 		}
 	}
 
-	void BatchBuffer::FlushAllBatches()
+	void Batch::FlushAllBatches()
 	{
+		VL_PROFILE_FUNCTION();
+
 		for (const auto& pair : m_Instances)
 		{
 			pair.second->Flush();
 		}
 	}
 
-	void BatchBuffer::AddData(const void* data, size_t size)
-	{
-		m_BufferController->AddToVertexBuffer(data, size);
-	}
-
-	void BatchBuffer::StartBatch()
+	void Batch::AddData(const void* data, size_t size)
 	{
 		VL_PROFILE_FUNCTION();
 
-		m_BufferController->Reset();
+		m_BatchBuffer->AddToVertexBuffer(data, size);
 	}
 
-	void BatchBuffer::Flush()
+	void Batch::StartBatch()
+	{
+		m_BatchBuffer->Reset();
+	}
+
+	void Batch::Flush()
 	{
 		VL_PROFILE_FUNCTION();
 
 		void* indexData = m_IndexBufferArray.data();
 
-		for (uint32_t i = 0; i < m_BufferController->GetVertexBuffersUsed(); i++)
+		for (uint32_t i = 0; i < m_BatchBuffer->GetVertexBuffersUsed(); i++)
 		{
-			Ref<VertexBuffer> VBO = m_BufferController->GetVBO(i);
+			Ref<VertexBuffer> VBO = m_BatchBuffer->GetVBO(i);
 
-			void* vertexData = m_BufferController->GetVertexBuffer(i);
-			uint32_t vertexSize = m_BufferController->GetVertexBufferSize(i);
-			uint32_t elementCount = m_BufferController->GetVertexCount(i) / m_VerticesPerElement;
+			void* vertexData = m_BatchBuffer->GetVertexBuffer(i);
+			uint32_t vertexSize = m_BatchBuffer->GetVertexBufferSize(i);
+			uint32_t elementCount = m_BatchBuffer->GetVertexCount(i) / m_VerticesPerElement;
 			uint32_t indexSize = elementCount * m_IndicesPerElement * sizeof(uint32_t);
 
 			VBO->SetData(vertexData, vertexSize);
@@ -129,14 +137,16 @@ namespace Velvet {
 			m_Settings.Texture->Bind();
 
 			m_BatchVAO->Bind();
-			RenderCommand::DrawIndexed(m_BatchVAO, (uint32_t)m_IndexBufferArray.size());
+			RenderCommand::DrawIndexed(m_BatchVAO, indexSize);
 		}
 
-		m_BufferController->DeleteExtraVertexBuffers();
+		m_BatchBuffer->DeleteExtraVertexBuffers();
 	}
 
-	void BatchBuffer::GenerateIndexBuffer()
+	void Batch::GenerateIndexBuffer()
 	{
+		VL_PROFILE_FUNCTION();
+
 		for (uint32_t i = 0; i < BatchData.MaxVertices; i++)
 		{
 			for (int i2 = 0; i2 < m_IndicesPerElement; i2++)
@@ -147,7 +157,7 @@ namespace Velvet {
 		}
 	}
 
-	void BatchBuffer::SetDataPerElement()
+	void Batch::SetDataPerElement()
 	{
 		switch (m_Settings.Type)
 		{
@@ -158,7 +168,7 @@ namespace Velvet {
 		case BatchType::Quad:
 			m_IndicesPerElement = 6;
 			m_VerticesPerElement = 4;
-			VL_CORE_WARN("Creating 'Quad' BatchBuffer");
+			VL_CORE_WARN("Creating 'Quad' Batch");
 			break;
 		default:
 			m_IndicesPerElement = 0;

@@ -4,7 +4,7 @@
 #include "Velvet/Core/Input.h"
 
 #include "Velvet/Renderer/Renderer.h"
-#include "Velvet/Renderer/UIController.h"
+#include "Velvet/Renderer/RendererUI.h"
 
 #include <glfw/glfw3.h>
 
@@ -93,7 +93,7 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		UIController::OnEvent(e);
+		RendererUI::OnEvent(e);
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(VL_BIND_EVENT_FN(Application::OnWindowClose));

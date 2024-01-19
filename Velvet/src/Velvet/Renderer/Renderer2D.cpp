@@ -1,7 +1,7 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/Renderer2D.h"
 
-#include "Velvet/Renderer/Batch/BatchBuffer.h"
+#include "Velvet/Renderer/Batch.h"
 #include "Velvet/Renderer/Primitives.h"
 #include "Velvet/Renderer/Renderer.h"
 #include "Velvet/Renderer/Shader.h"
@@ -12,7 +12,7 @@ namespace Velvet {
 
 	struct Render2DData
 	{
-		Ref<BatchBuffer> Batch;
+		Ref<Batch> Batch;
 		Ref<Shader> TextureShader;
 		Ref<Texture2D> WhiteTexture;
 
@@ -44,7 +44,7 @@ namespace Velvet {
 			Primitives::Quad::Indices
 		);
 
-		s_Data.Batch = BatchBuffer::Create(Renderer2DBatchSettings);
+		s_Data.Batch = Batch::Create(Renderer2DBatchSettings);
 	}
 
 	void Renderer2D::Shutdown()
@@ -104,7 +104,7 @@ namespace Velvet {
 			s_Data.BatchLayout,
 			Primitives::Quad::Indices
 		);
-		Ref<BatchBuffer> textureBatch = BatchBuffer::Create(textureBatchSettings);
+		Ref<Batch> textureBatch = Batch::Create(textureBatchSettings);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });

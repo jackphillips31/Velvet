@@ -1,7 +1,7 @@
 #include <vlpch.h>
-#include "Velvet/Renderer/UIController.h"
+#include "Velvet/Renderer/RendererUI.h"
 
-#include "Velvet/Renderer/Batch/BatchBuffer.h"
+#include "Velvet/Renderer/Batch.h"
 #include "Velvet/Renderer/Primitives.h"
 #include "Velvet/Renderer/Renderer.h"
 #include "Velvet/Renderer/Shader.h"
@@ -12,7 +12,7 @@ namespace Velvet {
 
 	struct UIData
 	{
-		Ref<BatchBuffer> BatchBufferController;
+		Ref<Batch> BatchBufferController;
 		Ref<Shader> TextureShader;
 		Ref<Texture2D> WhiteTexture;
 
@@ -27,11 +27,11 @@ namespace Velvet {
 		std::vector<UIElement*> UIElements;
 	};
 
-	static UIData UIControllerData;
+	static UIData s_Data;
 
-	OrthographicCameraController UIController::m_UICameraController = OrthographicCameraController();
+	OrthographicCameraController RendererUI::m_UICameraController = OrthographicCameraController();
 
-	void UIController::Init()
+	void RendererUI::Init()
 	{
 		VL_PROFILE_FUNCTION();
 		VL_CORE_INFO("Initializing UIController");
@@ -46,54 +46,70 @@ namespace Velvet {
 		m_UICameraController.SetCameraSettings(UICameraSettings);
 		m_UICameraController.SetInitialWindowDimensions(windowDimensions);
 
-		UIControllerData.TextureShader = Renderer::GetShaderLibrary().Get("UITexture");
-		UIControllerData.WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
+		s_Data.TextureShader = Renderer::GetShaderLibrary().Get("UITexture");
+		s_Data.WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
 
-		UIControllerData.TextureShader->Bind();
-		UIControllerData.TextureShader->SetInt("u_Texture", 0);
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetInt("u_Texture", 0);
 
 		BatchSettings UIBatchSettings(
 			BatchType::Quad,
-			UIControllerData.TextureShader,
-			UIControllerData.WhiteTexture,
-			UIControllerData.BatchLayout,
+			s_Data.TextureShader,
+			s_Data.WhiteTexture,
+			s_Data.BatchLayout,
 			Primitives::Quad::Indices
 		);
 
-		UIControllerData.BatchBufferController = BatchBuffer::Create(UIBatchSettings);
+		s_Data.BatchBufferController = Batch::Create(UIBatchSettings);
 	}
 
-	void UIController::Shutdown()
+	void RendererUI::Shutdown()
 	{
 		VL_PROFILE_FUNCTION();
 
 		ClearUIElements();
-		UIControllerData.BatchBufferController.reset();
-		UIControllerData.TextureShader.reset();
-		UIControllerData.WhiteTexture.reset();
+		s_Data.BatchBufferController.reset();
+		s_Data.TextureShader.reset();
+		s_Data.WhiteTexture.reset();
 	}
 
-	void UIController::OnEvent(Event& e)
+	void RendererUI::OnEvent(Event& e)
 	{
 		m_UICameraController.OnEvent(e);
 
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<MouseButtonPressedEvent>(VL_STATIC_BIND_EVENT_FN(UIController::OnMouseButtonPressed));
+		dispatcher.Dispatch<MouseButtonPressedEvent>(VL_STATIC_BIND_EVENT_FN(RendererUI::OnMouseButtonPressed));
 	}
 
-	void UIController::AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
+	void RendererUI::BeginScene()
+	{
+		VL_PROFILE_FUNCTION();
+
+		s_Data.IDCounter = 0;
+		ClearUIElements();
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", m_UICameraController.GetCamera().GetProjectionMatrix());
+	}
+
+	void RendererUI::EndScene()
+	{
+		VL_PROFILE_FUNCTION();
+	}
+
+	void RendererUI::AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation)
 	{
 		glm::vec3 normPos = { NDCFromPixel(pixelPosition, orientation), 1.0f };
-		AddQuad(normPos, size, color);
+		DrawQuad(normPos, size, color);
 	}
 
-	void UIController::AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const Ref<Texture2D>& texture, const Orientation& orientation)
+	void RendererUI::AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const Ref<Texture2D>& texture, const Orientation& orientation)
 	{
 		glm::vec3 normPos = { NDCFromPixel(pixelPosition, orientation), 1.0f };
-		AddQuad(normPos, size, texture);
+		DrawQuad(normPos, size, texture);
 	}
 
-	void UIController::AddQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+	void RendererUI::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		VL_PROFILE_FUNCTION();
 
@@ -107,21 +123,23 @@ namespace Velvet {
 			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
 			bufferElement.Color = color;
 
-			UIControllerData.BatchBufferController->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
+			s_Data.BatchBufferController->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
 		}
 		AddElement(position, size);
 	}
 
-	void UIController::AddQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+	void RendererUI::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
 	{
+		VL_PROFILE_FUNCTION();
+
 		BatchSettings textureBatchSettings(
 			BatchType::Quad,
-			UIControllerData.TextureShader,
+			s_Data.TextureShader,
 			texture,
-			UIControllerData.BatchLayout,
+			s_Data.BatchLayout,
 			Primitives::Quad::Indices
 		);
-		Ref<BatchBuffer> batchBuffer = BatchBuffer::Create(textureBatchSettings);
+		Ref<Batch> batchBuffer = Batch::Create(textureBatchSettings);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
@@ -138,25 +156,7 @@ namespace Velvet {
 		AddElement(position, size);
 	}
 
-	void UIController::BeginScene()
-	{
-		VL_PROFILE_FUNCTION();
-
-		UIControllerData.IDCounter = 0;
-		ClearUIElements();
-
-		UIControllerData.TextureShader->Bind();
-		UIControllerData.TextureShader->SetMat4("u_ViewProjection", m_UICameraController.GetCamera().GetProjectionMatrix());
-	}
-
-	void UIController::EndScene()
-	{
-		VL_PROFILE_FUNCTION();
-
-		//UIControllerData.BatchBufferController->Flush();
-	}
-
-	glm::vec2 UIController::GetOrientationFactors(const Orientation& orientation)
+	glm::vec2 RendererUI::GetOrientationFactors(const Orientation& orientation)
 	{
 		float xFactor = 0.0f;
 		if (orientation == TopLeft || orientation == BottomLeft)
@@ -173,7 +173,7 @@ namespace Velvet {
 		return glm::vec2(xFactor, yFactor);
 	}
 
-	glm::vec2 UIController::NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation)
+	glm::vec2 RendererUI::NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation)
 	{
 		Window& tempWindowRef = Application::Get().GetWindow();
 		glm::vec2 windowDimensions = glm::vec2(tempWindowRef.GetWidth(), tempWindowRef.GetHeight());
@@ -188,10 +188,8 @@ namespace Velvet {
 		return glm::vec2(normalizedX * aspectRatio * scale, normalizedY * scale);
 	}
 
-	void UIController::AddElement(const glm::vec2& position, const glm::vec2& size)
+	void RendererUI::AddElement(const glm::vec2& position, const glm::vec2& size)
 	{
-		VL_PROFILE_FUNCTION();
-
 		float xFactor = size.x / 2;
 		float yFactor = size.y / 2;
 
@@ -200,16 +198,16 @@ namespace Velvet {
 		newElement->x.y = position.x + xFactor;
 		newElement->y.x = position.y - yFactor;
 		newElement->y.y = position.y + yFactor;
-		newElement->ElementID = UIControllerData.IDCounter;
+		newElement->ElementID = s_Data.IDCounter;
 
-		UIControllerData.UIElements.push_back(newElement);
-		UIControllerData.IDCounter++;
+		s_Data.UIElements.push_back(newElement);
+		s_Data.IDCounter++;
 	}
 
-	bool UIController::CheckElementHover(const glm::vec2& mousePosition)
+	bool RendererUI::CheckElementHover(const glm::vec2& mousePosition)
 	{
 		glm::vec2 newPos = NDCFromPixel(mousePosition);
-		for (UIElement* ptr : UIControllerData.UIElements)
+		for (UIElement* ptr : s_Data.UIElements)
 		{
 			bool isBetween = (newPos.x >= ptr->x.x && newPos.x <= ptr->x.y && newPos.y >= ptr->y.x && newPos.y <= ptr->y.y);
 			if (isBetween)
@@ -218,20 +216,20 @@ namespace Velvet {
 		return false;
 	}
 
-	void UIController::ClearUIElements()
+	void RendererUI::ClearUIElements()
 	{
 		VL_PROFILE_FUNCTION();
 
-		for (size_t i = UIControllerData.UIElements.size(); i > 0; i--)
+		for (size_t i = s_Data.UIElements.size(); i > 0; i--)
 		{
-			auto it = UIControllerData.UIElements.begin() + i - 1;
+			auto it = s_Data.UIElements.begin() + i - 1;
 			delete* it;
-			UIControllerData.UIElements.erase(it);
+			s_Data.UIElements.erase(it);
 		}
-		UIControllerData.UIElements.clear();
+		s_Data.UIElements.clear();
 	}
 
-	bool UIController::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	bool RendererUI::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
 		std::pair<float, float> mousePosition = Input::GetMousePosition();
 

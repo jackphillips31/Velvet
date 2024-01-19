@@ -1,38 +1,43 @@
 #include <vlpch.h>
-#include "Velvet/Renderer/Batch/BufferController.h"
+#include "Velvet/Renderer/BatchBuffer.h"
 
 namespace Velvet {
 
-	BufferController::BufferController(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout)
+	BatchBuffer::BatchBuffer(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout)
 		: m_Layout(layout), m_BuffersUsed(0), m_MaxVertexCount(maxCount), m_VertexSize(elementSize)
 	{
+		VL_PROFILE_FUNCTION();
+
 		AddNewVertexBuffer(2);
 
 		m_BufferPtrs = m_BufferBases;
 		m_BuffersUsed = 1;
 	}
 
-	BufferController::~BufferController()
+	BatchBuffer::~BatchBuffer()
 	{
+		VL_PROFILE_FUNCTION();
+
 		DeleteAllVertexBuffers();
 	}
 
-	Scope<BufferController> BufferController::Create(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout)
+	Scope<BatchBuffer> BatchBuffer::Create(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout)
 	{
-		return CreateScope<BufferController>(elementSize, maxCount, layout);
+		return CreateScope<BatchBuffer>(elementSize, maxCount, layout);
 	}
 
-	void BufferController::Reset()
+	void BatchBuffer::Reset()
 	{
+		VL_PROFILE_FUNCTION();
+
 		m_BufferPtrs = m_BufferBases;
 		m_BuffersUsed = 1;
 
 		std::fill(m_VerticesPerBuffer.begin(), m_VerticesPerBuffer.end(), 0);
 	}
 
-	void BufferController::AddToVertexBuffer(const void* data, const size_t size)
+	void BatchBuffer::AddToVertexBuffer(const void* data, const size_t size)
 	{
-		VL_PROFILE_FUNCTION();
 		VL_CORE_ASSERT((m_VertexSize == size), "Buffer Element size does not match data size!");
 
 		int bufferIndex = m_BuffersUsed - 1;
@@ -57,12 +62,12 @@ namespace Velvet {
 		m_VerticesPerBuffer[bufferIndex]++;
 	}
 
-	void* BufferController::GetVertexBuffer(const int& buffer)
+	void* BatchBuffer::GetVertexBuffer(const int& buffer)
 	{
 		return m_BufferBases[buffer];
 	}
 
-	uint32_t BufferController::GetVertexBufferSize(const int& buffer)
+	uint32_t BatchBuffer::GetVertexBufferSize(const int& buffer)
 	{
 		void* currentBase = m_BufferBases[buffer];
 		void* currentPtr = m_BufferPtrs[buffer];
@@ -70,22 +75,22 @@ namespace Velvet {
 		return (uint32_t)((uint8_t*)currentPtr - (uint8_t*)currentBase);
 	}
 
-	uint32_t BufferController::GetVertexBuffersUsed()
+	uint32_t BatchBuffer::GetVertexBuffersUsed()
 	{
 		return m_BuffersUsed;
 	}
 
-	uint32_t BufferController::GetVertexCount(const int& buffer)
+	uint32_t BatchBuffer::GetVertexCount(const int& buffer)
 	{
 		return m_VerticesPerBuffer[buffer];
 	}
 
-	Ref<VertexBuffer> BufferController::GetVBO(const int& buffer)
+	Ref<VertexBuffer> BatchBuffer::GetVBO(const int& buffer)
 	{
 		return m_VBOs[buffer];
 	}
 
-	void BufferController::DeleteExtraVertexBuffers()
+	void BatchBuffer::DeleteExtraVertexBuffers()
 	{
 		VL_PROFILE_FUNCTION();
 
@@ -105,7 +110,7 @@ namespace Velvet {
 		}
 	}
 	
-	void BufferController::DeleteAllVertexBuffers()
+	void BatchBuffer::DeleteAllVertexBuffers()
 	{
 		VL_PROFILE_FUNCTION();
 
@@ -121,10 +126,8 @@ namespace Velvet {
 		m_VerticesPerBuffer.clear();
 	}
 
-	void BufferController::MoveVertexBufferPtr(size_t size, int count)
+	void BatchBuffer::MoveVertexBufferPtr(size_t size, int count)
 	{
-		VL_PROFILE_FUNCTION();
-
 		size_t bytesToMove = size * count;
 
 		void* oldPtr = m_BufferPtrs[m_BuffersUsed - 1];
@@ -133,7 +136,7 @@ namespace Velvet {
 		m_BufferPtrs[m_BuffersUsed - 1] = nextBuffer;
 	}
 
-	void BufferController::AddNewVertexBuffer(int count)
+	void BatchBuffer::AddNewVertexBuffer(int count)
 	{
 		VL_PROFILE_FUNCTION();
 

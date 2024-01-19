@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Velvet/Renderer/Batch/BufferController.h"
+#include "Velvet/Renderer/BatchBuffer.h"
 #include "Velvet/Renderer/Buffer.h"
 #include "Velvet/Renderer/Shader.h"
 #include "Velvet/Renderer/Texture.h"
@@ -36,15 +36,15 @@ namespace Velvet {
 		}
 	};
 
-	class BatchBuffer
+	class Batch
 	{
 	public:
-		BatchBuffer(const BatchSettings& settings);
-		~BatchBuffer();
+		Batch(const BatchSettings& settings);
+		~Batch();
 
 		static void Init();
 		static void Shutdown();
-		static Ref<BatchBuffer> Create(const BatchSettings& settings);
+		static Ref<Batch> Create(const BatchSettings& settings);
 		static void StartAllBatches();
 		static void FlushAllBatches();
 
@@ -60,12 +60,12 @@ namespace Velvet {
 		int m_VerticesPerElement = 0;
 		std::vector<uint32_t> m_IndexBufferArray;
 
-		Scope<BufferController> m_BufferController;
+		Scope<BatchBuffer> m_BatchBuffer;
 
 		static bool m_IsInitialized;
 		static Ref<IndexBuffer> m_IndexBuffer;
 		static Ref<VertexArray> m_BatchVAO;
-		static std::unordered_map<BatchSettings, Ref<BatchBuffer>> m_Instances;
+		static std::unordered_map<BatchSettings, Ref<Batch>> m_Instances;
 	};
 
 }

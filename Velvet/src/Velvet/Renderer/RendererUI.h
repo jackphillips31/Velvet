@@ -14,7 +14,7 @@ namespace Velvet {
 		uint32_t ElementID;
 	};
 
-	class UIController
+	class RendererUI
 	{
 	public:
 		enum Orientation
@@ -30,13 +30,16 @@ namespace Velvet {
 		static void Shutdown();
 		static void OnEvent(Event& e);
 
-		static void AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation);
-		static void AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const Ref<Texture2D>& texture, const Orientation& orientation);
-		static void AddQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
-		static void AddQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture);
-
 		static void BeginScene();
 		static void EndScene();
+
+		// UI Primitives
+		static void AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation);
+		static void AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const Ref<Texture2D>& texture, const Orientation& orientation);
+		
+		// Primitives
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture);
 	private:
 		static glm::vec2 GetOrientationFactors(const Orientation& orientation);
 		static glm::vec2 NDCFromPixel(const glm::vec2& pixelPosition, const Orientation& orientation = Orientation::TopLeft);

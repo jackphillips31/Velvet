@@ -1,9 +1,9 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/Renderer.h"
 
-#include "Velvet/Renderer/Batch/BatchBuffer.h"
+#include "Velvet/Renderer/Batch.h"
 #include "Velvet/Renderer/Renderer2D.h"
-#include "Velvet/Renderer/UIController.h"
+#include "Velvet/Renderer/RendererUI.h"
 
 #include "Velvet/Assets/Shaders/TextureShaderSource.h"
 
@@ -28,9 +28,9 @@ namespace Velvet {
 
 
 		RenderCommand::Init();
-		BatchBuffer::Init();
+		Batch::Init();
 		Renderer2D::Init();
-		UIController::Init();
+		RendererUI::Init();
 	}
 
 	void Renderer::Shutdown()
@@ -38,9 +38,9 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		RenderCommand::Shutdown();
-		BatchBuffer::Shutdown();
+		Batch::Shutdown();
 		Renderer2D::Shutdown();
-		UIController::Shutdown();
+		RendererUI::Shutdown();
 		m_SceneData.reset();
 		m_ShaderLibrary.reset();
 	}
