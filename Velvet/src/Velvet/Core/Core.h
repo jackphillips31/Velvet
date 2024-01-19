@@ -80,4 +80,11 @@ namespace Velvet {
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
 
+	// Helper function to combine hash values
+	template <typename T>
+	void hash_combine(size_t& seed, const T& value)
+	{
+		seed ^= std::hash<T>{}(value)+0x9e3779b9 + (seed << 6) + (seed >> 2);
+	}
+
 }

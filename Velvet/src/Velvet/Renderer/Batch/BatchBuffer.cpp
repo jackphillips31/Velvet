@@ -1,6 +1,7 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/Batch/BatchBuffer.h"
 
+#include "Velvet/Renderer/Primitives.h"
 #include "Velvet/Renderer/Texture.h"
 #include "Velvet/Renderer/Renderer.h"
 
@@ -15,64 +16,24 @@ namespace Velvet {
 
 		bool isInitialized = false;
 
-		glm::vec4 DefaultVertexPositions[4] = {
-			{ -0.5f, -0.5f, 0.0f, 1.0f },
-			{ 0.5f, -0.5f, 0.0f, 1.0f },
-			{ 0.5f,  0.5f, 0.0f, 1.0f },
-			{ -0.5f,  0.5f, 0.0f, 1.0f }
-		};
-		glm::vec2 DefaultTextureCoords[4] = {
-			{ 0.0f, 0.0f },
-			{ 1.0f, 0.0f },
-			{ 1.0f, 1.0f },
-			{ 0.0f, 1.0f }
-		};
-		int DefaultIndices[6] = {
-			0, 1, 2, 2, 3, 0
-		};
-
 		Ref<Shader> DefaultTextureShader;
 		Ref<Texture2D> DefaultWhiteTexture;
 	};
 
 	static BatchBufferData BatchData;
 
-	BatchBuffer::BatchBuffer(const BatchType& type, const BufferLayout& layout) :
-		m_Type(type),
-		m_IndexBuffer(IndexBuffer::Create(BatchData.MaxIndices)),
-		m_BatchVAO(VertexArray::Create()),
-		m_Shader(BatchData.DefaultTextureShader)
-	{
-		VL_PROFILE_FUNCTION();
-		VL_CORE_ASSERT(!(type == BatchType::None), "BatchType::None is not supported!");
+	Ref<IndexBuffer> BatchBuffer::m_IndexBuffer = nullptr;
+	Ref<VertexArray> BatchBuffer::m_BatchVAO = nullptr;
+	std::unordered_map<BatchSettings, Ref<BatchBuffer>> BatchBuffer::m_Instances;
 
-		switch (type)
-		{
-		case BatchType::None:
-			m_IndicesPerElement = 0;
-			m_VerticesPerElement = 0;
-			break;
-		case BatchType::Quad:
-			m_IndicesPerElement = 6;
-			m_VerticesPerElement = 4;
-			VL_CORE_WARN("Creating 'Quad' BatchBuffer");
-			break;
-		default:
-			m_IndicesPerElement = 0;
-			m_VerticesPerElement = 0;
-			break;
-		}
+	BatchBuffer::BatchBuffer(const BatchSettings& settings) :
+		m_Settings(settings)
+ 	{
+		SetDataPerElement();
+		GenerateIndexBuffer();
 
-		for (uint32_t i = 0; i < BatchData.MaxVertices; i++) {
-			for (int i2 = 0; i2 < m_IndicesPerElement; i2++)
-			{
-				uint32_t offset = m_VerticesPerElement * i;
-				m_IndexBufferArray.push_back(BatchData.DefaultIndices[i2] + offset);
-			}
-		}
-
-		m_BufferController = BufferController::Create(layout.GetStride(), BatchData.MaxVertices, layout);
-	}
+		m_BufferController = BufferController::Create(m_Settings.Layout.GetStride(), BatchData.MaxVertices, m_Settings.Layout);
+ 	}
 
 	BatchBuffer::~BatchBuffer()
 	{
@@ -90,52 +51,61 @@ namespace Velvet {
 		BatchData.DefaultWhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
 
 		BatchData.isInitialized = true;
+
+
+		m_IndexBuffer = IndexBuffer::Create(BatchData.MaxIndices);
+		m_BatchVAO = VertexArray::Create();
 	}
 
-	Scope<BatchBuffer> BatchBuffer::Create(const BatchType& type)
+	void BatchBuffer::Shutdown()
 	{
-		BufferLayout layout = BufferLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float4, "a_Color" }
-		});
-
-		return Create(type, layout);
+		m_Instances.clear();
 	}
 
-	Scope<BatchBuffer> BatchBuffer::Create(const BatchType& type, const BufferLayout& layout)
+	Ref<BatchBuffer> BatchBuffer::Create(const BatchSettings& settings)
 	{
 		VL_CORE_ASSERT(BatchData.isInitialized, "BatchData has not been initialized!");
-		return CreateScope<BatchBuffer>(type, layout);
-	}
 
-	void BatchBuffer::AddData(const void* data, size_t size)
-	{
-		m_BufferController->AddToVertexBuffer(data, size);
-	}
+		auto it = m_Instances.find(settings);
 
-	/*
-	void BatchBuffer::AddQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
-	{
-		VL_PROFILE_FUNCTION();
-
-		for (size_t i = 0; i < m_VerticesPerElement; i++)
+		if (it != m_Instances.end())
 		{
-			QuadVertexBufferElement bufferElement;
-			bufferElement.Position = transform * BatchData.DefaultVertexPositions[i];
-			bufferElement.TexCoord = BatchData.DefaultTextureCoords[i];
-			bufferElement.Color = color;
-
-			m_BufferController->AddToVertexBuffer(static_cast<void*>(&bufferElement), sizeof(QuadVertexBufferElement));
+			return it->second;
+		}
+		else
+		{
+			Ref<BatchBuffer> result = CreateRef<BatchBuffer>(settings);
+			m_Instances[settings] = result;
+			return result;
 		}
 	}
-	*/
+
+	void BatchBuffer::StartAllBatches()
+	{
+		for (const auto& pair : m_Instances)
+		{
+			pair.second->StartBatch();
+		}
+	}
+
+	void BatchBuffer::FlushAllBatches()
+	{
+		for (const auto& pair : m_Instances)
+		{
+			pair.second->Flush();
+		}
+	}
 
 	void BatchBuffer::StartBatch()
 	{
 		VL_PROFILE_FUNCTION();
 
 		m_BufferController->Reset();
+	}
+
+	void BatchBuffer::AddData(const void* data, size_t size)
+	{
+		m_BufferController->AddToVertexBuffer(data, size);
 	}
 
 	void BatchBuffer::Flush()
@@ -161,15 +131,48 @@ namespace Velvet {
 
 			glm::mat4 transform = glm::mat4(1.0f);
 
-			m_Shader->SetFloat4("u_Color", { 1.0f, 1.0f, 1.0f, 1.0f });
-			m_Shader->SetMat4("u_Transform", transform);
-			BatchData.DefaultWhiteTexture->Bind();
+			m_Settings.Shader->SetFloat4("u_Color", glm::vec4(1.0f));
+			m_Settings.Shader->SetMat4("u_Transform", transform);
+			m_Settings.Texture->Bind();
 
 			m_BatchVAO->Bind();
 			RenderCommand::DrawIndexed(m_BatchVAO, (uint32_t)m_IndexBufferArray.size());
 		}
 
 		m_BufferController->DeleteExtraVertexBuffers();
+	}
+
+	void BatchBuffer::GenerateIndexBuffer()
+	{
+		for (uint32_t i = 0; i < BatchData.MaxVertices; i++)
+		{
+			for (int i2 = 0; i2 < m_IndicesPerElement; i2++)
+			{
+				uint32_t offset = m_VerticesPerElement * i;
+				m_IndexBufferArray.push_back(m_Settings.Indices[i2] + offset);
+			}
+		}
+	}
+
+	void BatchBuffer::SetDataPerElement()
+	{
+		switch (m_Settings.Type)
+		{
+		case BatchType::None:
+			m_IndicesPerElement = 0;
+			m_VerticesPerElement = 0;
+			break;
+		case BatchType::Quad:
+			m_IndicesPerElement = 6;
+			m_VerticesPerElement = 4;
+			VL_CORE_WARN("Creating 'Quad' BatchBuffer");
+			break;
+		default:
+			m_IndicesPerElement = 0;
+			m_VerticesPerElement = 0;
+			VL_CORE_ASSERT(false, "This BatchType doesn't exist!!");
+			break;
+		}
 	}
 
 }

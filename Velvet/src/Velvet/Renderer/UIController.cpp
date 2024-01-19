@@ -1,6 +1,7 @@
 #include <vlpch.h>
 #include "Velvet/Renderer/UIController.h"
 
+#include "Velvet/Renderer/Primitives.h"
 #include "Velvet/Renderer/Renderer.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -9,29 +10,19 @@ namespace Velvet {
 
 	struct UIData
 	{
-		Scope<BatchBuffer> BatchBufferController;
+		Ref<BatchBuffer> BatchBufferController;
 		Ref<Shader> TextureShader;
 		Ref<Texture2D> WhiteTexture;
+
+		BufferLayout BatchLayout = BufferLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float2, "a_TexCoord" },
+			{ ShaderDataType::Float4, "a_Color" }
+			});
 
 		glm::vec2 InitialWindowDimensions;
 		uint32_t IDCounter = 0;
 		std::vector<UIElement*> UIElements;
-
-		glm::vec4 DefaultVertexPositions[4] = {
-			{ -0.5f, -0.5f, 0.0f, 1.0f },
-			{ 0.5f, -0.5f, 0.0f, 1.0f },
-			{ 0.5f,  0.5f, 0.0f, 1.0f },
-			{ -0.5f,  0.5f, 0.0f, 1.0f }
-		};
-		glm::vec2 DefaultTextureCoords[4] = {
-			{ 0.0f, 0.0f },
-			{ 1.0f, 0.0f },
-			{ 1.0f, 1.0f },
-			{ 0.0f, 1.0f }
-		};
-		int DefaultIndices[6] = {
-			0, 1, 2, 2, 3, 0
-		};
 	};
 
 	static UIData UIControllerData;
@@ -53,18 +44,21 @@ namespace Velvet {
 		m_UICameraController.SetCameraSettings(UICameraSettings);
 		m_UICameraController.SetInitialWindowDimensions(windowDimensions);
 
-		BufferLayout batchLayout = BufferLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float4, "a_Color" }
-		});
-		UIControllerData.BatchBufferController = BatchBuffer::Create(BatchType::Quad, batchLayout);
-
 		UIControllerData.TextureShader = Renderer::GetShaderLibrary().Get("Texture");
 		UIControllerData.WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
 
 		UIControllerData.TextureShader->Bind();
 		UIControllerData.TextureShader->SetInt("u_Texture", 0);
+
+		BatchSettings UIBatchSettings(
+			BatchType::Quad,
+			UIControllerData.TextureShader,
+			UIControllerData.WhiteTexture,
+			UIControllerData.BatchLayout,
+			Primitives::Quad::Indices
+		);
+
+		UIControllerData.BatchBufferController = BatchBuffer::Create(UIBatchSettings);
 	}
 
 	void UIController::Shutdown()
@@ -91,6 +85,12 @@ namespace Velvet {
 		AddQuad(normPos, size, color);
 	}
 
+	void UIController::AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const Ref<Texture2D>& texture, const Orientation& orientation)
+	{
+		glm::vec3 normPos = { NDCFromPixel(pixelPosition, orientation), 1.0f };
+		AddQuad(normPos, size, texture);
+	}
+
 	void UIController::AddQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		VL_PROFILE_FUNCTION();
@@ -98,16 +98,40 @@ namespace Velvet {
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		//UIControllerData.BatchBufferController->AddQuad(transform, color, 12);
+		for (size_t i = 0; i < 4; i++)
+		{
+			Primitives::QuadVertex bufferElement;
+			bufferElement.Position = transform * Primitives::Quad::Vertices[i];
+			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
+			bufferElement.Color = color;
+
+			UIControllerData.BatchBufferController->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
+		}
+		AddElement(position, size);
+	}
+
+	void UIController::AddQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+	{
+		BatchSettings textureBatchSettings(
+			BatchType::Quad,
+			UIControllerData.TextureShader,
+			texture,
+			UIControllerData.BatchLayout,
+			Primitives::Quad::Indices
+		);
+		Ref<BatchBuffer> batchBuffer = BatchBuffer::Create(textureBatchSettings);
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 		for (size_t i = 0; i < 4; i++)
 		{
-			QuadVertex bufferElement;
-			bufferElement.Position = transform * UIControllerData.DefaultVertexPositions[i];
-			bufferElement.TexCoord = UIControllerData.DefaultTextureCoords[i];
-			bufferElement.Color = color;
+			Primitives::QuadVertex bufferElement;
+			bufferElement.Position = transform * Primitives::Quad::Vertices[i];
+			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
+			bufferElement.Color = glm::vec4(1.0f);
 
-			UIControllerData.BatchBufferController->AddData(static_cast<void*>(&bufferElement), sizeof(QuadVertex));
+			batchBuffer->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
 		}
 		AddElement(position, size);
 	}
@@ -119,8 +143,6 @@ namespace Velvet {
 		UIControllerData.IDCounter = 0;
 		ClearUIElements();
 
-		UIControllerData.BatchBufferController->StartBatch();
-
 		UIControllerData.TextureShader->Bind();
 		UIControllerData.TextureShader->SetMat4("u_ViewProjection", m_UICameraController.GetCamera().GetProjectionMatrix());
 	}
@@ -129,7 +151,7 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		UIControllerData.BatchBufferController->Flush();
+		//UIControllerData.BatchBufferController->Flush();
 	}
 
 	glm::vec2 UIController::GetOrientationFactors(const Orientation& orientation)

@@ -43,6 +43,12 @@ namespace Velvet {
 		{
 		}
 
+		// Equality operator
+		bool operator==(const BufferElement& other) const
+		{
+			return Name == other.Name && Type == other.Type && Offset == other.Offset && Size == other.Size && Normalized == other.Normalized;
+		}
+
 		uint32_t GetComponentCount() const
 		{
 			switch (Type)
@@ -74,6 +80,12 @@ namespace Velvet {
 			: m_Elements(elements)
 		{
 			CalculateOffsetsAndStride();
+		}
+
+		// Equality operator
+		bool operator==(const BufferLayout& other) const
+		{
+			return m_Elements == other.m_Elements;
 		}
 
 		inline size_t GetStride() const { return m_Stride; }
@@ -134,3 +146,44 @@ namespace Velvet {
 	};
 
 }
+
+template<>
+struct std::hash<Velvet::BufferElement>
+{
+	size_t operator()(const Velvet::BufferElement& obj) const
+	{
+		size_t hashValue = 0;
+
+		// Hash Name
+		Velvet::hash_combine(hashValue, std::hash<std::string>{}(obj.Name));
+
+		// Hash ShaderDataType enum
+		Velvet::hash_combine(hashValue, std::hash<int>{}(static_cast<int>(obj.Type)));
+
+		// Hash size_t
+		Velvet::hash_combine(hashValue, std::hash<size_t>{}(obj.Offset));
+		Velvet::hash_combine(hashValue, std::hash<size_t>{}(obj.Size));
+
+		// Hash bool
+		Velvet::hash_combine(hashValue, std::hash<bool>{}(obj.Normalized));
+
+		return hashValue;
+	}
+};
+
+template<>
+struct std::hash<Velvet::BufferLayout>
+{
+	size_t operator()(const Velvet::BufferLayout& obj) const
+	{
+		size_t hashValue = 0;
+
+		// Hash Vector
+		for (const Velvet::BufferElement& elem : obj)
+		{
+			Velvet::hash_combine(hashValue, std::hash<Velvet::BufferElement>{}(elem));
+		}
+
+		return hashValue;
+	}
+};

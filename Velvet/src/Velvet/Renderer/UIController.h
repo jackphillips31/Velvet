@@ -9,13 +9,6 @@
 
 namespace Velvet {
 
-	struct QuadVertex
-	{
-		glm::vec3 Position;
-		glm::vec2 TexCoord;
-		glm::vec4 Color;
-	};
-
 	struct UIElement
 	{
 		glm::vec2 x;
@@ -40,7 +33,9 @@ namespace Velvet {
 		static void OnEvent(Event& e);
 
 		static void AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const glm::vec4& color, const Orientation& orientation);
+		static void AddButton(const glm::vec2& pixelPosition, const glm::vec2& size, const Ref<Texture2D>& texture, const Orientation& orientation);
 		static void AddQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+		static void AddQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture);
 
 		static void BeginScene();
 		static void EndScene();
@@ -55,6 +50,7 @@ namespace Velvet {
 		static bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 	private:
 		static OrthographicCameraController m_UICameraController;
+		static std::unordered_map<Ref<Texture2D>, Ref<BatchBuffer>> m_TextureBatches;
 	};
 
 }
