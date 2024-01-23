@@ -6,6 +6,164 @@
 
 namespace Velvet {
 
+	//--------------------------------------------------------------
+	//------------------------- Batch Buffer -----------------------
+	//--------------------------------------------------------------
+	BatchBuffer::BatchBuffer(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout)
+		: m_Layout(layout), m_BuffersUsed(0), m_MaxVertexCount(maxCount), m_VertexSize(elementSize)
+	{
+		VL_PROFILE_FUNCTION();
+
+		AddNewVertexBuffer(2);
+
+		m_BufferPtrs = m_BufferBases;
+		m_BuffersUsed = 1;
+	}
+
+	BatchBuffer::~BatchBuffer()
+	{
+		VL_PROFILE_FUNCTION();
+
+		DeleteAllVertexBuffers();
+	}
+
+	Scope<BatchBuffer> BatchBuffer::Create(const size_t& elementSize, const uint32_t& maxCount, const BufferLayout& layout)
+	{
+		return CreateScope<BatchBuffer>(elementSize, maxCount, layout);
+	}
+
+	void BatchBuffer::Reset()
+	{
+		VL_PROFILE_FUNCTION();
+
+		m_BufferPtrs = m_BufferBases;
+		m_BuffersUsed = 1;
+
+		std::fill(m_VerticesPerBuffer.begin(), m_VerticesPerBuffer.end(), 0);
+	}
+
+	void BatchBuffer::AddToVertexBuffer(const void* data, const size_t size)
+	{
+		VL_CORE_ASSERT((m_VertexSize == size), "Buffer Element size does not match data size!");
+
+		int bufferIndex = m_BuffersUsed - 1;
+
+		void* destination = nullptr;
+		if (m_VerticesPerBuffer[bufferIndex] == m_MaxVertexCount)
+		{
+			VL_CORE_WARN("Buffer has been filled! Adding another...");
+			AddNewVertexBuffer();
+			m_BuffersUsed++;
+			bufferIndex = m_BuffersUsed - 1;
+			m_VerticesPerBuffer[bufferIndex] = 0;
+			destination = m_BufferPtrs[bufferIndex];
+		}
+		else
+		{
+			destination = m_BufferPtrs[bufferIndex];
+		}
+
+		std::memcpy(destination, data, size);
+		MoveVertexBufferPtr(size);
+		m_VerticesPerBuffer[bufferIndex]++;
+	}
+
+	void* BatchBuffer::GetVertexBuffer(const int& buffer)
+	{
+		return m_BufferBases[buffer];
+	}
+
+	uint32_t BatchBuffer::GetVertexBufferSize(const int& buffer)
+	{
+		void* currentBase = m_BufferBases[buffer];
+		void* currentPtr = m_BufferPtrs[buffer];
+
+		return (uint32_t)((uint8_t*)currentPtr - (uint8_t*)currentBase);
+	}
+
+	uint32_t BatchBuffer::GetVertexBuffersUsed()
+	{
+		return m_BuffersUsed;
+	}
+
+	uint32_t BatchBuffer::GetVertexCount(const int& buffer)
+	{
+		return m_VerticesPerBuffer[buffer];
+	}
+
+	Ref<VertexBuffer> BatchBuffer::GetVBO(const int& buffer)
+	{
+		return m_VBOs[buffer];
+	}
+
+	void BatchBuffer::DeleteExtraVertexBuffers()
+	{
+		VL_PROFILE_FUNCTION();
+
+		if (m_BufferBases.size() > m_BuffersUsed + 1)
+		{
+			for (size_t i = m_BufferBases.size(); i > m_BuffersUsed + 1; --i)
+			{
+				size_t index = i - 1;
+				void* itBase = m_BufferBases[index];
+
+				free(itBase);
+
+				m_BufferBases.erase(m_BufferBases.begin() + index);
+				m_BufferPtrs.erase(m_BufferPtrs.begin() + index);
+				m_VerticesPerBuffer.erase(m_VerticesPerBuffer.begin() + index);
+			}
+		}
+	}
+
+	void BatchBuffer::DeleteAllVertexBuffers()
+	{
+		VL_PROFILE_FUNCTION();
+
+		for (size_t i = m_BufferBases.size(); i > 0; i--)
+		{
+			size_t index = i - 1;
+			void* itBase = m_BufferBases[index];
+
+			free(itBase);
+		}
+		m_BufferBases.clear();
+		m_BufferPtrs.clear();
+		m_VerticesPerBuffer.clear();
+	}
+
+	void BatchBuffer::MoveVertexBufferPtr(size_t size, int count)
+	{
+		size_t bytesToMove = size * count;
+
+		void* oldPtr = m_BufferPtrs[m_BuffersUsed - 1];
+		void* nextBuffer = (void*)((char*)oldPtr + bytesToMove);
+
+		m_BufferPtrs[m_BuffersUsed - 1] = nextBuffer;
+	}
+
+	void BatchBuffer::AddNewVertexBuffer(int count)
+	{
+		VL_PROFILE_FUNCTION();
+
+		size_t bufferSize = m_VertexSize * m_MaxVertexCount;
+
+		for (int i = 0; i < count; i++)
+		{
+			void* ptr = malloc(bufferSize);
+			Ref<VertexBuffer> newVBO = VertexBuffer::Create((uint32_t)bufferSize);
+			newVBO->SetLayout(m_Layout);
+
+			m_BufferBases.push_back(ptr);
+			m_BufferPtrs.push_back(ptr);
+			m_VerticesPerBuffer.push_back(0);
+			m_VBOs.push_back(newVBO);
+		}
+	}
+
+	//--------------------------------------------------------------
+	//---------------------------- Batch ---------------------------
+	//--------------------------------------------------------------
 	struct BatchBufferData
 	{
 		static const uint32_t MaxQuads = 2000;
@@ -28,6 +186,19 @@ namespace Velvet {
 
 		SetDataPerElement();
 		GenerateIndexBuffer();
+
+		int32_t samplers[BatchData.MaxTextureSlots];
+		for (uint32_t i = 0; i < BatchData.MaxTextureSlots; i++)
+		{
+			samplers[i] = i;
+		}
+
+		m_Settings.Shader->Bind();
+		m_Settings.Shader->SetIntArray("u_Textures", samplers, BatchData.MaxTextureSlots);
+
+		// Set first texture slot to white texture
+		m_TextureSlots[0] = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
+		m_TextureSlotIndex = 1;
 
 		m_BatchBuffer = BatchBuffer::Create(m_Settings.Layout.GetStride(), BatchData.MaxVertices, m_Settings.Layout);
  	}
@@ -103,6 +274,31 @@ namespace Velvet {
 		m_BatchBuffer->AddToVertexBuffer(data, size);
 	}
 
+	float Batch::GetTextureIndex(const Ref<Texture2D>& texture)
+	{
+		VL_PROFILE_FUNCTION();
+
+		float textureIndex = 0.0f;
+
+		for (uint32_t i = 1; i < m_TextureSlotIndex; i++)
+		{
+			if (*m_TextureSlots[i].get() == *texture.get())
+			{
+				return (float)i;
+			}
+		}
+
+		if (textureIndex == 0.0f)
+		{
+			textureIndex = (float)m_TextureSlotIndex;
+			m_TextureSlots[m_TextureSlotIndex] = texture;
+			m_TextureSlotIndex++;
+		}
+
+		return textureIndex;
+
+	}
+
 	void Batch::StartBatch()
 	{
 		m_BatchBuffer->Reset();
@@ -132,12 +328,14 @@ namespace Velvet {
 				m_BatchVAO->AddVertexBuffer(VBO);
 				m_BatchVAO->SetIndexBuffer(m_IndexBuffer);
 
-				glm::mat4 transform = glm::mat4(1.0f);
-
+				// Bind Shader
 				m_Settings.Shader->Bind();
-				m_Settings.Shader->SetFloat4("u_Color", glm::vec4(1.0f));
-				m_Settings.Shader->SetMat4("u_Transform", transform);
-				m_Settings.Texture->Bind();
+
+				// Bind textures
+				for (uint32_t i = 0; i < m_TextureSlotIndex; i++)
+				{
+					m_TextureSlots[i]->Bind(i);
+				}
 
 				RenderCommand::DrawIndexed(m_BatchVAO, indexCount);
 			}

@@ -18,8 +18,10 @@ namespace Velvet {
 
 		BufferLayout BatchLayout = BufferLayout({
 			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float4, "a_Color" },
 			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float4, "a_Color" }
+			{ ShaderDataType::Float, "a_TexIndex" },
+			{ ShaderDataType::Float, "a_TilingFactor" }
 		});
 	};
 
@@ -39,7 +41,6 @@ namespace Velvet {
 		BatchSettings Renderer2DBatchSettings(
 			BatchType::Quad,
 			s_Data.TextureShader,
-			s_Data.WhiteTexture,
 			s_Data.BatchLayout,
 			Primitives::Quad::Indices
 		);
@@ -85,8 +86,10 @@ namespace Velvet {
 		{
 			Primitives::QuadVertex bufferElement;
 			bufferElement.Position = transform * Primitives::Quad::Vertices[i];
-			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
 			bufferElement.Color = color;
+			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
+			bufferElement.TexIndex = 0;
+			bufferElement.TilingFactor = 1;
 
 			s_Data.Batch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
 		}
@@ -101,14 +104,7 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		BatchSettings textureBatchSettings(
-			BatchType::Quad,
-			s_Data.TextureShader,
-			texture,
-			s_Data.BatchLayout,
-			Primitives::Quad::Indices
-		);
-		Ref<Batch> textureBatch = Batch::Create(textureBatchSettings);
+		float textureIndex = s_Data.Batch->GetTextureIndex(texture);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
@@ -117,10 +113,12 @@ namespace Velvet {
 		{
 			Primitives::QuadVertex bufferElement;
 			bufferElement.Position = transform * Primitives::Quad::Vertices[i];
-			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
 			bufferElement.Color = glm::vec4(1.0f);
+			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
+			bufferElement.TexIndex = textureIndex;
+			bufferElement.TilingFactor = 10;
 
-			textureBatch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
+			s_Data.Batch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
 		}
 	}
 

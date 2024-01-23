@@ -76,7 +76,8 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 		VL_CORE_ASSERT(Exists(name), "Shader not found!");
-		return m_Shaders[name];
+		Ref<Shader> result = m_Shaders[name];
+		return result;
 	}
 
 	bool ShaderLibrary::Exists(const std::string& name) const

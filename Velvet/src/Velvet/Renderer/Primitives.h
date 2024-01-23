@@ -9,8 +9,10 @@ namespace Velvet {
 		struct QuadVertex
 		{
 			glm::vec3 Position;
-			glm::vec2 TexCoord;
 			glm::vec4 Color;
+			glm::vec2 TexCoord;
+			float TexIndex;
+			float TilingFactor;
 		};
 
 		namespace Quad {

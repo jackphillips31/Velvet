@@ -18,8 +18,10 @@ namespace Velvet {
 
 		BufferLayout BatchLayout = BufferLayout({
 			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float4, "a_Color" },
 			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float4, "a_Color" }
+			{ ShaderDataType::Float, "a_TexIndex" },
+			{ ShaderDataType::Float, "a_TilingFactor" }
 		});
 
 		glm::vec2 InitialWindowDimensions;
@@ -27,7 +29,7 @@ namespace Velvet {
 		std::vector<UIElement*> UIElements;
 	};
 
-	static UIData s_Data;
+	static UIData s_UIData;
 
 	OrthographicCameraController RendererUI::m_UICameraController = OrthographicCameraController();
 
@@ -46,21 +48,17 @@ namespace Velvet {
 		m_UICameraController.SetCameraSettings(UICameraSettings);
 		m_UICameraController.SetInitialWindowDimensions(windowDimensions);
 
-		s_Data.TextureShader = Renderer::GetShaderLibrary().Get("UITexture");
-		s_Data.WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetInt("u_Texture", 0);
+		s_UIData.TextureShader = Renderer::GetShaderLibrary().Get("UITexture");
+		s_UIData.WhiteTexture = Renderer::GetTexture2DLibrary().Get("DefaultWhite");
 
 		BatchSettings UIBatchSettings(
 			BatchType::Quad,
-			s_Data.TextureShader,
-			s_Data.WhiteTexture,
-			s_Data.BatchLayout,
+			s_UIData.TextureShader,
+			s_UIData.BatchLayout,
 			Primitives::Quad::Indices
 		);
 
-		s_Data.Batch = Batch::Create(UIBatchSettings);
+		s_UIData.Batch = Batch::Create(UIBatchSettings);
 	}
 
 	void RendererUI::Shutdown()
@@ -68,9 +66,9 @@ namespace Velvet {
 		VL_PROFILE_FUNCTION();
 
 		ClearUIElements();
-		s_Data.Batch.reset();
-		s_Data.TextureShader.reset();
-		s_Data.WhiteTexture.reset();
+		s_UIData.Batch.reset();
+		s_UIData.TextureShader.reset();
+		s_UIData.WhiteTexture.reset();
 	}
 
 	void RendererUI::OnEvent(Event& e)
@@ -85,11 +83,11 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		s_Data.IDCounter = 0;
+		s_UIData.IDCounter = 0;
 		ClearUIElements();
 
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", m_UICameraController.GetCamera().GetProjectionMatrix());
+		s_UIData.TextureShader->Bind();
+		s_UIData.TextureShader->SetMat4("u_ViewProjection", m_UICameraController.GetCamera().GetProjectionMatrix());
 	}
 
 	void RendererUI::EndScene()
@@ -120,10 +118,12 @@ namespace Velvet {
 		{
 			Primitives::QuadVertex bufferElement;
 			bufferElement.Position = transform * Primitives::Quad::Vertices[i];
-			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
 			bufferElement.Color = color;
+			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
+			bufferElement.TexIndex = 0;
+			bufferElement.TilingFactor = 1;
 
-			s_Data.Batch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
+			s_UIData.Batch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
 		}
 		AddElement(position, size);
 	}
@@ -132,26 +132,21 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		BatchSettings textureBatchSettings(
-			BatchType::Quad,
-			s_Data.TextureShader,
-			texture,
-			s_Data.BatchLayout,
-			Primitives::Quad::Indices
-		);
-		Ref<Batch> batchBuffer = Batch::Create(textureBatchSettings);
+		float textureIndex = s_UIData.Batch->GetTextureIndex(texture);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		for (size_t i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			Primitives::QuadVertex bufferElement;
 			bufferElement.Position = transform * Primitives::Quad::Vertices[i];
-			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
 			bufferElement.Color = glm::vec4(1.0f);
+			bufferElement.TexCoord = Primitives::Quad::TextureCoords[i];
+			bufferElement.TexIndex = textureIndex;
+			bufferElement.TilingFactor = 1;
 
-			batchBuffer->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
+			s_UIData.Batch->AddData(static_cast<void*>(&bufferElement), sizeof(Primitives::QuadVertex));
 		}
 		AddElement(position, size);
 	}
@@ -198,16 +193,16 @@ namespace Velvet {
 		newElement->x.y = position.x + xFactor;
 		newElement->y.x = position.y - yFactor;
 		newElement->y.y = position.y + yFactor;
-		newElement->ElementID = s_Data.IDCounter;
+		newElement->ElementID = s_UIData.IDCounter;
 
-		s_Data.UIElements.push_back(newElement);
-		s_Data.IDCounter++;
+		s_UIData.UIElements.push_back(newElement);
+		s_UIData.IDCounter++;
 	}
 
 	bool RendererUI::CheckElementHover(const glm::vec2& mousePosition)
 	{
 		glm::vec2 newPos = NDCFromPixel(mousePosition);
-		for (UIElement* ptr : s_Data.UIElements)
+		for (UIElement* ptr : s_UIData.UIElements)
 		{
 			bool isBetween = (newPos.x >= ptr->x.x && newPos.x <= ptr->x.y && newPos.y >= ptr->y.x && newPos.y <= ptr->y.y);
 			if (isBetween)
@@ -220,13 +215,13 @@ namespace Velvet {
 	{
 		VL_PROFILE_FUNCTION();
 
-		for (size_t i = s_Data.UIElements.size(); i > 0; i--)
+		for (size_t i = s_UIData.UIElements.size(); i > 0; i--)
 		{
-			auto it = s_Data.UIElements.begin() + i - 1;
+			auto it = s_UIData.UIElements.begin() + i - 1;
 			delete* it;
-			s_Data.UIElements.erase(it);
+			s_UIData.UIElements.erase(it);
 		}
-		s_Data.UIElements.clear();
+		s_UIData.UIElements.clear();
 	}
 
 	bool RendererUI::OnMouseButtonPressed(MouseButtonPressedEvent& e)
